@@ -6,7 +6,7 @@ from sqlmodel import Session, select
 
 from app.database import get_session
 from app.models import Fund, FundNavHistory
-from app.services.fund_data import fetch_fund_info, fetch_fund_nav
+from app.services.fund_data import fetch_fund_allocation, fetch_fund_info, fetch_fund_nav
 
 router = APIRouter(prefix="/api/funds", tags=["funds"])
 
@@ -55,4 +55,5 @@ def get_nav_history(
 def refresh_fund(fund_code: str, session: SessionDep):
     fund = fetch_fund_info(fund_code, session)
     fetch_fund_nav(fund_code, session)
+    fetch_fund_allocation(fund_code, session)
     return {"ok": True, "fund_name": fund.fund_name}
