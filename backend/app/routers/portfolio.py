@@ -5,6 +5,7 @@ from sqlmodel import Session, select
 
 from app.database import get_session
 from app.models import FundNavHistory, Holding
+from app.services.allocation import get_weighted_allocation
 
 router = APIRouter(prefix="/api/portfolio", tags=["portfolio"])
 
@@ -70,3 +71,8 @@ def portfolio_by_platform(session: SessionDep):
         p["pnl"] = round(p["market_value"] - p["cost"], 2)
 
     return result
+
+
+@router.get("/allocation")
+def portfolio_allocation(dimension: str, session: SessionDep):
+    return get_weighted_allocation(dimension, session)

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 
 from app.database import get_session
-from app.models import Fund, FundNavHistory
+from app.models import Fund, FundAllocation, FundNavHistory, FundTopHolding
 from app.services.fund_data import fetch_fund_allocation, fetch_fund_info, fetch_fund_nav
 
 router = APIRouter(prefix="/api/funds", tags=["funds"])
@@ -57,3 +57,46 @@ def refresh_fund(fund_code: str, session: SessionDep):
     fetch_fund_nav(fund_code, session)
     fetch_fund_allocation(fund_code, session)
     return {"ok": True, "fund_name": fund.fund_name}
+
+
+@router.get("/{fund_code}/allocation")
+def get_fund_allocation(fund_code: str, session: SessionDep):
+    allocations = session.exec(
+        select(FundAllocation).where(FundAllocation.fund_code == fund_code)
+    ).all()
+    result: dict[str, list] = {}
+    for a in allocations:
+        if a.dimension not in result:
+            result[a.dimension] = []
+        result[a.dimension].append({
+            "category": a.category,
+            "percentage": a.percentage,
+            "source": a.source,
+        })
+    return result
+
+
+@router.get("/{fund_code}/top-holdings")
+def get_fund_top_holdings(fund_code: str, session: SessionDep):
+    holdings = session.exec(
+        select(FundTopHolding).where(FundTopHolding.fund_code == fund_code)
+    ).all()
+    return [
+        {"stock_code": h.stock_code, "stock_name": h.stock_name, "percentage": h.percentage}
+        for h in holdings
+    ]
+
+
+@router.put("/{fund_code}/allocation")
+def override_allocation(fund_code: str, data: list[dict], session: SessionDep):
+    for item in data:
+        session.add(FundAllocation(
+            fund_code=fund_code,
+            dimension=item["dimension"],
+            category=item["category"],
+            percentage=item["percentage"],
+            source="manual",
+            report_date=item.get("report_date"),
+        ))
+    session.commit()
+    return {"ok": True}
