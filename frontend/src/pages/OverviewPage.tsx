@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { portfolioApi } from "@/services/api";
-import type { PlatformBreakdown, PortfolioSummary } from "@/types";
+import type { PlatformBreakdown, PortfolioSummary, PortfolioTrend } from "@/types";
 
 const platformChartConfig = {
   market_value: { label: "市值", color: "var(--chart-1)" },
@@ -13,10 +13,12 @@ const platformChartConfig = {
 export default function OverviewPage() {
   const [summary, setSummary] = useState<PortfolioSummary | null>(null);
   const [platforms, setPlatforms] = useState<PlatformBreakdown[]>([]);
+  const [trend, setTrend] = useState<PortfolioTrend[]>([]);
 
   useEffect(() => {
     portfolioApi.summary().then(setSummary);
     portfolioApi.byPlatform().then(setPlatforms);
+    portfolioApi.trend().then(setTrend);
   }, []);
 
   if (!summary) return <div className="text-muted-foreground">加载中...</div>;
@@ -81,6 +83,32 @@ export default function OverviewPage() {
                 <Bar dataKey="market_value" fill="var(--color-market_value)" radius={4} />
                 <Bar dataKey="cost" fill="var(--color-cost)" radius={4} />
               </BarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      )}
+
+      {trend.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>组合走势</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={{
+                total_value: { label: "总市值", color: "var(--chart-1)" },
+                total_cost: { label: "总成本", color: "var(--chart-2)" },
+              }}
+              className="h-[300px] w-full"
+            >
+              <LineChart data={trend}>
+                <CartesianGrid vertical={false} />
+                <XAxis dataKey="date" tickLine={false} axisLine={false} />
+                <YAxis tickLine={false} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Line type="monotone" dataKey="total_value" stroke="var(--color-total_value)" dot={false} />
+                <Line type="monotone" dataKey="total_cost" stroke="var(--color-total_cost)" dot={false} strokeDasharray="5 5" />
+              </LineChart>
             </ChartContainer>
           </CardContent>
         </Card>

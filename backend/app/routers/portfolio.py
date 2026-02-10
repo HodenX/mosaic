@@ -1,10 +1,11 @@
+from datetime import date as date_type
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session, select
 
 from app.database import get_session
-from app.models import FundNavHistory, Holding
+from app.models import FundNavHistory, Holding, PortfolioSnapshot
 from app.services.allocation import get_weighted_allocation
 
 router = APIRouter(prefix="/api/portfolio", tags=["portfolio"])
@@ -76,3 +77,28 @@ def portfolio_by_platform(session: SessionDep):
 @router.get("/allocation")
 def portfolio_allocation(dimension: str, session: SessionDep):
     return get_weighted_allocation(dimension, session)
+
+
+@router.get("/trend")
+def portfolio_trend(
+    session: SessionDep,
+    start: date_type | None = Query(None),
+    end: date_type | None = Query(None),
+):
+    query = select(PortfolioSnapshot)
+    if start:
+        query = query.where(PortfolioSnapshot.date >= start)
+    if end:
+        query = query.where(PortfolioSnapshot.date <= end)
+    query = query.order_by(PortfolioSnapshot.date)
+
+    records = session.exec(query).all()
+    return [
+        {
+            "date": str(r.date),
+            "total_value": r.total_value,
+            "total_cost": r.total_cost,
+            "total_pnl": r.total_pnl,
+        }
+        for r in records
+    ]

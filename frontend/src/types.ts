@@ -57,3 +57,25 @@ export interface NavHistory {
   date: string;
   nav: number;
 }
+
+export interface PortfolioTrend {
+  date: string;
+  total_value: number;
+  total_cost: number;
+  total_pnl: number;
+}
+
+export interface AllocationItem {
+  category: string;
+  percentage: number;
+}
+
+export interface FundAllocation {
+  [dimension: string]: AllocationItem[];
+}
+
+export interface TopHolding {
+  stock_code: string;
+  stock_name: string;
+  percentage: number;
+}

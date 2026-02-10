@@ -1,5 +1,7 @@
 import axios from "axios";
 import type {
+  AllocationItem,
+  FundAllocation,
   FundInfo,
   Holding,
   HoldingCreate,
@@ -7,6 +9,8 @@ import type {
   NavHistory,
   PlatformBreakdown,
   PortfolioSummary,
+  PortfolioTrend,
+  TopHolding,
 } from "@/types";
 
 const api = axios.create({
@@ -33,6 +37,10 @@ export const fundsApi = {
       .then((r) => r.data),
   refresh: (code: string) =>
     api.post(`/funds/${code}/refresh`).then((r) => r.data),
+  allocation: (code: string) =>
+    api.get<FundAllocation>(`/funds/${code}/allocation`).then((r) => r.data),
+  topHoldings: (code: string) =>
+    api.get<TopHolding[]>(`/funds/${code}/top-holdings`).then((r) => r.data),
 };
 
 export const portfolioApi = {
@@ -40,4 +48,8 @@ export const portfolioApi = {
     api.get<PortfolioSummary>("/portfolio/summary").then((r) => r.data),
   byPlatform: () =>
     api.get<PlatformBreakdown[]>("/portfolio/by-platform").then((r) => r.data),
+  trend: (start?: string, end?: string) =>
+    api.get<PortfolioTrend[]>("/portfolio/trend", { params: { start, end } }).then((r) => r.data),
+  allocation: (dimension: string) =>
+    api.get<AllocationItem[]>("/portfolio/allocation", { params: { dimension } }).then((r) => r.data),
 };
