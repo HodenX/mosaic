@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { portfolioApi } from "@/services/api";
-import type { PlatformBreakdown, PortfolioSummary, PortfolioTrend } from "@/types";
+import AllocationChart from "@/components/AllocationChart";
+import type { AllocationItem, PlatformBreakdown, PortfolioSummary, PortfolioTrend } from "@/types";
 
 const platformChartConfig = {
   market_value: { label: "市值", color: "var(--chart-1)" },
@@ -14,11 +15,17 @@ export default function OverviewPage() {
   const [summary, setSummary] = useState<PortfolioSummary | null>(null);
   const [platforms, setPlatforms] = useState<PlatformBreakdown[]>([]);
   const [trend, setTrend] = useState<PortfolioTrend[]>([]);
+  const [assetAlloc, setAssetAlloc] = useState<AllocationItem[]>([]);
+  const [geoAlloc, setGeoAlloc] = useState<AllocationItem[]>([]);
+  const [sectorAlloc, setSectorAlloc] = useState<AllocationItem[]>([]);
 
   useEffect(() => {
     portfolioApi.summary().then(setSummary);
     portfolioApi.byPlatform().then(setPlatforms);
     portfolioApi.trend().then(setTrend);
+    portfolioApi.allocation("asset_class").then(setAssetAlloc);
+    portfolioApi.allocation("geography").then(setGeoAlloc);
+    portfolioApi.allocation("sector").then(setSectorAlloc);
   }, []);
 
   if (!summary) return <div className="text-muted-foreground">加载中...</div>;
@@ -66,6 +73,12 @@ export default function OverviewPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <AllocationChart title="资产类别" data={assetAlloc} />
+        <AllocationChart title="地域分布" data={geoAlloc} />
+        <AllocationChart title="行业分布" data={sectorAlloc} />
       </div>
 
       {platforms.length > 0 && (
