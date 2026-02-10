@@ -1,8 +1,19 @@
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import Layout from "@/components/Layout";
+import OverviewPage from "@/pages/OverviewPage";
+import HoldingsPage from "@/pages/HoldingsPage";
+
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-3xl font-bold">Finance Manager</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Navigate to="/overview" replace />} />
+          <Route path="/overview" element={<OverviewPage />} />
+          <Route path="/holdings" element={<HoldingsPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
