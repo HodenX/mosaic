@@ -1,5 +1,7 @@
 from sqlmodel import SQLModel, Session, create_engine
 
+from app import models  # noqa: F401
+
 DATABASE_URL = "sqlite:///./data/finance.db"
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
