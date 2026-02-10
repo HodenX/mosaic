@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -70,7 +71,11 @@ export default function HoldingsPage() {
             <TableBody>
               {holdings.map((h) => (
                 <TableRow key={h.id}>
-                  <TableCell className="font-medium">{h.fund_name || h.fund_code}</TableCell>
+                  <TableCell className="font-medium">
+                    <Link to={`/fund/${h.fund_code}`} className="hover:underline">
+                      {h.fund_name || h.fund_code}
+                    </Link>
+                  </TableCell>
                   <TableCell>{h.fund_code}</TableCell>
                   <TableCell>{h.platform}</TableCell>
                   <TableCell className="text-right">{h.shares.toFixed(2)}</TableCell>
