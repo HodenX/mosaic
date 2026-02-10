@@ -5,12 +5,15 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import create_db_and_tables
 from app.routers import funds, holdings, portfolio
+from app.scheduler import scheduler
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_db_and_tables()
+    scheduler.start()
     yield
+    scheduler.shutdown()
 
 
 app = FastAPI(title="Fund Portfolio Aggregator", lifespan=lifespan)
