@@ -4,17 +4,31 @@ import type {
   BudgetChangeLogEntry,
   BudgetUpdate,
   ChangeLog,
+  DashboardSummary,
   FundAllocation,
   FundInfo,
   Holding,
   HoldingCreate,
   HoldingUpdate,
+  InsurancePolicy,
+  InsurancePolicyCreate,
+  InsurancePolicyList,
+  InsurancePolicyUpdate,
+  LiquidAsset,
+  LiquidAssetCreate,
+  LiquidAssetList,
+  LiquidAssetUpdate,
   NavHistory,
   PlatformBreakdown,
   PortfolioSummary,
   PortfolioTrend,
   PositionStatus,
+  Reminder,
   SnapshotUpdate,
+  StableAsset,
+  StableAssetCreate,
+  StableAssetList,
+  StableAssetUpdate,
   StrategyInfo,
   StrategyResult,
   TopHolding,
@@ -82,4 +96,45 @@ export const positionApi = {
     api.put<{ strategy_name: string; config: Record<string, unknown> }>(`/position/strategy-config/${name}`, { config_json }).then((r) => r.data),
   suggestion: () =>
     api.get<StrategyResult>("/position/suggestion").then((r) => r.data),
+};
+
+export const liquidApi = {
+  list: () => api.get<LiquidAssetList>("/liquid").then((r) => r.data),
+  create: (data: LiquidAssetCreate) =>
+    api.post<LiquidAsset>("/liquid", data).then((r) => r.data),
+  update: (id: number, data: LiquidAssetUpdate) =>
+    api.put<LiquidAsset>(`/liquid/${id}`, data).then((r) => r.data),
+  delete: (id: number) => api.delete(`/liquid/${id}`),
+};
+
+export const stableApi = {
+  list: () => api.get<StableAssetList>("/stable").then((r) => r.data),
+  create: (data: StableAssetCreate) =>
+    api.post<StableAsset>("/stable", data).then((r) => r.data),
+  update: (id: number, data: StableAssetUpdate) =>
+    api.put<StableAsset>(`/stable/${id}`, data).then((r) => r.data),
+  delete: (id: number) => api.delete(`/stable/${id}`),
+};
+
+export const insuranceApi = {
+  list: (insuredPerson?: string) =>
+    api
+      .get<InsurancePolicyList>("/insurance", {
+        params: { insured_person: insuredPerson },
+      })
+      .then((r) => r.data),
+  create: (data: InsurancePolicyCreate) =>
+    api.post<InsurancePolicy>("/insurance", data).then((r) => r.data),
+  update: (id: number, data: InsurancePolicyUpdate) =>
+    api.put<InsurancePolicy>(`/insurance/${id}`, data).then((r) => r.data),
+  delete: (id: number) => api.delete(`/insurance/${id}`),
+  renew: (id: number) =>
+    api.post<InsurancePolicy>(`/insurance/${id}/renew`).then((r) => r.data),
+};
+
+export const dashboardApi = {
+  summary: () =>
+    api.get<DashboardSummary>("/dashboard/summary").then((r) => r.data),
+  reminders: () =>
+    api.get<Reminder[]>("/dashboard/reminders").then((r) => r.data),
 };
