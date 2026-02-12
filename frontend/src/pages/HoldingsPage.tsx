@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import AddHoldingDialog from "@/components/AddHoldingDialog";
 import UpdateSnapshotDialog from "@/components/UpdateSnapshotDialog";
 import ChangeLogDialog from "@/components/ChangeLogDialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import { holdingsApi, fundsApi } from "@/services/api";
 import { useFundDetail } from "@/contexts/FundDetailContext";
 import type { Holding } from "@/types";
@@ -61,14 +62,26 @@ export default function HoldingsPage() {
     val != null ? `${val.toFixed(2)}%` : "-";
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">持仓明细</h2>
         <AddHoldingDialog onCreated={handleCreated} />
       </div>
 
       {loading ? (
-        <div className="text-muted-foreground">加载中...</div>
+        <div className="rounded-lg border shadow-sm overflow-hidden">
+          <div className="bg-muted/30 h-10" />
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-4 px-4 py-3 border-t">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-4 w-14" />
+              <Skeleton className="h-4 w-16 ml-auto" />
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="rounded-lg border shadow-sm overflow-hidden">
           <Table>
@@ -146,7 +159,7 @@ export default function HoldingsPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="hover:text-primary"
+                        className="hover:text-primary active:scale-[0.97] transition-transform duration-100"
                         disabled={refreshing.has(h.fund_code)}
                         onClick={() => handleRefresh(h.fund_code)}
                       >
@@ -155,7 +168,7 @@ export default function HoldingsPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-destructive hover:text-destructive"
+                        className="text-destructive hover:text-destructive active:scale-[0.97] transition-transform duration-100"
                         onClick={() => handleDelete(h.id)}
                       >
                         删除

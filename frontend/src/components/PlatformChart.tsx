@@ -4,8 +4,8 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import type { PlatformBreakdown } from "@/types";
 
 const platformChartConfig = {
-  market_value: { label: "市值", color: "var(--chart-1)" },
-  cost: { label: "成本", color: "var(--chart-2)" },
+  market_value: { label: "市值", color: "#0d9488" },
+  cost: { label: "成本", color: "#e87461" },
 } satisfies ChartConfig;
 
 interface Props {
@@ -16,7 +16,7 @@ export default function PlatformChart({ data }: Props) {
   if (!data.length) return null;
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-sm animate-in fade-in duration-300">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm">平台分布</CardTitle>
       </CardHeader>
@@ -27,8 +27,8 @@ export default function PlatformChart({ data }: Props) {
             <XAxis dataKey="platform" tickLine={false} axisLine={false} />
             <YAxis tickLine={false} axisLine={false} />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="market_value" fill="var(--color-market_value)" radius={6} />
-            <Bar dataKey="cost" fill="var(--color-cost)" radius={6} />
+            <Bar dataKey="market_value" fill="#0d9488" radius={6} />
+            <Bar dataKey="cost" fill="#e87461" radius={6} />
           </BarChart>
         </ChartContainer>
       </CardContent>

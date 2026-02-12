@@ -50,7 +50,7 @@ export default function DataManagementPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-200">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">数据管理</h2>
         <Button onClick={handleRefreshAll} disabled={refreshAll}>
@@ -84,6 +84,7 @@ export default function DataManagementPage() {
                     <Button
                       variant="outline"
                       size="sm"
+                      className="hover:text-primary"
                       disabled={refreshing.has(f.fund_code)}
                       onClick={() => handleRefreshOne(f.fund_code)}
                     >

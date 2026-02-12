@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { holdingsApi } from "@/services/api";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { ChangeLog } from "@/types";
 
 interface Props {
@@ -55,7 +56,16 @@ export default function ChangeLogDialog({ holdingId, fundName }: Props) {
         </DialogHeader>
 
         {loading ? (
-          <div className="text-muted-foreground text-center py-4">加载中...</div>
+          <div className="space-y-3 py-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex gap-4">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+            ))}
+          </div>
         ) : logs.length === 0 ? (
           <div className="text-muted-foreground text-center py-8">
             暂无变更记录
@@ -64,7 +74,7 @@ export default function ChangeLogDialog({ holdingId, fundName }: Props) {
           <div className="rounded-md border max-h-96 overflow-auto">
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className="bg-muted/30">
                   <TableHead>日期</TableHead>
                   <TableHead>份额变化</TableHead>
                   <TableHead>成本价变化</TableHead>
@@ -73,9 +83,9 @@ export default function ChangeLogDialog({ holdingId, fundName }: Props) {
               </TableHeader>
               <TableBody>
                 {logs.map((log) => (
-                  <TableRow key={log.id}>
+                  <TableRow key={log.id} className="hover:bg-muted/50 transition-colors">
                     <TableCell>{log.change_date}</TableCell>
-                    <TableCell>
+                    <TableCell className="font-mono tabular-nums">
                       {log.old_shares.toFixed(2)} → {log.new_shares.toFixed(2)}
                       <span
                         className={`ml-1 text-xs ${
@@ -87,7 +97,7 @@ export default function ChangeLogDialog({ holdingId, fundName }: Props) {
                         ({formatDiff(log.shares_diff)})
                       </span>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="font-mono tabular-nums">
                       {log.old_cost_price.toFixed(4)} →{" "}
                       {log.new_cost_price.toFixed(4)}
                     </TableCell>

@@ -43,7 +43,7 @@ export default function BudgetChangeLogDialog() {
           <div className="max-h-80 overflow-auto">
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className="bg-muted/30">
                   <TableHead>时间</TableHead>
                   <TableHead className="text-right">调整前</TableHead>
                   <TableHead className="text-right">调整后</TableHead>
@@ -52,14 +52,14 @@ export default function BudgetChangeLogDialog() {
               </TableHeader>
               <TableBody>
                 {logs.map((log) => (
-                  <TableRow key={log.id}>
+                  <TableRow key={log.id} className="hover:bg-muted/50 transition-colors">
                     <TableCell className="text-sm">
                       {new Date(log.created_at).toLocaleString("zh-CN")}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right font-mono tabular-nums">
                       ¥{log.old_budget.toLocaleString()}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right font-mono tabular-nums">
                       ¥{log.new_budget.toLocaleString()}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">

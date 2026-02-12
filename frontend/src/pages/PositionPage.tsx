@@ -5,6 +5,7 @@ import PositionGauge from "@/components/PositionGauge";
 import BudgetSettingDialog from "@/components/BudgetSettingDialog";
 import BudgetChangeLogDialog from "@/components/BudgetChangeLogDialog";
 import StrategySuggestionDialog from "@/components/StrategySuggestionDialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import { positionApi } from "@/services/api";
 import type { PositionStatus, StrategyInfo, StrategyResult } from "@/types";
 
@@ -44,17 +45,24 @@ export default function PositionPage() {
     loadSuggestion();
   };
 
-  if (!position) return <div className="text-muted-foreground">加载中...</div>;
+  if (!position) return (
+    <div className="space-y-6">
+      <Skeleton className="h-7 w-32" />
+      <Skeleton className="h-[200px] rounded-xl" />
+      <Skeleton className="h-[160px] rounded-xl" />
+      <Skeleton className="h-[120px] rounded-xl" />
+    </div>
+  );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-200">
       <h2 className="text-xl font-semibold">仓位管理</h2>
 
       {/* Budget management */}
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>投资预算</CardTitle>
+            <CardTitle className="text-sm">投资预算</CardTitle>
             <div className="flex gap-2">
               <BudgetChangeLogDialog />
               <BudgetSettingDialog current={position} onUpdated={handleBudgetUpdated} />
@@ -66,20 +74,20 @@ export default function PositionPage() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">总预算</p>
-                  <p className="text-xl font-bold">¥{position.total_budget.toLocaleString()}</p>
+                  <p className="text-xs font-medium text-muted-foreground tracking-wide">总预算</p>
+                  <p className="text-xl font-semibold tracking-tight tabular-nums">¥{position.total_budget.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">已投入</p>
-                  <p className="text-xl font-bold">¥{position.total_value.toLocaleString()}</p>
+                  <p className="text-xs font-medium text-muted-foreground tracking-wide">已投入</p>
+                  <p className="text-xl font-semibold tracking-tight tabular-nums">¥{position.total_value.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">可用资金</p>
-                  <p className="text-xl font-bold">¥{position.available_cash.toLocaleString()}</p>
+                  <p className="text-xs font-medium text-muted-foreground tracking-wide">可用资金</p>
+                  <p className="text-xl font-semibold tracking-tight tabular-nums">¥{position.available_cash.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">仓位比例</p>
-                  <p className="text-xl font-bold">{position.position_ratio.toFixed(1)}%</p>
+                  <p className="text-xs font-medium text-muted-foreground tracking-wide">仓位比例</p>
+                  <p className="text-xl font-semibold tracking-tight tabular-nums">{position.position_ratio.toFixed(1)}%</p>
                 </div>
               </div>
               <PositionGauge
@@ -105,17 +113,17 @@ export default function PositionPage() {
       </Card>
 
       {/* Strategy management */}
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle>策略管理</CardTitle>
+          <CardTitle className="text-sm">策略管理</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {strategies.map((s) => (
               <div
                 key={s.name}
-                className={`flex items-center justify-between rounded-md border p-4 ${
-                  s.name === position.active_strategy ? "border-primary bg-primary/5" : ""
+                className={`flex items-center justify-between rounded-md border p-4 transition-colors ${
+                  s.name === position.active_strategy ? "border-l-3 border-l-primary bg-primary/5" : "hover:bg-muted/50"
                 }`}
               >
                 <div>
@@ -144,10 +152,10 @@ export default function PositionPage() {
       </Card>
 
       {/* Strategy suggestion result */}
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>策略建议</CardTitle>
+            <CardTitle className="text-sm">策略建议</CardTitle>
             <StrategySuggestionDialog />
           </div>
         </CardHeader>
@@ -160,7 +168,7 @@ export default function PositionPage() {
                   {suggestion.suggestions.map((s, i) => (
                     <div
                       key={i}
-                      className="flex items-center justify-between rounded-md border p-3"
+                      className="flex items-center justify-between rounded-md border p-3 hover:bg-muted/50 transition-colors"
                     >
                       <div>
                         <p className="text-sm font-medium">

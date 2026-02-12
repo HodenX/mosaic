@@ -12,7 +12,7 @@ import { useFundDetail } from "@/contexts/FundDetailContext";
 import type { AllocationItem, FundInfo, NavHistory, TopHolding } from "@/types";
 
 const navChartConfig = {
-  nav: { label: "单位净值", color: "var(--chart-1)" },
+  nav: { label: "单位净值", color: "#0d9488" },
 } satisfies ChartConfig;
 
 export default function FundDetailPanel() {
@@ -107,7 +107,7 @@ export default function FundDetailPanel() {
                         <XAxis dataKey="date" tickLine={false} axisLine={false} />
                         <YAxis tickLine={false} axisLine={false} domain={["auto", "auto"]} />
                         <ChartTooltip content={<ChartTooltipContent />} />
-                        <Line type="monotone" dataKey="nav" stroke="var(--color-nav)" strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="nav" stroke="#0d9488" strokeWidth={2} dot={false} />
                       </LineChart>
                     </ChartContainer>
                   </CardContent>

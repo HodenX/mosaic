@@ -17,7 +17,7 @@ export default function SummaryCards({ summary, position, onPositionUpdated }: P
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <Card className="shadow-sm border-t-2 border-t-primary">
+      <Card className="shadow-sm border-t-2 border-t-primary transition-shadow duration-200 hover:shadow-md">
         <CardContent className="pt-5 pb-4">
           <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">总市值</p>
           <div className="text-2xl font-semibold tracking-tight tabular-nums">
@@ -25,7 +25,7 @@ export default function SummaryCards({ summary, position, onPositionUpdated }: P
           </div>
         </CardContent>
       </Card>
-      <Card className="shadow-sm border-t-2 border-t-muted-foreground/20">
+      <Card className="shadow-sm border-t-2 border-t-muted-foreground/20 transition-shadow duration-200 hover:shadow-md">
         <CardContent className="pt-5 pb-4">
           <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">总成本</p>
           <div className="text-2xl font-semibold tracking-tight tabular-nums">
@@ -33,7 +33,7 @@ export default function SummaryCards({ summary, position, onPositionUpdated }: P
           </div>
         </CardContent>
       </Card>
-      <Card className={`shadow-sm border-t-2 ${pnlBorder}`}>
+      <Card className={`shadow-sm border-t-2 ${pnlBorder} transition-shadow duration-200 hover:shadow-md`}>
         <CardContent className="pt-5 pb-4">
           <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">总盈亏</p>
           <div className={`text-2xl font-semibold tracking-tight tabular-nums ${pnlColor}`}>
@@ -41,7 +41,7 @@ export default function SummaryCards({ summary, position, onPositionUpdated }: P
           </div>
         </CardContent>
       </Card>
-      <Card className={`shadow-sm border-t-2 ${pnlBorder}`}>
+      <Card className={`shadow-sm border-t-2 ${pnlBorder} transition-shadow duration-200 hover:shadow-md`}>
         <CardContent className="pt-5 pb-4">
           <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">收益率</p>
           <div className={`text-2xl font-semibold tracking-tight tabular-nums ${pnlColor}`}>

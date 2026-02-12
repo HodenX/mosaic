@@ -5,9 +5,8 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import type { AllocationCoverage, AllocationItem } from "@/types";
 
 const COLORS = [
-  "var(--chart-1)", "var(--chart-2)", "var(--chart-3)",
-  "var(--chart-4)", "var(--chart-5)",
-  "#8b5cf6", "#ec4899", "#f97316", "#14b8a6", "#6366f1",
+  "#0d9488", "#e87461", "#d4a843", "#6366f1", "#e2628a",
+  "#8b5cf6", "#ec4899", "#f97316", "#14b8a6", "#06b6d4",
 ];
 
 interface Props {
@@ -57,7 +56,7 @@ export default function AllocationChart({ title, data, coverage }: Props) {
   const selectedItem = data.find((item) => item.category === selectedCategory);
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-sm animate-in fade-in duration-300">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm">{title}</CardTitle>
         {coverage && coverage.covered_funds < coverage.total_funds && (
