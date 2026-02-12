@@ -95,7 +95,7 @@ function AddStableDialog({ onCreated }: { onCreated: () => void }) {
     try {
       await stableApi.create({
         ...form,
-        annual_rate: (form.annual_rate ?? 0) / 100,
+        annual_rate: form.annual_rate ?? 0,
         start_date: form.start_date || null,
         maturity_date: form.maturity_date || null,
       });
@@ -213,7 +213,7 @@ function EditStableDialog({
         type: asset.type,
         platform: asset.platform,
         amount: asset.amount,
-        annual_rate: asset.annual_rate * 100,
+        annual_rate: asset.annual_rate,
         start_date: asset.start_date,
         maturity_date: asset.maturity_date,
       });
@@ -227,7 +227,7 @@ function EditStableDialog({
     try {
       await stableApi.update(asset.id, {
         ...form,
-        annual_rate: form.annual_rate != null ? form.annual_rate / 100 : undefined,
+        annual_rate: form.annual_rate != null ? form.annual_rate : undefined,
         start_date: form.start_date || null,
         maturity_date: form.maturity_date || null,
       });
@@ -429,7 +429,7 @@ export default function StablePage() {
                     {formatCurrency(item.amount)}
                   </TableCell>
                   <TableCell className="text-right font-mono tabular-nums whitespace-nowrap">
-                    {(item.annual_rate * 100).toFixed(2)}%
+                    {item.annual_rate.toFixed(2)}%
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {item.start_date ?? "-"}
