@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -8,9 +7,11 @@ import AddHoldingDialog from "@/components/AddHoldingDialog";
 import UpdateSnapshotDialog from "@/components/UpdateSnapshotDialog";
 import ChangeLogDialog from "@/components/ChangeLogDialog";
 import { holdingsApi, fundsApi } from "@/services/api";
+import { useFundDetail } from "@/contexts/FundDetailContext";
 import type { Holding } from "@/types";
 
 export default function HoldingsPage() {
+  const { openFundDetail } = useFundDetail();
   const [holdings, setHoldings] = useState<Holding[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState<Set<string>>(new Set());
@@ -62,17 +63,17 @@ export default function HoldingsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">持仓明细</h2>
+        <h2 className="text-xl font-semibold">持仓明细</h2>
         <AddHoldingDialog onCreated={handleCreated} />
       </div>
 
       {loading ? (
         <div className="text-muted-foreground">加载中...</div>
       ) : (
-        <div className="rounded-md border">
+        <div className="rounded-lg border shadow-sm overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="bg-muted/30">
                 <TableHead>基金名称</TableHead>
                 <TableHead>基金代码</TableHead>
                 <TableHead>平台</TableHead>
@@ -87,30 +88,33 @@ export default function HoldingsPage() {
             </TableHeader>
             <TableBody>
               {holdings.map((h) => (
-                <TableRow key={h.id} className={refreshing.has(h.fund_code) ? "opacity-60" : ""}>
+                <TableRow key={h.id} className={`hover:bg-muted/50 transition-colors ${refreshing.has(h.fund_code) ? "opacity-60" : ""}`}>
                   <TableCell className="font-medium">
-                    <Link to={`/fund/${h.fund_code}`} className="hover:underline">
+                    <button
+                      onClick={() => openFundDetail(h.fund_code)}
+                      className="hover:underline text-left text-primary hover:text-primary/80"
+                    >
                       {h.fund_name || h.fund_code}
-                    </Link>
+                    </button>
                   </TableCell>
-                  <TableCell>{h.fund_code}</TableCell>
+                  <TableCell className="font-mono text-xs tabular-nums">{h.fund_code}</TableCell>
                   <TableCell>{h.platform}</TableCell>
-                  <TableCell className="text-right">{h.shares.toFixed(2)}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right font-mono tabular-nums">{h.shares.toFixed(2)}</TableCell>
+                  <TableCell className="text-right font-mono tabular-nums">
                     {refreshing.has(h.fund_code) && !h.latest_nav
                       ? "加载中..."
                       : h.latest_nav?.toFixed(4) ?? "-"}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right font-mono tabular-nums">
                     {refreshing.has(h.fund_code) && h.market_value == null
                       ? "加载中..."
                       : formatCurrency(h.market_value)}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right font-mono tabular-nums">
                     {formatCurrency(h.shares * h.cost_price)}
                   </TableCell>
                   <TableCell
-                    className={`text-right ${
+                    className={`text-right font-mono tabular-nums ${
                       h.pnl != null && h.pnl >= 0 ? "text-red-500" : "text-green-500"
                     }`}
                   >
@@ -119,7 +123,7 @@ export default function HoldingsPage() {
                       : formatCurrency(h.pnl)}
                   </TableCell>
                   <TableCell
-                    className={`text-right ${
+                    className={`text-right font-mono tabular-nums ${
                       h.pnl_percent != null && h.pnl_percent >= 0
                         ? "text-red-500"
                         : "text-green-500"
@@ -142,6 +146,7 @@ export default function HoldingsPage() {
                       <Button
                         variant="ghost"
                         size="sm"
+                        className="hover:text-primary"
                         disabled={refreshing.has(h.fund_code)}
                         onClick={() => handleRefresh(h.fund_code)}
                       >
@@ -150,7 +155,7 @@ export default function HoldingsPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-destructive"
+                        className="text-destructive hover:text-destructive"
                         onClick={() => handleDelete(h.id)}
                       >
                         删除

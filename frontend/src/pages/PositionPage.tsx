@@ -48,7 +48,7 @@ export default function PositionPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">仓位管理</h2>
+      <h2 className="text-xl font-semibold">仓位管理</h2>
 
       {/* Budget management */}
       <Card>

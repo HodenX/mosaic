@@ -1,0 +1,37 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import type { PlatformBreakdown } from "@/types";
+
+const platformChartConfig = {
+  market_value: { label: "市值", color: "var(--chart-1)" },
+  cost: { label: "成本", color: "var(--chart-2)" },
+} satisfies ChartConfig;
+
+interface Props {
+  data: PlatformBreakdown[];
+}
+
+export default function PlatformChart({ data }: Props) {
+  if (!data.length) return null;
+
+  return (
+    <Card className="shadow-sm">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm">平台分布</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={platformChartConfig} className="h-[300px] w-full">
+          <BarChart data={data}>
+            <CartesianGrid vertical={false} strokeOpacity={0.3} />
+            <XAxis dataKey="platform" tickLine={false} axisLine={false} />
+            <YAxis tickLine={false} axisLine={false} />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <Bar dataKey="market_value" fill="var(--color-market_value)" radius={6} />
+            <Bar dataKey="cost" fill="var(--color-cost)" radius={6} />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
+}

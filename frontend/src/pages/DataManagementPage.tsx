@@ -52,20 +52,20 @@ export default function DataManagementPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">数据管理</h2>
+        <h2 className="text-xl font-semibold">数据管理</h2>
         <Button onClick={handleRefreshAll} disabled={refreshAll}>
           {refreshAll ? "刷新中..." : "刷新全部基金"}
         </Button>
       </div>
 
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <CardTitle>基金数据状态</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="bg-muted/30">
                 <TableHead>基金代码</TableHead>
                 <TableHead>基金名称</TableHead>
                 <TableHead>最新净值</TableHead>
@@ -75,10 +75,10 @@ export default function DataManagementPage() {
             </TableHeader>
             <TableBody>
               {uniqueFunds.map((f) => (
-                <TableRow key={f.fund_code}>
-                  <TableCell>{f.fund_code}</TableCell>
+                <TableRow key={f.fund_code} className="hover:bg-muted/50 transition-colors">
+                  <TableCell className="font-mono text-xs tabular-nums">{f.fund_code}</TableCell>
                   <TableCell>{f.fund_name || "-"}</TableCell>
-                  <TableCell>{f.latest_nav?.toFixed(4) ?? "-"}</TableCell>
+                  <TableCell className="font-mono tabular-nums">{f.latest_nav?.toFixed(4) ?? "-"}</TableCell>
                   <TableCell>{f.latest_nav_date ?? "-"}</TableCell>
                   <TableCell>
                     <Button

@@ -57,7 +57,7 @@ export default function AllocationChart({ title, data, coverage }: Props) {
   const selectedItem = data.find((item) => item.category === selectedCategory);
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm">{title}</CardTitle>
         {coverage && coverage.covered_funds < coverage.total_funds && (
@@ -75,8 +75,8 @@ export default function AllocationChart({ title, data, coverage }: Props) {
               nameKey="name"
               cx="50%"
               cy="50%"
-              innerRadius={50}
-              outerRadius={90}
+              innerRadius={55}
+              outerRadius={85}
               onClick={hasFunds ? (_: unknown, index: number) => handleCategoryClick(chartData[index].name) : undefined}
               style={hasFunds ? { cursor: "pointer" } : undefined}
             >
@@ -102,7 +102,7 @@ export default function AllocationChart({ title, data, coverage }: Props) {
             >
               <div className="flex items-center gap-2">
                 <div
-                  className="h-2 w-2 rounded-full"
+                  className="h-2.5 w-2.5 rounded-full"
                   style={{ backgroundColor: COLORS[i % COLORS.length] }}
                 />
                 <span className="text-muted-foreground">{item.category}</span>
