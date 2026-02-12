@@ -69,6 +69,7 @@ export default function DataManagementPage() {
                 <TableHead>基金代码</TableHead>
                 <TableHead>基金名称</TableHead>
                 <TableHead>最新净值</TableHead>
+                <TableHead>净值日期</TableHead>
                 <TableHead>操作</TableHead>
               </TableRow>
             </TableHeader>
@@ -78,6 +79,7 @@ export default function DataManagementPage() {
                   <TableCell>{f.fund_code}</TableCell>
                   <TableCell>{f.fund_name || "-"}</TableCell>
                   <TableCell>{f.latest_nav?.toFixed(4) ?? "-"}</TableCell>
+                  <TableCell>{f.latest_nav_date ?? "-"}</TableCell>
                   <TableCell>
                     <Button
                       variant="outline"

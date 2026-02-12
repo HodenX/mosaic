@@ -1,6 +1,7 @@
 import axios from "axios";
 import type {
-  AllocationItem,
+  AllocationResponse,
+  ChangeLog,
   FundAllocation,
   FundInfo,
   Holding,
@@ -10,6 +11,7 @@ import type {
   PlatformBreakdown,
   PortfolioSummary,
   PortfolioTrend,
+  SnapshotUpdate,
   TopHolding,
 } from "@/types";
 
@@ -24,6 +26,10 @@ export const holdingsApi = {
   update: (id: number, data: HoldingUpdate) =>
     api.put<Holding>(`/holdings/${id}`, data).then((r) => r.data),
   delete: (id: number) => api.delete(`/holdings/${id}`),
+  updateSnapshot: (id: number, data: SnapshotUpdate) =>
+    api.post<Holding>(`/holdings/${id}/update-snapshot`, data).then((r) => r.data),
+  changelog: (id: number) =>
+    api.get<ChangeLog[]>(`/holdings/${id}/changelog`).then((r) => r.data),
 };
 
 export const fundsApi = {
@@ -51,5 +57,5 @@ export const portfolioApi = {
   trend: (start?: string, end?: string) =>
     api.get<PortfolioTrend[]>("/portfolio/trend", { params: { start, end } }).then((r) => r.data),
   allocation: (dimension: string) =>
-    api.get<AllocationItem[]>("/portfolio/allocation", { params: { dimension } }).then((r) => r.data),
+    api.get<AllocationResponse>("/portfolio/allocation", { params: { dimension } }).then((r) => r.data),
 };

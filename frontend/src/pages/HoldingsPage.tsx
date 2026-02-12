@@ -5,12 +5,15 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import AddHoldingDialog from "@/components/AddHoldingDialog";
+import UpdateSnapshotDialog from "@/components/UpdateSnapshotDialog";
+import ChangeLogDialog from "@/components/ChangeLogDialog";
 import { holdingsApi, fundsApi } from "@/services/api";
 import type { Holding } from "@/types";
 
 export default function HoldingsPage() {
   const [holdings, setHoldings] = useState<Holding[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState<Set<string>>(new Set());
 
   const fetchHoldings = useCallback(async () => {
     setLoading(true);
@@ -27,8 +30,22 @@ export default function HoldingsPage() {
   }, [fetchHoldings]);
 
   const handleRefresh = async (fundCode: string) => {
-    await fundsApi.refresh(fundCode);
+    setRefreshing((prev) => new Set(prev).add(fundCode));
+    try {
+      await fundsApi.refresh(fundCode);
+      await fetchHoldings();
+    } finally {
+      setRefreshing((prev) => {
+        const next = new Set(prev);
+        next.delete(fundCode);
+        return next;
+      });
+    }
+  };
+
+  const handleCreated = async (fundCode: string) => {
     await fetchHoldings();
+    handleRefresh(fundCode);
   };
 
   const handleDelete = async (id: number) => {
@@ -46,7 +63,7 @@ export default function HoldingsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">持仓明细</h2>
-        <AddHoldingDialog onCreated={fetchHoldings} />
+        <AddHoldingDialog onCreated={handleCreated} />
       </div>
 
       {loading ? (
@@ -70,7 +87,7 @@ export default function HoldingsPage() {
             </TableHeader>
             <TableBody>
               {holdings.map((h) => (
-                <TableRow key={h.id}>
+                <TableRow key={h.id} className={refreshing.has(h.fund_code) ? "opacity-60" : ""}>
                   <TableCell className="font-medium">
                     <Link to={`/fund/${h.fund_code}`} className="hover:underline">
                       {h.fund_name || h.fund_code}
@@ -80,9 +97,15 @@ export default function HoldingsPage() {
                   <TableCell>{h.platform}</TableCell>
                   <TableCell className="text-right">{h.shares.toFixed(2)}</TableCell>
                   <TableCell className="text-right">
-                    {h.latest_nav?.toFixed(4) ?? "-"}
+                    {refreshing.has(h.fund_code) && !h.latest_nav
+                      ? "加载中..."
+                      : h.latest_nav?.toFixed(4) ?? "-"}
                   </TableCell>
-                  <TableCell className="text-right">{formatCurrency(h.market_value)}</TableCell>
+                  <TableCell className="text-right">
+                    {refreshing.has(h.fund_code) && h.market_value == null
+                      ? "加载中..."
+                      : formatCurrency(h.market_value)}
+                  </TableCell>
                   <TableCell className="text-right">
                     {formatCurrency(h.shares * h.cost_price)}
                   </TableCell>
@@ -91,7 +114,9 @@ export default function HoldingsPage() {
                       h.pnl != null && h.pnl >= 0 ? "text-red-500" : "text-green-500"
                     }`}
                   >
-                    {formatCurrency(h.pnl)}
+                    {refreshing.has(h.fund_code) && h.pnl == null
+                      ? "加载中..."
+                      : formatCurrency(h.pnl)}
                   </TableCell>
                   <TableCell
                     className={`text-right ${
@@ -100,16 +125,27 @@ export default function HoldingsPage() {
                         : "text-green-500"
                     }`}
                   >
-                    {formatPercent(h.pnl_percent)}
+                    {refreshing.has(h.fund_code) && h.pnl_percent == null
+                      ? "加载中..."
+                      : formatPercent(h.pnl_percent)}
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
+                      <UpdateSnapshotDialog
+                        holding={h}
+                        onUpdated={fetchHoldings}
+                      />
+                      <ChangeLogDialog
+                        holdingId={h.id}
+                        fundName={h.fund_name || h.fund_code}
+                      />
                       <Button
                         variant="ghost"
                         size="sm"
+                        disabled={refreshing.has(h.fund_code)}
                         onClick={() => handleRefresh(h.fund_code)}
                       >
-                        刷新
+                        {refreshing.has(h.fund_code) ? "刷新中..." : "刷新"}
                       </Button>
                       <Button
                         variant="ghost"

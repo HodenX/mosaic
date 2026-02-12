@@ -13,7 +13,7 @@ import { holdingsApi } from "@/services/api";
 import type { HoldingCreate } from "@/types";
 
 interface Props {
-  onCreated: () => void;
+  onCreated: (fundCode: string) => void;
 }
 
 export default function AddHoldingDialog({ onCreated }: Props) {
@@ -34,7 +34,7 @@ export default function AddHoldingDialog({ onCreated }: Props) {
       await holdingsApi.create(form);
       setOpen(false);
       setForm({ fund_code: "", platform: "", shares: 0, cost_price: 0, purchase_date: "" });
-      onCreated();
+      onCreated(form.fund_code);
     } finally {
       setLoading(false);
     }

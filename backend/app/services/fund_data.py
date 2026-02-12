@@ -6,6 +6,26 @@ from sqlmodel import Session, select
 from app.models import Fund, FundAllocation, FundNavHistory, FundTopHolding
 
 
+_QDII_GEOGRAPHY_KEYWORDS: list[tuple[list[str], str]] = [
+    (["美国", "美股", "纳斯达克", "标普"], "美国"),
+    (["港股", "恒生", "香港"], "中国香港"),
+    (["日本", "日经", "东证"], "日本"),
+    (["德国", "欧洲"], "欧洲"),
+    (["全球", "MSCI"], "全球"),
+]
+
+
+def _infer_geography(fund_type: str, fund_name: str) -> str:
+    """Infer geography from fund_type and fund_name."""
+    if not fund_type or not fund_type.startswith("QDII"):
+        return "中国"
+    for keywords, geo in _QDII_GEOGRAPHY_KEYWORDS:
+        for kw in keywords:
+            if kw in fund_name:
+                return geo
+    return "海外（其他）"
+
+
 def fetch_fund_info(fund_code: str, session: Session) -> Fund:
     """Fetch fund metadata from akshare and update database."""
     fund = session.get(Fund, fund_code)
@@ -54,7 +74,9 @@ def fetch_fund_nav(fund_code: str, session: Session) -> None:
 
 def fetch_fund_allocation(fund_code: str, session: Session) -> None:
     """Fetch asset allocation and top holdings from akshare."""
+    _fetch_asset_class_allocation(fund_code, session)
     _fetch_sector_allocation(fund_code, session)
+    _fetch_geography_allocation(fund_code, session)
     _fetch_top_holdings(fund_code, session)
     session.commit()
 
@@ -71,6 +93,35 @@ def _recent_quarter_dates() -> list[str]:
     for q_month, q_day in [(12, 31), (9, 30), (6, 30), (3, 31)]:
         quarters.append(datetime.date(year - 1, q_month, q_day).strftime("%Y%m%d"))
     return quarters
+
+
+def _fetch_asset_class_allocation(fund_code: str, session: Session) -> None:
+    """Fetch asset class allocation (股票/债券/现金/其他) from xueqiu."""
+    try:
+        df = ak.fund_individual_detail_hold_xq(symbol=fund_code)
+        if df.empty:
+            return
+
+        # Clear old auto records for asset_class
+        old = session.exec(
+            select(FundAllocation)
+            .where(FundAllocation.fund_code == fund_code)
+            .where(FundAllocation.dimension == "asset_class")
+            .where(FundAllocation.source == "auto")
+        ).all()
+        for o in old:
+            session.delete(o)
+
+        for _, row in df.iterrows():
+            session.add(FundAllocation(
+                fund_code=fund_code,
+                dimension="asset_class",
+                category=str(row["资产类型"]),
+                percentage=float(row["仓位占比"]),
+                source="auto",
+            ))
+    except Exception:
+        pass
 
 
 def _fetch_sector_allocation(fund_code: str, session: Session) -> None:
@@ -92,15 +143,21 @@ def _fetch_sector_allocation(fund_code: str, session: Session) -> None:
                     for o in old:
                         session.delete(o)
 
-                    report_date_str = str(df.iloc[0].get("截止时间", ""))
-                    report_date_val = None
-                    if report_date_str:
-                        try:
-                            report_date_val = datetime.date.fromisoformat(report_date_str)
-                        except ValueError:
-                            pass
+                    # Only keep the latest quarter's data (df is sorted by date descending)
+                    latest_date = df.iloc[0]["截止时间"] if "截止时间" in df.columns else None
+                    if latest_date is not None:
+                        recent = df[df["截止时间"] == latest_date]
+                    else:
+                        recent = df
 
-                    for _, row in df.iterrows():
+                    for _, row in recent.iterrows():
+                        report_date_str = str(row.get("截止时间", ""))
+                        report_date_val = None
+                        if report_date_str:
+                            try:
+                                report_date_val = datetime.date.fromisoformat(report_date_str)
+                            except ValueError:
+                                pass
                         session.add(FundAllocation(
                             fund_code=fund_code,
                             dimension="sector",
@@ -114,6 +171,33 @@ def _fetch_sector_allocation(fund_code: str, session: Session) -> None:
                 continue
     except Exception:
         pass
+
+
+def _fetch_geography_allocation(fund_code: str, session: Session) -> None:
+    """Infer geography allocation from fund metadata and store it."""
+    fund = session.get(Fund, fund_code)
+    if not fund:
+        return
+
+    geography = _infer_geography(fund.fund_type or "", fund.fund_name or "")
+
+    # Clear old auto records for geography
+    old = session.exec(
+        select(FundAllocation)
+        .where(FundAllocation.fund_code == fund_code)
+        .where(FundAllocation.dimension == "geography")
+        .where(FundAllocation.source == "auto")
+    ).all()
+    for o in old:
+        session.delete(o)
+
+    session.add(FundAllocation(
+        fund_code=fund_code,
+        dimension="geography",
+        category=geography,
+        percentage=100.0,
+        source="auto",
+    ))
 
 
 def _fetch_top_holdings(fund_code: str, session: Session) -> None:

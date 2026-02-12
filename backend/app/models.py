@@ -57,6 +57,19 @@ class FundTopHolding(SQLModel, table=True):
     report_date: datetime.date | None = None
 
 
+class HoldingChangeLog(SQLModel, table=True):
+    __tablename__ = "holding_change_logs"
+
+    id: int | None = Field(default=None, primary_key=True)
+    holding_id: int = Field(foreign_key="holdings.id")
+    change_date: datetime.date
+    old_shares: float
+    new_shares: float
+    old_cost_price: float
+    new_cost_price: float
+    created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+
+
 class PortfolioSnapshot(SQLModel, table=True):
     __tablename__ = "portfolio_snapshots"
 

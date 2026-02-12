@@ -4,7 +4,7 @@ import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "rec
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { portfolioApi } from "@/services/api";
 import AllocationChart from "@/components/AllocationChart";
-import type { AllocationItem, PlatformBreakdown, PortfolioSummary, PortfolioTrend } from "@/types";
+import type { AllocationResponse, PlatformBreakdown, PortfolioSummary, PortfolioTrend } from "@/types";
 
 const platformChartConfig = {
   market_value: { label: "市值", color: "var(--chart-1)" },
@@ -15,9 +15,9 @@ export default function OverviewPage() {
   const [summary, setSummary] = useState<PortfolioSummary | null>(null);
   const [platforms, setPlatforms] = useState<PlatformBreakdown[]>([]);
   const [trend, setTrend] = useState<PortfolioTrend[]>([]);
-  const [assetAlloc, setAssetAlloc] = useState<AllocationItem[]>([]);
-  const [geoAlloc, setGeoAlloc] = useState<AllocationItem[]>([]);
-  const [sectorAlloc, setSectorAlloc] = useState<AllocationItem[]>([]);
+  const [assetAlloc, setAssetAlloc] = useState<AllocationResponse | null>(null);
+  const [geoAlloc, setGeoAlloc] = useState<AllocationResponse | null>(null);
+  const [sectorAlloc, setSectorAlloc] = useState<AllocationResponse | null>(null);
 
   useEffect(() => {
     portfolioApi.summary().then(setSummary);
@@ -76,9 +76,9 @@ export default function OverviewPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <AllocationChart title="资产类别" data={assetAlloc} />
-        <AllocationChart title="地域分布" data={geoAlloc} />
-        <AllocationChart title="行业分布" data={sectorAlloc} />
+        <AllocationChart title="资产类别" data={assetAlloc?.items ?? []} coverage={assetAlloc?.coverage} />
+        <AllocationChart title="地域分布" data={geoAlloc?.items ?? []} coverage={geoAlloc?.coverage} />
+        <AllocationChart title="行业分布" data={sectorAlloc?.items ?? []} coverage={sectorAlloc?.coverage} />
       </div>
 
       {platforms.length > 0 && (
