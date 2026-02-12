@@ -75,9 +75,15 @@ def renew_policy(policy_id: int, session: SessionDep):
         raise HTTPException(status_code=404, detail="Insurance policy not found")
     if not policy.next_payment_date:
         raise HTTPException(status_code=422, detail="No next_payment_date set")
-    policy.next_payment_date = policy.next_payment_date.replace(
-        year=policy.next_payment_date.year + 1
-    )
+    try:
+        policy.next_payment_date = policy.next_payment_date.replace(
+            year=policy.next_payment_date.year + 1
+        )
+    except ValueError:
+        # Handle Feb 29 -> non-leap year: fall back to Feb 28
+        policy.next_payment_date = policy.next_payment_date.replace(
+            year=policy.next_payment_date.year + 1, day=28
+        )
     policy.updated_at = dt.datetime.now()
     session.add(policy)
     session.commit()

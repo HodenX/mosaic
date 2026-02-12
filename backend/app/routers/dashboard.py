@@ -125,10 +125,30 @@ def dashboard_reminders(session: SessionDep):
     today = dt.date.today()
     reminders = []
 
+    # Insurance lapsed / expired reminders
+    all_policies = session.exec(select(InsurancePolicy)).all()
+    for p in all_policies:
+        if p.status == "lapsed":
+            reminders.append({
+                "type": "insurance_lapsed",
+                "level": "urgent",
+                "title": "保险已失效",
+                "detail": f"{p.name}({p.insured_person}) 状态已失效",
+                "days": None,
+                "link": "/insurance",
+            })
+        elif p.status == "active" and p.end_date and p.end_date < today:
+            reminders.append({
+                "type": "insurance_expired",
+                "level": "urgent",
+                "title": "保险已过期",
+                "detail": f"{p.name}({p.insured_person}) 已于{p.end_date}过期",
+                "days": None,
+                "link": "/insurance",
+            })
+
     # Insurance renewal reminders
-    active_policies = session.exec(
-        select(InsurancePolicy).where(InsurancePolicy.status == "active")
-    ).all()
+    active_policies = [p for p in all_policies if p.status == "active"]
     for p in active_policies:
         if not p.next_payment_date:
             continue
