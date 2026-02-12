@@ -4,6 +4,7 @@ import OverviewPage from "@/pages/OverviewPage";
 import HoldingsPage from "@/pages/HoldingsPage";
 import DataManagementPage from "@/pages/DataManagementPage";
 import FundDetailPage from "@/pages/FundDetailPage";
+import PositionPage from "@/pages/PositionPage";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route path="/" element={<Navigate to="/overview" replace />} />
           <Route path="/overview" element={<OverviewPage />} />
           <Route path="/holdings" element={<HoldingsPage />} />
+          <Route path="/position" element={<PositionPage />} />
           <Route path="/data" element={<DataManagementPage />} />
           <Route path="/fund/:fundCode" element={<FundDetailPage />} />
         </Route>

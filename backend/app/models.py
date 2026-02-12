@@ -77,3 +77,34 @@ class PortfolioSnapshot(SQLModel, table=True):
     total_value: float
     total_cost: float
     total_pnl: float
+
+
+class PositionBudget(SQLModel, table=True):
+    __tablename__ = "position_budgets"
+
+    id: int | None = Field(default=None, primary_key=True)
+    total_budget: float = 0.0
+    target_position_min: float = 0.0
+    target_position_max: float = 100.0
+    active_strategy: str = "simple"
+    created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+    updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+
+
+class BudgetChangeLog(SQLModel, table=True):
+    __tablename__ = "budget_change_logs"
+
+    id: int | None = Field(default=None, primary_key=True)
+    old_budget: float
+    new_budget: float
+    reason: str | None = None
+    created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+
+
+class StrategyConfig(SQLModel, table=True):
+    __tablename__ = "strategy_configs"
+
+    id: int | None = Field(default=None, primary_key=True)
+    strategy_name: str = Field(index=True)
+    config_json: str = "{}"
+    updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)

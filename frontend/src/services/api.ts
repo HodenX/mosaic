@@ -1,6 +1,8 @@
 import axios from "axios";
 import type {
   AllocationResponse,
+  BudgetChangeLogEntry,
+  BudgetUpdate,
   ChangeLog,
   FundAllocation,
   FundInfo,
@@ -11,7 +13,10 @@ import type {
   PlatformBreakdown,
   PortfolioSummary,
   PortfolioTrend,
+  PositionStatus,
   SnapshotUpdate,
+  StrategyInfo,
+  StrategyResult,
   TopHolding,
 } from "@/types";
 
@@ -58,4 +63,23 @@ export const portfolioApi = {
     api.get<PortfolioTrend[]>("/portfolio/trend", { params: { start, end } }).then((r) => r.data),
   allocation: (dimension: string) =>
     api.get<AllocationResponse>("/portfolio/allocation", { params: { dimension } }).then((r) => r.data),
+};
+
+export const positionApi = {
+  getBudget: () =>
+    api.get<PositionStatus>("/position/budget").then((r) => r.data),
+  updateBudget: (data: BudgetUpdate) =>
+    api.put<PositionStatus>("/position/budget", data).then((r) => r.data),
+  changelog: () =>
+    api.get<BudgetChangeLogEntry[]>("/position/budget/changelog").then((r) => r.data),
+  strategies: () =>
+    api.get<StrategyInfo[]>("/position/strategies").then((r) => r.data),
+  setActiveStrategy: (strategy_name: string) =>
+    api.put<PositionStatus>("/position/active-strategy", { strategy_name }).then((r) => r.data),
+  getStrategyConfig: (name: string) =>
+    api.get<{ strategy_name: string; config: Record<string, unknown> }>(`/position/strategy-config/${name}`).then((r) => r.data),
+  updateStrategyConfig: (name: string, config_json: Record<string, unknown>) =>
+    api.put<{ strategy_name: string; config: Record<string, unknown> }>(`/position/strategy-config/${name}`, { config_json }).then((r) => r.data),
+  suggestion: () =>
+    api.get<StrategyResult>("/position/suggestion").then((r) => r.data),
 };

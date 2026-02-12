@@ -119,3 +119,53 @@ export interface ChangeLog {
   shares_diff: number;
   created_at: string;
 }
+
+export interface PositionStatus {
+  total_budget: number;
+  total_value: number;
+  total_cost: number;
+  available_cash: number;
+  position_ratio: number;
+  target_position_min: number;
+  target_position_max: number;
+  active_strategy: string;
+  is_below_min: boolean;
+  is_above_max: boolean;
+}
+
+export interface BudgetUpdate {
+  total_budget?: number;
+  target_position_min?: number;
+  target_position_max?: number;
+  reason?: string;
+}
+
+export interface BudgetChangeLogEntry {
+  id: number;
+  old_budget: number;
+  new_budget: number;
+  reason: string | null;
+  created_at: string;
+}
+
+export interface StrategyInfo {
+  name: string;
+  display_name: string;
+  description: string;
+  config_schema: Record<string, unknown>;
+}
+
+export interface SuggestionItem {
+  fund_code: string;
+  fund_name: string;
+  action: string;
+  amount: number;
+  reason: string;
+}
+
+export interface StrategyResult {
+  strategy_name: string;
+  summary: string;
+  suggestions: SuggestionItem[];
+  extra: Record<string, unknown>;
+}

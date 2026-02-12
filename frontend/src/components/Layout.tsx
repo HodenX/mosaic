@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { label: "组合概览", path: "/overview" },
   { label: "持仓明细", path: "/holdings" },
+  { label: "仓位管理", path: "/position" },
   { label: "数据管理", path: "/data" },
 ];
 
