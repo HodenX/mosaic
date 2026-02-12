@@ -109,3 +109,75 @@ class StrategyResultResponse(SQLModel):
     summary: str
     suggestions: list[SuggestionItemResponse]
     extra: dict
+
+
+# --- Liquid Asset schemas ---
+
+class LiquidAssetCreate(SQLModel):
+    name: str
+    type: str
+    platform: str = ""
+    amount: float = 0.0
+    annual_rate: float | None = None
+
+
+class LiquidAssetUpdate(SQLModel):
+    name: str | None = None
+    type: str | None = None
+    platform: str | None = None
+    amount: float | None = None
+    annual_rate: float | None = None
+
+
+# --- Stable Asset schemas ---
+
+class StableAssetCreate(SQLModel):
+    name: str
+    type: str
+    platform: str = ""
+    amount: float = 0.0
+    annual_rate: float = 0.0
+    start_date: date | None = None
+    maturity_date: date | None = None
+
+
+class StableAssetUpdate(SQLModel):
+    name: str | None = None
+    type: str | None = None
+    platform: str | None = None
+    amount: float | None = None
+    annual_rate: float | None = None
+    start_date: date | None = None
+    maturity_date: date | None = None
+
+
+# --- Insurance Policy schemas ---
+
+class InsurancePolicyCreate(SQLModel):
+    name: str
+    type: str
+    insurer: str = ""
+    insured_person: str
+    annual_premium: float = 0.0
+    coverage_amount: float | None = None
+    coverage_summary: str | None = None
+    start_date: date | None = None
+    end_date: date | None = None
+    payment_years: int | None = None
+    next_payment_date: date | None = None
+    status: str = "active"
+
+
+class InsurancePolicyUpdate(SQLModel):
+    name: str | None = None
+    type: str | None = None
+    insurer: str | None = None
+    insured_person: str | None = None
+    annual_premium: float | None = None
+    coverage_amount: float | None = None
+    coverage_summary: str | None = None
+    start_date: date | None = None
+    end_date: date | None = None
+    payment_years: int | None = None
+    next_payment_date: date | None = None
+    status: str | None = None
