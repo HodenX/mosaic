@@ -33,6 +33,7 @@ app.include_router(portfolio.router)
 app.include_router(position.router)
 app.include_router(liquid.router)
 app.include_router(insurance.router)
+app.include_router(stable.router)
 
 
 @app.get("/api/health")
