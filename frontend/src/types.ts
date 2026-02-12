@@ -169,3 +169,180 @@ export interface StrategyResult {
   suggestions: SuggestionItem[];
   extra: Record<string, unknown>;
 }
+
+// --- Four-Bucket Types ---
+
+export interface LiquidAsset {
+  id: number;
+  name: string;
+  type: string;
+  platform: string;
+  amount: number;
+  annual_rate: number | null;
+  updated_at: string;
+}
+
+export interface LiquidAssetCreate {
+  name: string;
+  type: string;
+  platform?: string;
+  amount?: number;
+  annual_rate?: number | null;
+}
+
+export interface LiquidAssetUpdate {
+  name?: string;
+  type?: string;
+  platform?: string;
+  amount?: number;
+  annual_rate?: number | null;
+}
+
+export interface LiquidAssetList {
+  items: LiquidAsset[];
+  summary: {
+    total_amount: number;
+    estimated_annual_return: number;
+    count: number;
+  };
+}
+
+export interface StableAsset {
+  id: number;
+  name: string;
+  type: string;
+  platform: string;
+  amount: number;
+  annual_rate: number;
+  start_date: string | null;
+  maturity_date: string | null;
+  updated_at: string;
+}
+
+export interface StableAssetCreate {
+  name: string;
+  type: string;
+  platform?: string;
+  amount?: number;
+  annual_rate?: number;
+  start_date?: string | null;
+  maturity_date?: string | null;
+}
+
+export interface StableAssetUpdate {
+  name?: string;
+  type?: string;
+  platform?: string;
+  amount?: number;
+  annual_rate?: number;
+  start_date?: string | null;
+  maturity_date?: string | null;
+}
+
+export interface StableAssetList {
+  items: StableAsset[];
+  summary: {
+    total_amount: number;
+    estimated_annual_return: number;
+    count: number;
+  };
+}
+
+export interface InsurancePolicy {
+  id: number;
+  name: string;
+  type: string;
+  insurer: string;
+  insured_person: string;
+  annual_premium: number;
+  coverage_amount: number | null;
+  coverage_summary: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  payment_years: number | null;
+  next_payment_date: string | null;
+  status: string;
+  updated_at: string;
+}
+
+export interface InsurancePolicyCreate {
+  name: string;
+  type: string;
+  insurer?: string;
+  insured_person: string;
+  annual_premium?: number;
+  coverage_amount?: number | null;
+  coverage_summary?: string | null;
+  start_date?: string | null;
+  end_date?: string | null;
+  payment_years?: number | null;
+  next_payment_date?: string | null;
+  status?: string;
+}
+
+export interface InsurancePolicyUpdate {
+  name?: string;
+  type?: string;
+  insurer?: string;
+  insured_person?: string;
+  annual_premium?: number;
+  coverage_amount?: number | null;
+  coverage_summary?: string | null;
+  start_date?: string | null;
+  end_date?: string | null;
+  payment_years?: number | null;
+  next_payment_date?: string | null;
+  status?: string;
+}
+
+export interface InsurancePolicyList {
+  items: InsurancePolicy[];
+  summary: {
+    total_annual_premium: number;
+    active_count: number;
+    total_count: number;
+    covered_persons: number;
+  };
+}
+
+export interface DashboardSummary {
+  total_assets: number;
+  total_return: number;
+  total_return_percent: number;
+  buckets: {
+    liquid: {
+      amount: number;
+      estimated_return: number;
+      count: number;
+    };
+    stable: {
+      amount: number;
+      estimated_return: number;
+      count: number;
+      nearest_maturity_days: number | null;
+    };
+    growth: {
+      total_amount: number;
+      total_cost: number;
+      total_pnl: number;
+      pnl_percent: number;
+      count: number;
+    };
+    insurance: {
+      active_count: number;
+      total_count: number;
+      annual_premium: number;
+      covered_persons: number;
+      nearest_renewal_days: number | null;
+    };
+  };
+}
+
+export interface Reminder {
+  type: string;
+  level: "urgent" | "warning" | "info";
+  title: string;
+  detail: string;
+  days: number | null;
+  link: string;
+}
