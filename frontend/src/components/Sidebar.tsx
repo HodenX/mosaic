@@ -40,12 +40,13 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       )}
     >
       {/* Header */}
-      <div className="flex h-14 items-center border-b border-sidebar-border px-4">
+      <div className="flex h-14 items-center border-b border-sidebar-border px-4 gap-2.5">
+        <img src="/logo.svg" alt="FolioPal" className="h-8 w-8 shrink-0 rounded-lg" />
         {!collapsed && (
-          <span className="text-lg font-semibold truncate text-primary">基金管家</span>
-        )}
-        {collapsed && (
-          <span className="text-lg font-semibold mx-auto text-primary">基</span>
+          <div className="flex flex-col leading-tight truncate">
+            <span className="text-sm font-bold tracking-wide text-primary">FolioPal</span>
+            <span className="text-[10px] text-sidebar-foreground/50">聚宝</span>
+          </div>
         )}
       </div>
 
