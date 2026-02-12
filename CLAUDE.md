@@ -11,11 +11,12 @@ Fund Portfolio Aggregator (基金管家) — a locally-running personal finance 
 ### Backend (Python FastAPI)
 
 ```bash
+uv vnev
 # Activate virtual environment
 source backend/venv/bin/activate
 
 # Install dependencies
-pip install -r backend/requirements.txt
+uv pip install -r backend/requirements.txt
 
 # Run backend server (from project root)
 cd backend && uvicorn app.main:app --reload

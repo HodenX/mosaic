@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from app.services.strategies.asset_rebalance import AssetRebalanceStrategy
 from app.services.strategies.base import RebalanceStrategy
 from app.services.strategies.simple import SimpleStrategy
 
@@ -12,6 +13,7 @@ def _register(strategy: RebalanceStrategy) -> None:
 
 # Register built-in strategies
 _register(SimpleStrategy())
+_register(AssetRebalanceStrategy())
 
 
 def get_strategy(name: str) -> RebalanceStrategy | None:

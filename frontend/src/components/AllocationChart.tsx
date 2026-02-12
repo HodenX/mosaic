@@ -5,7 +5,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import type { AllocationCoverage, AllocationItem } from "@/types";
 
 const COLORS = [
-  "#0d9488", "#e87461", "#d4a843", "#6366f1", "#e2628a",
+  "var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)",
   "#8b5cf6", "#ec4899", "#f97316", "#14b8a6", "#06b6d4",
 ];
 

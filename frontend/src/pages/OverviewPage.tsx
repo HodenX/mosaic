@@ -1,29 +1,32 @@
 import { useEffect, useState } from "react";
 import { portfolioApi, positionApi } from "@/services/api";
 import SummaryCards from "@/components/SummaryCards";
+import AssetAllocationTarget from "@/components/AssetAllocationTarget";
 import TrendChart from "@/components/TrendChart";
-import PlatformChart from "@/components/PlatformChart";
-import AllocationChart from "@/components/AllocationChart";
+import CollapsibleAnalytics from "@/components/CollapsibleAnalytics";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { AllocationResponse, PlatformBreakdown, PortfolioSummary, PortfolioTrend, PositionStatus } from "@/types";
+import type { PortfolioSummary, PortfolioTrend, PositionStatus, StrategyResult } from "@/types";
 
 export default function OverviewPage() {
   const [summary, setSummary] = useState<PortfolioSummary | null>(null);
-  const [platforms, setPlatforms] = useState<PlatformBreakdown[]>([]);
   const [trend, setTrend] = useState<PortfolioTrend[]>([]);
-  const [assetAlloc, setAssetAlloc] = useState<AllocationResponse | null>(null);
-  const [geoAlloc, setGeoAlloc] = useState<AllocationResponse | null>(null);
-  const [sectorAlloc, setSectorAlloc] = useState<AllocationResponse | null>(null);
   const [position, setPosition] = useState<PositionStatus | null>(null);
+  const [suggestion, setSuggestion] = useState<StrategyResult | null>(null);
+  const [strategyTargets, setStrategyTargets] = useState<Record<string, { target: number; min: number; max: number }> | null>(null);
 
   useEffect(() => {
     portfolioApi.summary().then(setSummary);
-    portfolioApi.byPlatform().then(setPlatforms);
     portfolioApi.trend().then(setTrend);
-    portfolioApi.allocation("asset_class").then(setAssetAlloc);
-    portfolioApi.allocation("geography").then(setGeoAlloc);
-    portfolioApi.allocation("sector").then(setSectorAlloc);
-    positionApi.getBudget().then(setPosition);
+    positionApi.getBudget().then((pos) => {
+      setPosition(pos);
+      if (pos.active_strategy === "asset_rebalance") {
+        positionApi.suggestion().then(setSuggestion);
+        positionApi.getStrategyConfig("asset_rebalance").then((res) => {
+          const cfg = res?.config as Record<string, unknown> | undefined;
+          setStrategyTargets((cfg?.targets as typeof strategyTargets) ?? null);
+        }).catch(() => setStrategyTargets(null));
+      }
+    });
   }, []);
 
   if (!summary) return (
@@ -34,16 +37,7 @@ export default function OverviewPage() {
           <Skeleton key={i} className="h-[88px] rounded-xl" />
         ))}
       </div>
-      <Skeleton className="h-[56px] rounded-xl" />
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        <Skeleton className="lg:col-span-3 h-[300px] rounded-xl" />
-        <Skeleton className="lg:col-span-2 h-[300px] rounded-xl" />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-[320px] rounded-xl" />
-        ))}
-      </div>
+      <Skeleton className="h-[220px] rounded-xl" />
     </div>
   );
 
@@ -51,35 +45,31 @@ export default function OverviewPage() {
     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
       <h2 className="text-xl font-semibold">组合概览</h2>
 
-      {/* Row 1: Summary cards + position gauge */}
+      {/* Row 1: Summary cards (PnL, Return%, Market Value, Position) */}
       <SummaryCards
         summary={summary}
         position={position}
         onPositionUpdated={setPosition}
       />
 
-      {/* Row 2: Trend chart (wider) + Platform chart */}
-      {(trend.length > 0 || platforms.length > 0) && (
-        <div className={`grid grid-cols-1 gap-4 ${trend.length > 0 && platforms.length > 0 ? "lg:grid-cols-5" : ""}`}>
-          {trend.length > 0 && (
-            <div className={platforms.length > 0 ? "lg:col-span-3" : ""}>
-              <TrendChart data={trend} />
-            </div>
-          )}
-          {platforms.length > 0 && (
-            <div className={trend.length > 0 ? "lg:col-span-2" : ""}>
-              <PlatformChart data={platforms} />
-            </div>
-          )}
-        </div>
+      {/* Asset allocation target gauges (only for asset_rebalance strategy) */}
+      {position?.active_strategy === "asset_rebalance" && suggestion?.extra?.class_ratios != null && (
+        <AssetAllocationTarget
+          classRatios={suggestion.extra.class_ratios as Record<string, number>}
+          classValues={(suggestion.extra.class_values ?? {}) as Record<string, number>}
+          targets={strategyTargets ?? {
+            equity: { target: 70, min: 65, max: 75 },
+            bond: { target: 10, min: 8, max: 12 },
+            gold: { target: 20, min: 16, max: 24 },
+          }}
+        />
       )}
 
-      {/* Row 3: Allocation donuts */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <AllocationChart title="资产类别" data={assetAlloc?.items ?? []} coverage={assetAlloc?.coverage} />
-        <AllocationChart title="地域分布" data={geoAlloc?.items ?? []} coverage={geoAlloc?.coverage} />
-        <AllocationChart title="行业分布" data={sectorAlloc?.items ?? []} coverage={sectorAlloc?.coverage} />
-      </div>
+      {/* Row 2: Trend chart (full width) */}
+      {trend.length > 0 && <TrendChart data={trend} />}
+
+      {/* Row 3: Collapsible analytics panel */}
+      <CollapsibleAnalytics activeStrategy={position?.active_strategy ?? ""} />
     </div>
   );
 }

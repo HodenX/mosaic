@@ -34,7 +34,7 @@ export default function StrategySuggestionDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {trigger ?? <Button variant="outline" size="sm">查看详情</Button>}
+        {trigger ?? <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">查看详情</Button>}
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>

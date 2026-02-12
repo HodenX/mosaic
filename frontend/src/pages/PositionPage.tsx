@@ -72,22 +72,22 @@ export default function PositionPage() {
         <CardContent>
           {position.total_budget > 0 ? (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
+              <div className="flex flex-wrap gap-x-8 gap-y-3">
+                <div className="min-w-0">
                   <p className="text-xs font-medium text-muted-foreground tracking-wide">总预算</p>
-                  <p className="text-xl font-semibold tracking-tight tabular-nums">¥{position.total_budget.toLocaleString()}</p>
+                  <p className="text-xl font-semibold tracking-tight tabular-nums whitespace-nowrap">¥{position.total_budget.toLocaleString()}</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs font-medium text-muted-foreground tracking-wide">已投入</p>
-                  <p className="text-xl font-semibold tracking-tight tabular-nums">¥{position.total_value.toLocaleString()}</p>
+                  <p className="text-xl font-semibold tracking-tight tabular-nums whitespace-nowrap">¥{position.total_value.toLocaleString()}</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs font-medium text-muted-foreground tracking-wide">可用资金</p>
-                  <p className="text-xl font-semibold tracking-tight tabular-nums">¥{position.available_cash.toLocaleString()}</p>
+                  <p className="text-xl font-semibold tracking-tight tabular-nums whitespace-nowrap">¥{position.available_cash.toLocaleString()}</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs font-medium text-muted-foreground tracking-wide">仓位比例</p>
-                  <p className="text-xl font-semibold tracking-tight tabular-nums">{position.position_ratio.toFixed(1)}%</p>
+                  <p className="text-xl font-semibold tracking-tight tabular-nums whitespace-nowrap">{position.position_ratio.toFixed(1)}%</p>
                 </div>
               </div>
               <PositionGauge
@@ -137,8 +137,9 @@ export default function PositionPage() {
                 </div>
                 {s.name !== position.active_strategy && (
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
+                    className="text-muted-foreground hover:text-primary"
                     disabled={switching}
                     onClick={() => handleSwitch(s.name)}
                   >

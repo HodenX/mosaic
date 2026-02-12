@@ -62,7 +62,8 @@ export default function DataManagementPage() {
         <CardHeader>
           <CardTitle>基金数据状态</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-0">
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/30">
@@ -76,15 +77,15 @@ export default function DataManagementPage() {
             <TableBody>
               {uniqueFunds.map((f) => (
                 <TableRow key={f.fund_code} className="hover:bg-muted/50 transition-colors">
-                  <TableCell className="font-mono text-xs tabular-nums">{f.fund_code}</TableCell>
-                  <TableCell>{f.fund_name || "-"}</TableCell>
-                  <TableCell className="font-mono tabular-nums">{f.latest_nav?.toFixed(4) ?? "-"}</TableCell>
-                  <TableCell>{f.latest_nav_date ?? "-"}</TableCell>
+                  <TableCell className="font-mono text-xs tabular-nums whitespace-nowrap">{f.fund_code}</TableCell>
+                  <TableCell className="whitespace-nowrap">{f.fund_name || "-"}</TableCell>
+                  <TableCell className="font-mono tabular-nums whitespace-nowrap">{f.latest_nav?.toFixed(4) ?? "-"}</TableCell>
+                  <TableCell className="whitespace-nowrap">{f.latest_nav_date ?? "-"}</TableCell>
                   <TableCell>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      className="hover:text-primary"
+                      className="text-muted-foreground hover:text-primary"
                       disabled={refreshing.has(f.fund_code)}
                       onClick={() => handleRefreshOne(f.fund_code)}
                     >
@@ -95,6 +96,7 @@ export default function DataManagementPage() {
               ))}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

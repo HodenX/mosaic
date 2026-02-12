@@ -9,6 +9,7 @@ import ChangeLogDialog from "@/components/ChangeLogDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { holdingsApi, fundsApi } from "@/services/api";
 import { useFundDetail } from "@/contexts/FundDetailContext";
+import { formatCurrency, formatPercent } from "@/lib/utils";
 import type { Holding } from "@/types";
 
 export default function HoldingsPage() {
@@ -55,12 +56,6 @@ export default function HoldingsPage() {
     await fetchHoldings();
   };
 
-  const formatCurrency = (val: number | null) =>
-    val != null ? `¥${val.toFixed(2)}` : "-";
-
-  const formatPercent = (val: number | null) =>
-    val != null ? `${val.toFixed(2)}%` : "-";
-
   return (
     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
       <div className="flex items-center justify-between">
@@ -83,26 +78,26 @@ export default function HoldingsPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-lg border shadow-sm overflow-hidden">
+        <div className="rounded-lg border shadow-sm overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/30">
-                <TableHead>基金名称</TableHead>
-                <TableHead>基金代码</TableHead>
-                <TableHead>平台</TableHead>
-                <TableHead className="text-right">份额</TableHead>
-                <TableHead className="text-right">最新净值</TableHead>
-                <TableHead className="text-right">市值</TableHead>
-                <TableHead className="text-right">成本</TableHead>
-                <TableHead className="text-right">盈亏</TableHead>
-                <TableHead className="text-right">盈亏%</TableHead>
-                <TableHead>操作</TableHead>
+                <TableHead className="whitespace-nowrap">基金名称</TableHead>
+                <TableHead className="whitespace-nowrap">基金代码</TableHead>
+                <TableHead className="whitespace-nowrap">平台</TableHead>
+                <TableHead className="text-right whitespace-nowrap">份额</TableHead>
+                <TableHead className="text-right whitespace-nowrap">最新净值</TableHead>
+                <TableHead className="text-right whitespace-nowrap">市值</TableHead>
+                <TableHead className="text-right whitespace-nowrap">成本</TableHead>
+                <TableHead className="text-right whitespace-nowrap">盈亏</TableHead>
+                <TableHead className="text-right whitespace-nowrap">盈亏%</TableHead>
+                <TableHead className="whitespace-nowrap">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {holdings.map((h) => (
                 <TableRow key={h.id} className={`hover:bg-muted/50 transition-colors ${refreshing.has(h.fund_code) ? "opacity-60" : ""}`}>
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium whitespace-nowrap">
                     <button
                       onClick={() => openFundDetail(h.fund_code)}
                       className="hover:underline text-left text-primary hover:text-primary/80"
@@ -110,24 +105,24 @@ export default function HoldingsPage() {
                       {h.fund_name || h.fund_code}
                     </button>
                   </TableCell>
-                  <TableCell className="font-mono text-xs tabular-nums">{h.fund_code}</TableCell>
-                  <TableCell>{h.platform}</TableCell>
-                  <TableCell className="text-right font-mono tabular-nums">{h.shares.toFixed(2)}</TableCell>
-                  <TableCell className="text-right font-mono tabular-nums">
+                  <TableCell className="font-mono text-xs tabular-nums whitespace-nowrap">{h.fund_code}</TableCell>
+                  <TableCell className="whitespace-nowrap">{h.platform}</TableCell>
+                  <TableCell className="text-right font-mono tabular-nums whitespace-nowrap">{h.shares.toFixed(2)}</TableCell>
+                  <TableCell className="text-right font-mono tabular-nums whitespace-nowrap">
                     {refreshing.has(h.fund_code) && !h.latest_nav
                       ? "加载中..."
                       : h.latest_nav?.toFixed(4) ?? "-"}
                   </TableCell>
-                  <TableCell className="text-right font-mono tabular-nums">
+                  <TableCell className="text-right font-mono tabular-nums whitespace-nowrap">
                     {refreshing.has(h.fund_code) && h.market_value == null
                       ? "加载中..."
                       : formatCurrency(h.market_value)}
                   </TableCell>
-                  <TableCell className="text-right font-mono tabular-nums">
+                  <TableCell className="text-right font-mono tabular-nums whitespace-nowrap">
                     {formatCurrency(h.shares * h.cost_price)}
                   </TableCell>
                   <TableCell
-                    className={`text-right font-mono tabular-nums ${
+                    className={`text-right font-mono tabular-nums whitespace-nowrap ${
                       h.pnl != null && h.pnl >= 0 ? "text-red-500" : "text-green-500"
                     }`}
                   >
@@ -136,7 +131,7 @@ export default function HoldingsPage() {
                       : formatCurrency(h.pnl)}
                   </TableCell>
                   <TableCell
-                    className={`text-right font-mono tabular-nums ${
+                    className={`text-right font-mono tabular-nums whitespace-nowrap ${
                       h.pnl_percent != null && h.pnl_percent >= 0
                         ? "text-red-500"
                         : "text-green-500"
@@ -146,7 +141,7 @@ export default function HoldingsPage() {
                       ? "加载中..."
                       : formatPercent(h.pnl_percent)}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <div className="flex gap-1">
                       <UpdateSnapshotDialog
                         holding={h}
