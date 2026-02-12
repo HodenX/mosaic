@@ -63,7 +63,7 @@ export default function StrategySuggestionDialog({
                     >
                       <div>
                         <p className="text-sm font-medium">
-                          {s.fund_name} ({s.fund_code})
+                          {s.fund_name}{s.fund_code ? ` (${s.fund_code})` : ""}
                         </p>
                         <p className="text-xs text-muted-foreground">{s.reason}</p>
                       </div>

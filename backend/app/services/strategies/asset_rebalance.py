@@ -13,6 +13,7 @@ DEFAULT_CONFIG = {
         "gold": {"target": 20, "min": 16, "max": 24},
     },
     "execution_window_days": 5,
+    "min_position_for_rebalance": 80,
 }
 
 ASSET_CLASS_LABELS = {
@@ -82,6 +83,10 @@ class AssetRebalanceStrategy:
                 "type": "integer",
                 "description": "每月末执行窗口天数",
             },
+            "min_position_for_rebalance": {
+                "type": "number",
+                "description": "触发再平衡的最低仓位%，低于此值优先补仓",
+            },
         },
     }
 
@@ -99,6 +104,7 @@ class AssetRebalanceStrategy:
             cfg["targets"] = {**DEFAULT_CONFIG["targets"], **context.strategy_config["targets"]}
         targets = cfg["targets"]
         window_days = cfg.get("execution_window_days", 5)
+        min_position = cfg.get("min_position_for_rebalance", 80)
 
         # --- Classify holdings and compute per-class market value ---
         class_values: dict[str, float] = {"equity": 0.0, "bond": 0.0, "gold": 0.0}
@@ -114,6 +120,34 @@ class AssetRebalanceStrategy:
         class_ratios: dict[str, float] = {}
         for cls in class_values:
             class_ratios[cls] = (class_values[cls] / total_value * 100) if total_value > 0 else 0.0
+
+        # --- If position is below threshold, skip rebalance and suggest filling position ---
+        if context.position_ratio < min_position:
+            target_value = budget * min_position / 100
+            gap = target_value - context.total_value
+            return StrategyResult(
+                strategy_name=self.name,
+                summary=(
+                    f"当前仓位 {context.position_ratio:.1f}% 低于再平衡最低仓位要求 {min_position:.0f}%，"
+                    f"优先补充仓位至 {min_position:.0f}% 以上（约需买入 ¥{gap:,.2f}），"
+                    f"达标后再执行资产再平衡。"
+                ),
+                suggestions=[SuggestionItem(
+                    fund_code="",
+                    fund_name="补充仓位",
+                    action="buy",
+                    amount=round(gap, 2),
+                    reason=f"仓位 {context.position_ratio:.1f}% 不足 {min_position:.0f}%，建议先补仓",
+                )],
+                metadata={
+                    "action": "fill_position",
+                    "position_ratio": round(context.position_ratio, 2),
+                    "min_position_for_rebalance": min_position,
+                    "gap": round(gap, 2),
+                    "class_ratios": {k: round(v, 2) for k, v in class_ratios.items()},
+                    "class_values": {k: round(v, 2) for k, v in class_values.items()},
+                },
+            )
 
         # --- Build status lines ---
         status_lines = []
