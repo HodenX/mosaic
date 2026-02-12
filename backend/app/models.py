@@ -108,3 +108,45 @@ class StrategyConfig(SQLModel, table=True):
     strategy_name: str = Field(index=True)
     config_json: str = "{}"
     updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+
+
+class LiquidAsset(SQLModel, table=True):
+    __tablename__ = "liquid_assets"
+    id: int | None = Field(default=None, primary_key=True)
+    name: str
+    type: str  # "deposit" | "money_fund"
+    platform: str = ""
+    amount: float = 0.0
+    annual_rate: float | None = None
+    updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+
+
+class StableAsset(SQLModel, table=True):
+    __tablename__ = "stable_assets"
+    id: int | None = Field(default=None, primary_key=True)
+    name: str
+    type: str  # "term_deposit" | "bank_product"
+    platform: str = ""
+    amount: float = 0.0
+    annual_rate: float = 0.0
+    start_date: datetime.date | None = None
+    maturity_date: datetime.date | None = None
+    updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+
+
+class InsurancePolicy(SQLModel, table=True):
+    __tablename__ = "insurance_policies"
+    id: int | None = Field(default=None, primary_key=True)
+    name: str
+    type: str  # "critical_illness" | "medical" | "accident" | "life"
+    insurer: str = ""
+    insured_person: str  # "我" | "老婆" | "孩子" etc.
+    annual_premium: float = 0.0
+    coverage_amount: float | None = None
+    coverage_summary: str | None = None
+    start_date: datetime.date | None = None
+    end_date: datetime.date | None = None
+    payment_years: int | None = None
+    next_payment_date: datetime.date | None = None
+    status: str = "active"  # "active" | "expired" | "lapsed"
+    updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
