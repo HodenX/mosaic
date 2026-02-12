@@ -30,6 +30,12 @@ from mcp_server.tools.market import (  # noqa: E402
     get_macro_indicators,
     get_market_indices,
 )
+from mcp_server.tools.buckets import (  # noqa: E402
+    get_liquid_assets,
+    get_stable_assets,
+    get_insurance_policies,
+    get_family_asset_summary,
+)
 
 # Import resources
 from mcp_server.resources.overview import get_portfolio_overview  # noqa: E402
@@ -84,6 +90,12 @@ mcp.tool(get_strategy_suggestion)
 mcp.tool(get_market_indices)
 mcp.tool(get_fund_realtime_nav)
 mcp.tool(get_macro_indicators)
+
+# Group 5: Buckets (四桶资产)
+mcp.tool(get_liquid_assets)
+mcp.tool(get_stable_assets)
+mcp.tool(get_insurance_policies)
+mcp.tool(get_family_asset_summary)
 
 # ---------------------------------------------------------------------------
 # Register resources
