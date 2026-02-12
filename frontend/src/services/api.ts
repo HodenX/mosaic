@@ -32,6 +32,7 @@ import type {
   StrategyInfo,
   StrategyResult,
   TopHolding,
+  TotalAssetTrend,
 } from "@/types";
 
 const api = axios.create({
@@ -137,4 +138,7 @@ export const dashboardApi = {
     api.get<DashboardSummary>("/dashboard/summary").then((r) => r.data),
   reminders: () =>
     api.get<Reminder[]>("/dashboard/reminders").then((r) => r.data),
+  trend: (days?: number) =>
+    api.get<TotalAssetTrend[]>("/dashboard/trend", { params: { days } }).then((r) => r.data),
+  snapshot: () => api.post("/dashboard/snapshot"),
 };

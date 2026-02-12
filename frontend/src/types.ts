@@ -346,3 +346,12 @@ export interface Reminder {
   days: number | null;
   link: string;
 }
+
+export interface TotalAssetTrend {
+  date: string;
+  liquid_amount: number;
+  stable_amount: number;
+  growth_amount: number;
+  insurance_premium: number;
+  total_assets: number;
+}

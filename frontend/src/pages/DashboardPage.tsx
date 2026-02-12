@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Droplets, Landmark, TrendingUp, Shield, ChevronRight } from "lucide-react";
-import { PieChart, Pie, Cell } from "recharts";
+import { PieChart, Pie, Cell, Area, CartesianGrid, ComposedChart, Line, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { dashboardApi } from "@/services/api";
-import { formatCurrency } from "@/lib/utils";
-import type { DashboardSummary, Reminder } from "@/types";
+import { formatCurrency, formatWan } from "@/lib/utils";
+import type { DashboardSummary, Reminder, TotalAssetTrend } from "@/types";
 
 const LEVEL_ICONS: Record<string, string> = {
   urgent: "\uD83D\uDD34",
@@ -27,15 +28,52 @@ const chartConfig = {
   growth: { label: "\u957F\u94B1", color: "var(--chart-3)" },
 } satisfies ChartConfig;
 
+const trendChartConfig = {
+  total_assets: { label: "\u603B\u8D44\u4EA7", color: "var(--chart-1)" },
+} satisfies ChartConfig;
+
+type TrendRange = "1M" | "3M" | "6M" | "1Y" | "ALL";
+const trendRanges: { key: TrendRange; label: string; days: number }[] = [
+  { key: "1M", label: "1\u6708", days: 30 },
+  { key: "3M", label: "3\u6708", days: 90 },
+  { key: "6M", label: "6\u6708", days: 180 },
+  { key: "1Y", label: "1\u5E74", days: 365 },
+  { key: "ALL", label: "\u5168\u90E8", days: 0 },
+];
+
 export default function DashboardPage() {
   const navigate = useNavigate();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [trendData, setTrendData] = useState<TotalAssetTrend[]>([]);
+  const [trendRange, setTrendRange] = useState<TrendRange>("ALL");
+  const [snapshotLoading, setSnapshotLoading] = useState(false);
 
   useEffect(() => {
     dashboardApi.summary().then(setSummary);
     dashboardApi.reminders().then(setReminders);
+    dashboardApi.trend(0).then(setTrendData);
   }, []);
+
+  const filteredTrend = useMemo(() => {
+    if (trendRange === "ALL" || !trendData.length) return trendData;
+    const days = trendRanges.find((r) => r.key === trendRange)!.days;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    const cutoffStr = cutoff.toISOString().slice(0, 10);
+    return trendData.filter((d) => d.date >= cutoffStr);
+  }, [trendData, trendRange]);
+
+  const handleSnapshot = async () => {
+    setSnapshotLoading(true);
+    try {
+      await dashboardApi.snapshot();
+      const updated = await dashboardApi.trend(0);
+      setTrendData(updated);
+    } finally {
+      setSnapshotLoading(false);
+    }
+  };
 
   if (!summary) {
     return (
@@ -278,6 +316,64 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* 3.5. Total Asset Trend Chart */}
+      <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
+        <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
+          <CardTitle className="text-sm">{"\u8D44\u4EA7\u8D70\u52BF"}</CardTitle>
+          {filteredTrend.length > 0 && (
+            <div className="flex gap-1">
+              {trendRanges.map((r) => (
+                <button
+                  key={r.key}
+                  onClick={() => setTrendRange(r.key)}
+                  className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
+                    trendRange === r.key
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  }`}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </CardHeader>
+        <CardContent>
+          {filteredTrend.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 gap-3">
+              <p className="text-sm text-muted-foreground">
+                {"\u6682\u65E0\u5386\u53F2\u6570\u636E\uFF0C\u6570\u636E\u5C06\u6BCF\u65E5\u81EA\u52A8\u8BB0\u5F55"}
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSnapshot}
+                disabled={snapshotLoading}
+              >
+                {snapshotLoading ? "\u8BB0\u5F55\u4E2D..." : "\u7ACB\u5373\u8BB0\u5F55"}
+              </Button>
+            </div>
+          ) : (
+            <ChartContainer config={trendChartConfig} className="h-[220px] w-full">
+              <ComposedChart data={filteredTrend}>
+                <defs>
+                  <linearGradient id="fillTotalAssets" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--chart-1)" stopOpacity={0.12} />
+                    <stop offset="100%" stopColor="var(--chart-1)" stopOpacity={0.01} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid vertical={false} strokeOpacity={0.3} />
+                <XAxis dataKey="date" tickLine={false} axisLine={false} />
+                <YAxis tickLine={false} axisLine={false} tickFormatter={formatWan} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Area type="monotone" dataKey="total_assets" fill="url(#fillTotalAssets)" stroke="none" />
+                <Line type="monotone" dataKey="total_assets" stroke="var(--chart-1)" strokeWidth={2} dot={false} />
+              </ComposedChart>
+            </ChartContainer>
+          )}
+        </CardContent>
+      </Card>
 
       {/* 4. Reminders List */}
       <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
