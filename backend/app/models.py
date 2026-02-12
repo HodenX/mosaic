@@ -134,6 +134,17 @@ class StableAsset(SQLModel, table=True):
     updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
 
 
+class TotalAssetSnapshot(SQLModel, table=True):
+    __tablename__ = "total_asset_snapshots"
+
+    date: datetime.date = Field(primary_key=True)
+    liquid_amount: float = 0.0
+    stable_amount: float = 0.0
+    growth_amount: float = 0.0
+    insurance_premium: float = 0.0
+    total_assets: float = 0.0
+
+
 class InsurancePolicy(SQLModel, table=True):
     __tablename__ = "insurance_policies"
     id: int | None = Field(default=None, primary_key=True)

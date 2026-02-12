@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 from app.database import engine
 from app.models import Holding
 from app.services.fund_data import fetch_fund_nav
-from app.services.snapshot import take_portfolio_snapshot
+from app.services.snapshot import take_portfolio_snapshot, take_total_asset_snapshot
 
 
 def _daily_update():
@@ -19,6 +19,7 @@ def _daily_update():
                 pass
 
         take_portfolio_snapshot(session)
+        take_total_asset_snapshot(session)
 
 
 scheduler = BackgroundScheduler()

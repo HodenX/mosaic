@@ -12,6 +12,7 @@ from app.models import (
     StableAsset,
     InsurancePolicy,
     PositionBudget,
+    TotalAssetSnapshot,
 )
 
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
@@ -244,3 +245,41 @@ def dashboard_reminders(session: SessionDep):
     reminders.sort(key=lambda r: (level_order.get(r["level"], 9), r["days"] if r["days"] is not None else 999))
 
     return reminders
+
+
+@router.get("/trend")
+def dashboard_trend(session: SessionDep, days: int = 90):
+    """Return total asset snapshots for the last N days."""
+    cutoff = dt.date.today() - dt.timedelta(days=days) if days > 0 else dt.date.min
+    rows = session.exec(
+        select(TotalAssetSnapshot)
+        .where(TotalAssetSnapshot.date >= cutoff)
+        .order_by(TotalAssetSnapshot.date)
+    ).all()
+    return [
+        {
+            "date": str(r.date),
+            "liquid_amount": r.liquid_amount,
+            "stable_amount": r.stable_amount,
+            "growth_amount": r.growth_amount,
+            "insurance_premium": r.insurance_premium,
+            "total_assets": r.total_assets,
+        }
+        for r in rows
+    ]
+
+
+@router.post("/snapshot")
+def take_snapshot(session: SessionDep):
+    """Manually trigger a total asset snapshot for today."""
+    from app.services.snapshot import take_total_asset_snapshot
+
+    result = take_total_asset_snapshot(session)
+    return {
+        "date": str(result.date),
+        "liquid_amount": result.liquid_amount,
+        "stable_amount": result.stable_amount,
+        "growth_amount": result.growth_amount,
+        "insurance_premium": result.insurance_premium,
+        "total_assets": result.total_assets,
+    }
