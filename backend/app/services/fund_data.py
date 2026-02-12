@@ -1,4 +1,5 @@
 import datetime
+import re
 
 import akshare as ak
 from sqlmodel import Session, select
@@ -14,16 +15,172 @@ _QDII_GEOGRAPHY_KEYWORDS: list[tuple[list[str], str]] = [
     (["全球", "MSCI"], "全球"),
 ]
 
+# Approximate sector weights for major indices (based on public data, 2024-Q4).
+# Used as fallback when eastmoney API has no industry data for QDII/index funds.
+_INDEX_SECTOR_WEIGHTS: dict[str, list[tuple[str, float]]] = {
+    "标普500": [
+        ("信息技术", 32.4),
+        ("金融", 13.5),
+        ("医疗保健", 11.5),
+        ("非必需消费品", 10.6),
+        ("通信服务", 9.2),
+        ("工业", 8.2),
+        ("必需消费品", 5.8),
+        ("能源", 3.3),
+        ("公用事业", 2.5),
+        ("房地产", 2.1),
+        ("原材料", 1.9),
+    ],
+    "纳斯达克100": [
+        ("信息技术", 49.5),
+        ("通信服务", 15.8),
+        ("非必需消费品", 14.2),
+        ("医疗保健", 6.8),
+        ("必需消费品", 4.5),
+        ("工业", 4.3),
+        ("公用事业", 1.2),
+        ("能源", 0.5),
+        ("金融", 0.4),
+    ],
+    "恒生指数": [
+        ("金融", 35.8),
+        ("信息技术", 27.5),
+        ("非必需消费品", 10.2),
+        ("房地产", 6.5),
+        ("工业", 5.8),
+        ("通信服务", 4.8),
+        ("医疗保健", 3.5),
+        ("能源", 3.2),
+        ("公用事业", 1.8),
+        ("必需消费品", 0.9),
+    ],
+    "日经225": [
+        ("工业", 23.5),
+        ("信息技术", 20.8),
+        ("非必需消费品", 18.2),
+        ("医疗保健", 9.8),
+        ("通信服务", 7.5),
+        ("原材料", 6.2),
+        ("金融", 5.8),
+        ("必需消费品", 4.5),
+        ("房地产", 2.0),
+        ("能源", 1.0),
+        ("公用事业", 0.7),
+    ],
+    "中证主要消费": [
+        ("食品饮料", 65.0),
+        ("农林牧渔", 15.0),
+        ("家用电器", 10.0),
+        ("商贸零售", 5.0),
+        ("纺织服饰", 3.0),
+        ("其他", 2.0),
+    ],
+}
+
+# Map fund name keywords to the index name in _INDEX_SECTOR_WEIGHTS
+_FUND_NAME_TO_INDEX: list[tuple[list[str], str]] = [
+    (["标普500", "标普 500", "S&P500", "S&P 500"], "标普500"),
+    (["纳斯达克100", "纳斯达克 100", "纳指100", "NASDAQ100", "NASDAQ 100"], "纳斯达克100"),
+    (["恒生指数", "恒生ETF", "恒指"], "恒生指数"),
+    (["日经225", "日经 225", "日经指数"], "日经225"),
+    (["中证主要消费"], "中证主要消费"),
+]
+
 
 def _infer_geography(fund_type: str, fund_name: str) -> str:
-    """Infer geography from fund_type and fund_name."""
-    if not fund_type or not fund_type.startswith("QDII"):
+    """Infer geography from fund_type and fund_name (single-region fallback)."""
+    is_overseas = (
+        fund_type.startswith("QDII")
+        or "海外" in fund_type
+        or "QDII" in fund_name
+    )
+    if not fund_type or not is_overseas:
         return "中国"
     for keywords, geo in _QDII_GEOGRAPHY_KEYWORDS:
         for kw in keywords:
             if kw in fund_name:
                 return geo
     return "海外（其他）"
+
+
+# Keywords in benchmark components that map to a geography.
+# Order matters: first match wins per component.
+_BENCHMARK_GEO_KEYWORDS: list[tuple[list[str], str]] = [
+    (["标普", "纳斯达克", "纳指", "罗素", "道琼斯", "S&P", "NASDAQ"], "美国"),
+    (["恒生", "香港", "港股", "中证香港"], "中国香港"),
+    (["日经", "东证", "TOPIX"], "日本"),
+    (["DAX", "德国", "欧洲", "STOXX", "富时"], "欧洲"),
+    (["MSCI全球", "全球"], "全球"),
+    (["沪深", "中证", "上证", "深证", "创业板", "科创", "国证"], "中国"),
+]
+
+# Benchmark components matching these keywords are non-equity (cash/bond)
+# and should be excluded from geography inference.
+_BENCHMARK_SKIP_KEYWORDS = [
+    "存款", "利率", "中债", "国债", "债券", "票据", "货币", "现金",
+]
+
+
+def _parse_benchmark_geography(benchmark: str) -> list[tuple[str, float]] | None:
+    """Parse benchmark string into [(geography, weight), ...].
+
+    Returns None if parsing fails or no equity components are found.
+    Example input: "沪深300指数收益率*50%+中证香港300指数收益率*30%+中债总指数收益率*20%"
+    Example output: [("中国", 62.5), ("中国香港", 37.5)]  (re-normalized after dropping bond)
+    """
+    if not benchmark:
+        return None
+
+    # Split on '+' or '＋' (fullwidth)
+    parts = re.split(r"[+＋]", benchmark)
+
+    geo_weights: list[tuple[str, float]] = []
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+
+        # Skip non-equity components (cash, bonds)
+        if any(kw in part for kw in _BENCHMARK_SKIP_KEYWORDS):
+            continue
+
+        # Extract percentage: look for *NN% or ×NN% or NN%
+        m = re.search(r"[*×]\s*(\d+(?:\.\d+)?)\s*%", part)
+        if not m:
+            m = re.search(r"(\d+(?:\.\d+)?)\s*%", part)
+        if not m:
+            continue
+        weight = float(m.group(1))
+
+        # Match geography
+        matched_geo = None
+        for keywords, geo in _BENCHMARK_GEO_KEYWORDS:
+            for kw in keywords:
+                if kw in part:
+                    matched_geo = geo
+                    break
+            if matched_geo:
+                break
+        if not matched_geo:
+            continue
+
+        geo_weights.append((matched_geo, weight))
+
+    if not geo_weights:
+        return None
+
+    # Merge duplicate geographies
+    merged: dict[str, float] = {}
+    for geo, w in geo_weights:
+        merged[geo] = merged.get(geo, 0.0) + w
+
+    # Re-normalize to 100%
+    total = sum(merged.values())
+    if total <= 0:
+        return None
+    result = [(geo, round(w / total * 100, 2)) for geo, w in merged.items()]
+    result.sort(key=lambda x: -x[1])
+    return result
 
 
 def fetch_fund_info(fund_code: str, session: Session) -> Fund:
@@ -124,10 +281,46 @@ def _fetch_asset_class_allocation(fund_code: str, session: Session) -> None:
         pass
 
 
+def _match_index_name(fund_name: str) -> str | None:
+    """Return the index key if the fund name matches a known index, else None."""
+    for keywords, index_name in _FUND_NAME_TO_INDEX:
+        for kw in keywords:
+            if kw in fund_name:
+                return index_name
+    return None
+
+
+def _apply_index_sector_fallback(fund_code: str, index_name: str, session: Session) -> None:
+    """Write pre-defined index sector weights as fallback allocation data."""
+    weights = _INDEX_SECTOR_WEIGHTS.get(index_name)
+    if not weights:
+        return
+
+    # Clear old auto records for sector
+    old = session.exec(
+        select(FundAllocation)
+        .where(FundAllocation.fund_code == fund_code)
+        .where(FundAllocation.dimension == "sector")
+        .where(FundAllocation.source == "auto")
+    ).all()
+    for o in old:
+        session.delete(o)
+
+    for category, percentage in weights:
+        session.add(FundAllocation(
+            fund_code=fund_code,
+            dimension="sector",
+            category=category,
+            percentage=percentage,
+            source="auto",
+        ))
+
+
 def _fetch_sector_allocation(fund_code: str, session: Session) -> None:
     """Fetch sector/industry allocation."""
     current_year = str(datetime.date.today().year)
     prev_year = str(datetime.date.today().year - 1)
+    fetched = False
     try:
         for year in [current_year, prev_year]:
             try:
@@ -166,20 +359,27 @@ def _fetch_sector_allocation(fund_code: str, session: Session) -> None:
                             source="auto",
                             report_date=report_date_val,
                         ))
+                    fetched = True
                     break
             except Exception:
                 continue
     except Exception:
         pass
 
+    # Fallback: use pre-defined index sector weights for known QDII/index funds
+    if not fetched:
+        fund = session.get(Fund, fund_code)
+        if fund and fund.fund_name:
+            index_name = _match_index_name(fund.fund_name)
+            if index_name:
+                _apply_index_sector_fallback(fund_code, index_name, session)
+
 
 def _fetch_geography_allocation(fund_code: str, session: Session) -> None:
-    """Infer geography allocation from fund metadata and store it."""
+    """Infer geography allocation from benchmark or fund metadata."""
     fund = session.get(Fund, fund_code)
     if not fund:
         return
-
-    geography = _infer_geography(fund.fund_type or "", fund.fund_name or "")
 
     # Clear old auto records for geography
     old = session.exec(
@@ -191,13 +391,35 @@ def _fetch_geography_allocation(fund_code: str, session: Session) -> None:
     for o in old:
         session.delete(o)
 
-    session.add(FundAllocation(
-        fund_code=fund_code,
-        dimension="geography",
-        category=geography,
-        percentage=100.0,
-        source="auto",
-    ))
+    # Try parsing benchmark from akshare first
+    geo_splits = None
+    try:
+        df = ak.fund_overview_em(symbol=fund_code)
+        if not df.empty:
+            benchmark = str(df.iloc[0].get("业绩比较基准", ""))
+            geo_splits = _parse_benchmark_geography(benchmark)
+    except Exception:
+        pass
+
+    if geo_splits:
+        for geo, pct in geo_splits:
+            session.add(FundAllocation(
+                fund_code=fund_code,
+                dimension="geography",
+                category=geo,
+                percentage=pct,
+                source="auto",
+            ))
+    else:
+        # Fallback: single-region inference from fund type/name
+        geography = _infer_geography(fund.fund_type or "", fund.fund_name or "")
+        session.add(FundAllocation(
+            fund_code=fund_code,
+            dimension="geography",
+            category=geography,
+            percentage=100.0,
+            source="auto",
+        ))
 
 
 def _fetch_top_holdings(fund_code: str, session: Session) -> None:
