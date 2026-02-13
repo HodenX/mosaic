@@ -150,6 +150,7 @@ class InsurancePolicy(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str
     type: str  # "critical_illness" | "medical" | "accident" | "life"
+    policy_number: str | None = None
     insurer: str = ""
     insured_person: str  # "我" | "老婆" | "孩子" etc.
     annual_premium: float = 0.0

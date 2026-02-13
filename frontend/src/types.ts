@@ -252,6 +252,7 @@ export interface InsurancePolicy {
   id: number;
   name: string;
   type: string;
+  policy_number: string | null;
   insurer: string;
   insured_person: string;
   annual_premium: number;
@@ -268,6 +269,7 @@ export interface InsurancePolicy {
 export interface InsurancePolicyCreate {
   name: string;
   type: string;
+  policy_number?: string | null;
   insurer?: string;
   insured_person: string;
   annual_premium?: number;
@@ -283,6 +285,7 @@ export interface InsurancePolicyCreate {
 export interface InsurancePolicyUpdate {
   name?: string;
   type?: string;
+  policy_number?: string | null;
   insurer?: string;
   insured_person?: string;
   annual_premium?: number;

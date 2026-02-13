@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,10 +10,31 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { insuranceApi } from "@/services/api";
-import { formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import type {
   InsurancePolicy,
   InsurancePolicyCreate,
@@ -32,20 +54,50 @@ const TYPE_LABELS: Record<string, string> = {
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   active: {
     label: "生效中",
-    className: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+    className: "bg-primary/10 text-primary",
   },
   expired: {
     label: "已过期",
-    className: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+    className: "bg-muted text-muted-foreground",
   },
   lapsed: {
     label: "已失效",
-    className: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+    className: "bg-destructive/10 text-destructive",
   },
 };
 
-const SELECT_CLASS =
-  "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
+const INSURERS = [
+  "中国人寿",
+  "中国平安人寿",
+  "太平洋人寿",
+  "新华人寿",
+  "泰康人寿",
+  "中国太平人寿",
+  "友邦保险",
+  "人保寿险",
+  "阳光人寿",
+  "华夏人寿",
+  "百年人寿",
+  "信泰人寿",
+  "弘康人寿",
+  "招商信诺",
+  "中英人寿",
+  "中意人寿",
+  "中荷人寿",
+  "同方全球人寿",
+  "复星联合健康",
+  "昆仑健康",
+  "和谐健康",
+  "瑞泰人寿",
+  "国联人寿",
+  "长城人寿",
+  "众安保险",
+  "京东安联",
+  "平安健康",
+  "平安财险",
+  "人保财险",
+  "太平洋财险",
+];
 
 // ---- Helpers ----
 
@@ -75,6 +127,7 @@ function getEmptyCreateForm(): InsurancePolicyCreate {
   return {
     name: "",
     type: "critical_illness",
+    policy_number: null,
     insurer: "",
     insured_person: "",
     annual_premium: 0,
@@ -86,6 +139,87 @@ function getEmptyCreateForm(): InsurancePolicyCreate {
     next_payment_date: null,
     status: "active",
   };
+}
+
+// ---- Insurer Combobox ----
+
+function InsurerCombobox({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between font-normal h-9 px-3"
+        >
+          <span className={cn(!value && "text-muted-foreground")}>
+            {value || "选择或输入保险公司"}
+          </span>
+          <ChevronsUpDownIcon className="size-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+        <Command shouldFilter={true}>
+          <CommandInput
+            placeholder="搜索保险公司..."
+            value={search}
+            onValueChange={setSearch}
+          />
+          <CommandList>
+            <CommandEmpty>
+              {search.trim() ? (
+                <button
+                  type="button"
+                  className="w-full px-2 py-1.5 text-sm hover:bg-accent rounded-sm cursor-pointer"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    onChange(search.trim());
+                    setSearch("");
+                    setOpen(false);
+                  }}
+                >
+                  使用「{search.trim()}」
+                </button>
+              ) : (
+                "未找到匹配项"
+              )}
+            </CommandEmpty>
+            <CommandGroup>
+              {INSURERS.map((insurer) => (
+                <CommandItem
+                  key={insurer}
+                  value={insurer}
+                  onSelect={(v) => {
+                    onChange(v);
+                    setSearch("");
+                    setOpen(false);
+                  }}
+                >
+                  {insurer}
+                  <CheckIcon
+                    className={cn(
+                      "ml-auto size-4",
+                      value === insurer ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
 }
 
 // ---- Policy Form Fields (shared between Add and Edit) ----
@@ -111,26 +245,29 @@ function PolicyFormFields({
         </div>
         <div className="space-y-2">
           <Label>保险类型</Label>
-          <select
-            className={SELECT_CLASS}
+          <Select
             value={form.type ?? "critical_illness"}
-            onChange={(e) => setForm({ ...form, type: e.target.value })}
+            onValueChange={(v) => setForm({ ...form, type: v })}
           >
-            <option value="critical_illness">重疾险</option>
-            <option value="medical">医疗险</option>
-            <option value="accident">意外险</option>
-            <option value="life">寿险</option>
-          </select>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="critical_illness">重疾险</SelectItem>
+              <SelectItem value="medical">医疗险</SelectItem>
+              <SelectItem value="accident">意外险</SelectItem>
+              <SelectItem value="life">寿险</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>保险公司</Label>
-          <Input
+          <InsurerCombobox
             value={form.insurer ?? ""}
-            onChange={(e) => setForm({ ...form, insurer: e.target.value })}
-            placeholder="例如 平安人寿"
+            onChange={(v) => setForm({ ...form, insurer: v })}
           />
         </div>
         <div className="space-y-2">
@@ -142,6 +279,18 @@ function PolicyFormFields({
             required
           />
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>保单编号</Label>
+        <Input
+          value={form.policy_number ?? ""}
+          onChange={(e) => {
+            const v = e.target.value;
+            setForm({ ...form, policy_number: v === "" ? null : v });
+          }}
+          placeholder="可选，保单合同编号"
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -177,8 +326,7 @@ function PolicyFormFields({
 
       <div className="space-y-2">
         <Label>保障摘要</Label>
-        <textarea
-          className="flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
+        <Textarea
           value={form.coverage_summary ?? ""}
           onChange={(e) => {
             const v = e.target.value;
@@ -186,6 +334,7 @@ function PolicyFormFields({
           }}
           placeholder="可选，简述保障内容"
           rows={2}
+          className="resize-none min-h-[60px]"
         />
       </div>
 
@@ -200,6 +349,7 @@ function PolicyFormFields({
               setForm({ ...form, start_date: v === "" ? null : v });
             }}
           />
+          <p className="text-xs text-muted-foreground">可选</p>
         </div>
         <div className="space-y-2">
           <Label>终止日期</Label>
@@ -211,7 +361,7 @@ function PolicyFormFields({
               setForm({ ...form, end_date: v === "" ? null : v });
             }}
           />
-          <p className="text-xs text-muted-foreground">留空表示终身</p>
+          <p className="text-xs text-muted-foreground">可选，留空表示保终身</p>
         </div>
       </div>
 
@@ -238,20 +388,25 @@ function PolicyFormFields({
               setForm({ ...form, next_payment_date: v === "" ? null : v });
             }}
           />
+          <p className="text-xs text-muted-foreground">可选</p>
         </div>
       </div>
 
       <div className="space-y-2">
         <Label>状态</Label>
-        <select
-          className={SELECT_CLASS}
+        <Select
           value={form.status ?? "active"}
-          onChange={(e) => setForm({ ...form, status: e.target.value })}
+          onValueChange={(v) => setForm({ ...form, status: v })}
         >
-          <option value="active">生效中</option>
-          <option value="expired">已过期</option>
-          <option value="lapsed">已失效</option>
-        </select>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="active">生效中</SelectItem>
+            <SelectItem value="expired">已过期</SelectItem>
+            <SelectItem value="lapsed">已失效</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </>
   );
@@ -318,6 +473,7 @@ function EditPolicyDialog({
       setForm({
         name: policy.name,
         type: policy.type,
+        policy_number: policy.policy_number,
         insurer: policy.insurer,
         insured_person: policy.insured_person,
         annual_premium: policy.annual_premium,
@@ -417,7 +573,7 @@ function PolicyCard({
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-base">{policy.name}</CardTitle>
           <span
-            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusCfg.className}`}
+            className={`inline-flex items-center shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${statusCfg.className}`}
           >
             {statusCfg.label}
           </span>
@@ -425,8 +581,9 @@ function PolicyCard({
       </CardHeader>
 
       <CardContent className="space-y-1.5 text-sm">
-        <p className="text-muted-foreground">{policy.insurer || "-"}</p>
-        <p className="text-muted-foreground">{typeLabel}</p>
+        <p className="text-muted-foreground">
+          {[policy.insurer, typeLabel].filter(Boolean).join(" · ")}
+        </p>
         <div className="flex justify-between">
           <span className="text-muted-foreground">保额</span>
           <span className="font-medium tabular-nums">
@@ -456,10 +613,18 @@ function PolicyCard({
         {/* Collapsible Detail Section */}
         {expanded && (
           <div className="mt-3 pt-3 border-t space-y-2 text-sm">
-            <div>
-              <span className="text-muted-foreground">保障摘要：</span>
-              <span>{policy.coverage_summary || "暂无保障摘要"}</span>
-            </div>
+            {policy.policy_number && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">保单编号</span>
+                <span className="font-mono text-xs">{policy.policy_number}</span>
+              </div>
+            )}
+            {policy.coverage_summary && (
+              <div>
+                <span className="text-muted-foreground">保障摘要：</span>
+                <span>{policy.coverage_summary}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-muted-foreground">生效日期</span>
               <span>{formatDate(policy.start_date)}</span>
@@ -468,14 +633,10 @@ function PolicyCard({
               <span className="text-muted-foreground">终止日期</span>
               <span>{policy.end_date ? formatDate(policy.end_date) : "终身"}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">缴费年限</span>
-              <span>{policy.payment_years != null ? `${policy.payment_years}年` : "-"}</span>
-            </div>
-            {policy.next_payment_date && (
+            {policy.payment_years != null && (
               <div className="flex justify-between">
-                <span className="text-muted-foreground">下次续费</span>
-                <span>{formatDate(policy.next_payment_date)}</span>
+                <span className="text-muted-foreground">缴费年限</span>
+                <span>{policy.payment_years}年</span>
               </div>
             )}
           </div>
@@ -492,16 +653,24 @@ function PolicyCard({
             variant="ghost"
             size="sm"
             disabled={renewing}
-            onClick={handleRenew}
+            onClick={() => {
+              if (window.confirm(`确认「${policy.name}」已完成续费？下次续费日期将顺延一年。`)) {
+                handleRenew();
+              }
+            }}
           >
-            {renewing ? "处理中..." : "已续费"}
+            {renewing ? "处理中..." : "标记续费"}
           </Button>
         )}
         <Button
           variant="ghost"
           size="sm"
-          className="text-destructive hover:text-destructive active:scale-[0.97] transition-transform duration-100"
-          onClick={handleDelete}
+          className="text-destructive hover:text-destructive"
+          onClick={() => {
+            if (window.confirm(`确认删除保单「${policy.name}」？此操作不可恢复。`)) {
+              handleDelete();
+            }
+          }}
         >
           删除
         </Button>

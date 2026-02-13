@@ -12,6 +12,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { stableApi } from "@/services/api";
@@ -129,14 +136,18 @@ function AddStableDialog({ onCreated }: { onCreated: () => void }) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>类型</Label>
-              <select
+              <Select
                 value={form.type}
-                onChange={(e) => setForm({ ...form, type: e.target.value })}
-                className="border-input bg-transparent h-9 w-full rounded-md border px-3 py-1 text-base shadow-xs md:text-sm"
+                onValueChange={(v) => setForm({ ...form, type: v })}
               >
-                <option value="term_deposit">定期存款</option>
-                <option value="bank_product">银行理财</option>
-              </select>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="term_deposit">定期存款</SelectItem>
+                  <SelectItem value="bank_product">银行理财</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label>平台</Label>
@@ -261,14 +272,18 @@ function EditStableDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>类型</Label>
-              <select
-                value={form.type ?? ""}
-                onChange={(e) => setForm({ ...form, type: e.target.value })}
-                className="border-input bg-transparent h-9 w-full rounded-md border px-3 py-1 text-base shadow-xs md:text-sm"
+              <Select
+                value={form.type ?? "term_deposit"}
+                onValueChange={(v) => setForm({ ...form, type: v })}
               >
-                <option value="term_deposit">定期存款</option>
-                <option value="bank_product">银行理财</option>
-              </select>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="term_deposit">定期存款</SelectItem>
+                  <SelectItem value="bank_product">银行理财</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label>平台</Label>
@@ -443,7 +458,7 @@ export default function StablePage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-destructive hover:text-destructive active:scale-[0.97] transition-transform duration-100"
+                        className="text-destructive hover:text-destructive"
                         onClick={() => handleDelete(item.id)}
                       >
                         删除

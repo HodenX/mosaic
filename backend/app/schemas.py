@@ -156,6 +156,7 @@ class StableAssetUpdate(SQLModel):
 class InsurancePolicyCreate(SQLModel):
     name: str
     type: str
+    policy_number: str | None = None
     insurer: str = ""
     insured_person: str
     annual_premium: float = 0.0
@@ -171,6 +172,7 @@ class InsurancePolicyCreate(SQLModel):
 class InsurancePolicyUpdate(SQLModel):
     name: str | None = None
     type: str | None = None
+    policy_number: str | None = None
     insurer: str | None = None
     insured_person: str | None = None
     annual_premium: float | None = None

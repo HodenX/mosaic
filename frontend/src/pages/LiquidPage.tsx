@@ -12,6 +12,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { liquidApi } from "@/services/api";
@@ -73,24 +80,30 @@ function AddLiquidDialog({ onCreated }: { onCreated: () => void }) {
               required
             />
           </div>
-          <div className="space-y-2">
-            <Label>类型</Label>
-            <select
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              value={form.type}
-              onChange={(e) => setForm({ ...form, type: e.target.value })}
-            >
-              <option value="deposit">活期存款</option>
-              <option value="money_fund">货币基金</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <Label>平台</Label>
-            <Input
-              value={form.platform ?? ""}
-              onChange={(e) => setForm({ ...form, platform: e.target.value })}
-              placeholder="例如 支付宝"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>类型</Label>
+              <Select
+                value={form.type}
+                onValueChange={(v) => setForm({ ...form, type: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="deposit">活期存款</SelectItem>
+                  <SelectItem value="money_fund">货币基金</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>平台</Label>
+              <Input
+                value={form.platform ?? ""}
+                onChange={(e) => setForm({ ...form, platform: e.target.value })}
+                placeholder="例如 支付宝"
+              />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -184,24 +197,30 @@ function EditLiquidDialog({ asset, onUpdated }: { asset: LiquidAsset; onUpdated:
               required
             />
           </div>
-          <div className="space-y-2">
-            <Label>类型</Label>
-            <select
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              value={form.type ?? "deposit"}
-              onChange={(e) => setForm({ ...form, type: e.target.value })}
-            >
-              <option value="deposit">活期存款</option>
-              <option value="money_fund">货币基金</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <Label>平台</Label>
-            <Input
-              value={form.platform ?? ""}
-              onChange={(e) => setForm({ ...form, platform: e.target.value })}
-              placeholder="例如 支付宝"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>类型</Label>
+              <Select
+                value={form.type ?? "deposit"}
+                onValueChange={(v) => setForm({ ...form, type: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="deposit">活期存款</SelectItem>
+                  <SelectItem value="money_fund">货币基金</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>平台</Label>
+              <Input
+                value={form.platform ?? ""}
+                onChange={(e) => setForm({ ...form, platform: e.target.value })}
+                placeholder="例如 支付宝"
+              />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -339,7 +358,7 @@ export default function LiquidPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-destructive hover:text-destructive active:scale-[0.97] transition-transform duration-100"
+                        className="text-destructive hover:text-destructive"
                         onClick={() => handleDelete(asset.id)}
                       >
                         删除
