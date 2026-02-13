@@ -1,5 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -540,6 +550,8 @@ function PolicyCard({
   onRefresh: () => void;
 }) {
   const [renewing, setRenewing] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmRenew, setConfirmRenew] = useState(false);
 
   const statusCfg = STATUS_CONFIG[policy.status] ?? STATUS_CONFIG.active;
   const typeLabel = TYPE_LABELS[policy.type] ?? policy.type;
@@ -568,114 +580,153 @@ function PolicyCard({
   };
 
   return (
-    <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
-      <CardHeader className="pb-0">
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-base">{policy.name}</CardTitle>
-          <span
-            className={`inline-flex items-center shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${statusCfg.className}`}
-          >
-            {statusCfg.label}
-          </span>
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-1.5 text-sm">
-        <p className="text-muted-foreground">
-          {[policy.insurer, typeLabel].filter(Boolean).join(" · ")}
-        </p>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">保额</span>
-          <span className="font-medium tabular-nums">
-            {policy.coverage_amount != null
-              ? formatCurrency(policy.coverage_amount, 0)
-              : "-"}
-          </span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">年保费</span>
-          <span className="font-medium tabular-nums">
-            {formatCurrency(policy.annual_premium)}
-          </span>
-        </div>
-        {renewal.level !== "none" && (
-          <div className={`flex justify-between ${renewalColorClass}`}>
-            <span className={renewal.level === "normal" ? "text-muted-foreground" : ""}>
-              续费
-            </span>
-            <span className="tabular-nums">
-              {formatDate(policy.next_payment_date)}
-              {renewal.days !== null && ` (${renewal.days}天)`}
+    <>
+      <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
+        <CardHeader className="pb-0">
+          <div className="flex items-start justify-between gap-2">
+            <CardTitle className="text-base">{policy.name}</CardTitle>
+            <span
+              className={`inline-flex items-center shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${statusCfg.className}`}
+            >
+              {statusCfg.label}
             </span>
           </div>
-        )}
+        </CardHeader>
 
-        {/* Collapsible Detail Section */}
-        {expanded && (
-          <div className="mt-3 pt-3 border-t space-y-2 text-sm">
-            {policy.policy_number && (
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">保单编号</span>
-                <span className="font-mono text-xs">{policy.policy_number}</span>
-              </div>
-            )}
-            {policy.coverage_summary && (
-              <div>
-                <span className="text-muted-foreground">保障摘要：</span>
-                <span>{policy.coverage_summary}</span>
-              </div>
-            )}
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">生效日期</span>
-              <span>{formatDate(policy.start_date)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">终止日期</span>
-              <span>{policy.end_date ? formatDate(policy.end_date) : "终身"}</span>
-            </div>
-            {policy.payment_years != null && (
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">缴费年限</span>
-                <span>{policy.payment_years}年</span>
-              </div>
-            )}
+        <CardContent className="space-y-1.5 text-sm">
+          <p className="text-muted-foreground">
+            {[policy.insurer, typeLabel].filter(Boolean).join(" · ")}
+          </p>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">保额</span>
+            <span className="font-medium tabular-nums font-serif">
+              {policy.coverage_amount != null
+                ? formatCurrency(policy.coverage_amount, 0)
+                : "-"}
+            </span>
           </div>
-        )}
-      </CardContent>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">年保费</span>
+            <span className="font-medium tabular-nums font-serif">
+              {formatCurrency(policy.annual_premium)}
+            </span>
+          </div>
+          {renewal.level !== "none" && (
+            <div className={`flex justify-between ${renewalColorClass}`}>
+              <span className={renewal.level === "normal" ? "text-muted-foreground" : ""}>
+                续费
+              </span>
+              <span className="tabular-nums font-serif">
+                {formatDate(policy.next_payment_date)}
+                {renewal.days !== null && ` (${renewal.days}天)`}
+              </span>
+            </div>
+          )}
 
-      <CardFooter className="flex flex-wrap gap-1 pt-0">
-        <Button variant="ghost" size="sm" onClick={onToggleExpand}>
-          {expanded ? "收起" : "详情"}
-        </Button>
-        <EditPolicyDialog policy={policy} onUpdated={onRefresh} />
-        {policy.status === "active" && policy.next_payment_date && (
+          {/* Collapsible Detail Section */}
+          {expanded && (
+            <div className="mt-3 pt-3 border-t space-y-2 text-sm">
+              {policy.policy_number && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">保单编号</span>
+                  <span className="font-mono text-xs">{policy.policy_number}</span>
+                </div>
+              )}
+              {policy.coverage_summary && (
+                <div>
+                  <span className="text-muted-foreground">保障摘要：</span>
+                  <span>{policy.coverage_summary}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">生效日期</span>
+                <span>{formatDate(policy.start_date)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">终止日期</span>
+                <span>{policy.end_date ? formatDate(policy.end_date) : "终身"}</span>
+              </div>
+              {policy.payment_years != null && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">缴费年限</span>
+                  <span>{policy.payment_years}年</span>
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+
+        <CardFooter className="flex flex-wrap gap-1 pt-0">
+          <Button variant="ghost" size="sm" onClick={onToggleExpand}>
+            {expanded ? "收起" : "详情"}
+          </Button>
+          <EditPolicyDialog policy={policy} onUpdated={onRefresh} />
+          {policy.status === "active" && policy.next_payment_date && (
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={renewing}
+              onClick={() => setConfirmRenew(true)}
+            >
+              {renewing ? "处理中..." : "标记续费"}
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="sm"
-            disabled={renewing}
-            onClick={() => {
-              if (window.confirm(`确认「${policy.name}」已完成续费？下次续费日期将顺延一年。`)) {
-                handleRenew();
-              }
-            }}
+            className="text-destructive hover:text-destructive"
+            onClick={() => setConfirmDelete(true)}
           >
-            {renewing ? "处理中..." : "标记续费"}
+            删除
           </Button>
-        )}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-destructive hover:text-destructive"
-          onClick={() => {
-            if (window.confirm(`确认删除保单「${policy.name}」？此操作不可恢复。`)) {
-              handleDelete();
-            }
-          }}
-        >
-          删除
-        </Button>
-      </CardFooter>
-    </Card>
+        </CardFooter>
+      </Card>
+
+      {/* Renew Confirmation */}
+      <AlertDialog open={confirmRenew} onOpenChange={setConfirmRenew}>
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>确认续费</AlertDialogTitle>
+            <AlertDialogDescription>
+              确认「{policy.name}」已完成续费？下次续费日期将顺延一年。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                handleRenew();
+              }}
+            >
+              确认续费
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>确认删除</AlertDialogTitle>
+            <AlertDialogDescription>
+              确认删除保单「{policy.name}」？此操作不可恢复。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => {
+                handleDelete();
+              }}
+            >
+              确认删除
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 
@@ -732,7 +783,7 @@ export default function InsurancePage() {
               <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">
                 保单数量
               </p>
-              <div className="text-2xl font-semibold tracking-tight tabular-nums">
+              <div className="text-2xl font-semibold tracking-tight tabular-nums font-serif">
                 {data.summary.active_count}
                 <span className="text-sm font-normal text-muted-foreground ml-1">
                   份生效 / {data.summary.total_count} 份总计
@@ -745,7 +796,7 @@ export default function InsurancePage() {
               <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">
                 年缴保费
               </p>
-              <div className="text-2xl font-semibold tracking-tight tabular-nums">
+              <div className="text-2xl font-semibold tracking-tight tabular-nums font-serif">
                 {formatCurrency(data.summary.total_annual_premium)}
               </div>
             </CardContent>
@@ -755,7 +806,7 @@ export default function InsurancePage() {
               <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">
                 覆盖人数
               </p>
-              <div className="text-2xl font-semibold tracking-tight tabular-nums">
+              <div className="text-2xl font-semibold tracking-tight tabular-nums font-serif">
                 {data.summary.covered_persons}
                 <span className="text-sm font-normal text-muted-foreground ml-1">人</span>
               </div>

@@ -288,7 +288,7 @@ export default function LiquidPage() {
           <Card className="shadow-sm border-t-2 border-t-primary transition-shadow duration-200 hover:shadow-md">
             <CardContent className="pt-5 pb-4">
               <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">总金额</p>
-              <div className="text-2xl font-semibold tracking-tight tabular-nums">
+              <div className="text-2xl font-semibold tracking-tight tabular-nums font-serif">
                 {formatCurrency(data.summary.total_amount)}
               </div>
             </CardContent>
@@ -296,7 +296,7 @@ export default function LiquidPage() {
           <Card className="shadow-sm border-t-2 border-t-primary transition-shadow duration-200 hover:shadow-md">
             <CardContent className="pt-5 pb-4">
               <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">预估年收益</p>
-              <div className="text-2xl font-semibold tracking-tight tabular-nums">
+              <div className="text-2xl font-semibold tracking-tight tabular-nums font-serif">
                 {formatCurrency(data.summary.estimated_annual_return)}
               </div>
             </CardContent>
@@ -345,10 +345,10 @@ export default function LiquidPage() {
                   <TableCell className="font-medium whitespace-nowrap">{asset.name}</TableCell>
                   <TableCell className="whitespace-nowrap">{TYPE_LABELS[asset.type] ?? asset.type}</TableCell>
                   <TableCell className="whitespace-nowrap">{asset.platform}</TableCell>
-                  <TableCell className="text-right font-mono tabular-nums whitespace-nowrap">
+                  <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">
                     {formatCurrency(asset.amount)}
                   </TableCell>
-                  <TableCell className="text-right font-mono tabular-nums whitespace-nowrap">
+                  <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">
                     {asset.annual_rate != null ? `${asset.annual_rate.toFixed(2)}%` : "-"}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">{formatDate(asset.updated_at)}</TableCell>

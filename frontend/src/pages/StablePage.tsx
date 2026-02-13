@@ -376,20 +376,20 @@ export default function StablePage() {
       {/* Summary Bar */}
       {data && (
         <div className="grid grid-cols-2 gap-4">
-          <Card className="py-4">
-            <CardContent className="flex flex-col gap-1">
-              <span className="text-sm text-muted-foreground">总金额</span>
-              <span className="text-xl font-semibold font-mono tabular-nums">
+          <Card className="shadow-sm border-t-2 border-t-primary transition-shadow duration-200 hover:shadow-md">
+            <CardContent className="pt-5 pb-4">
+              <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">总金额</p>
+              <div className="text-2xl font-semibold tracking-tight tabular-nums font-serif">
                 {formatCurrency(data.summary.total_amount)}
-              </span>
+              </div>
             </CardContent>
           </Card>
-          <Card className="py-4">
-            <CardContent className="flex flex-col gap-1">
-              <span className="text-sm text-muted-foreground">预估年收益</span>
-              <span className="text-xl font-semibold font-mono tabular-nums">
+          <Card className="shadow-sm border-t-2 border-t-primary transition-shadow duration-200 hover:shadow-md">
+            <CardContent className="pt-5 pb-4">
+              <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">预估年收益</p>
+              <div className="text-2xl font-semibold tracking-tight tabular-nums font-serif">
                 {formatCurrency(data.summary.estimated_annual_return)}
-              </span>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -440,10 +440,10 @@ export default function StablePage() {
                     {TYPE_LABELS[item.type] ?? item.type}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">{item.platform || "-"}</TableCell>
-                  <TableCell className="text-right font-mono tabular-nums whitespace-nowrap">
+                  <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">
                     {formatCurrency(item.amount)}
                   </TableCell>
-                  <TableCell className="text-right font-mono tabular-nums whitespace-nowrap">
+                  <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">
                     {item.annual_rate.toFixed(2)}%
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
