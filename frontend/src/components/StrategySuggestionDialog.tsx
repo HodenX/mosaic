@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -39,6 +40,7 @@ export default function StrategySuggestionDialog({
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>策略建议详情</DialogTitle>
+          <DialogDescription className="sr-only">当前投资策略的分析与操作建议</DialogDescription>
         </DialogHeader>
         {loading ? (
           <p className="text-sm text-muted-foreground py-4">分析中...</p>

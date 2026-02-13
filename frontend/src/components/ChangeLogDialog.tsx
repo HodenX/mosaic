@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -53,6 +54,7 @@ export default function ChangeLogDialog({ holdingId, fundName }: Props) {
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>持仓变更历史 — {fundName}</DialogTitle>
+          <DialogDescription className="sr-only">查看份额和成本价的历史变更记录</DialogDescription>
         </DialogHeader>
 
         {loading ? (
@@ -75,17 +77,17 @@ export default function ChangeLogDialog({ holdingId, fundName }: Props) {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/30">
-                  <TableHead>日期</TableHead>
-                  <TableHead>份额变化</TableHead>
-                  <TableHead>成本价变化</TableHead>
-                  <TableHead>记录时间</TableHead>
+                  <TableHead className="whitespace-nowrap">日期</TableHead>
+                  <TableHead className="whitespace-nowrap">份额变化</TableHead>
+                  <TableHead className="whitespace-nowrap">成本价变化</TableHead>
+                  <TableHead className="whitespace-nowrap">记录时间</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {logs.map((log) => (
                   <TableRow key={log.id} className="hover:bg-muted/50 transition-colors">
                     <TableCell>{log.change_date}</TableCell>
-                    <TableCell className="font-mono tabular-nums">
+                    <TableCell className="font-serif tabular-nums">
                       {log.old_shares.toFixed(2)} → {log.new_shares.toFixed(2)}
                       <span
                         className={`ml-1 text-xs ${
@@ -97,7 +99,7 @@ export default function ChangeLogDialog({ holdingId, fundName }: Props) {
                         ({formatDiff(log.shares_diff)})
                       </span>
                     </TableCell>
-                    <TableCell className="font-mono tabular-nums">
+                    <TableCell className="font-serif tabular-nums">
                       {log.old_cost_price.toFixed(4)} →{" "}
                       {log.new_cost_price.toFixed(4)}
                     </TableCell>

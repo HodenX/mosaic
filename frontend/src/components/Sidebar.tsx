@@ -115,15 +115,15 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <div className="flex h-14 items-center border-b border-sidebar-border px-4 gap-2.5">
         <img
           src="/logo.svg"
-          alt="FolioPal"
+          alt="知合 Mosaic"
           className="h-8 w-8 shrink-0 rounded-lg"
         />
         {!collapsed && (
           <div className="flex flex-col leading-tight truncate">
-            <span className="text-sm font-bold tracking-wide text-primary">
-              FolioPal
+            <span className="text-sm font-bold tracking-wider text-primary font-serif">
+              知合
             </span>
-            <span className="text-[10px] text-sidebar-foreground/50 font-serif">聚宝</span>
+            <span className="text-[10px] text-sidebar-foreground/50 tracking-widest">MOSAIC</span>
           </div>
         )}
       </div>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Cell, Pie, PieChart } from "recharts";
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
@@ -23,7 +24,7 @@ const STORAGE_KEY = "overview_analytics_open";
 
 const COLORS = [
   "var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)",
-  "#8b5cf6", "#ec4899", "#f97316", "#14b8a6", "#06b6d4",
+  "var(--chart-6)", "var(--chart-7)", "var(--chart-8)", "var(--chart-9)", "var(--chart-10)",
 ];
 
 export default function CollapsibleAnalytics({ activeStrategy }: Props) {
@@ -106,12 +107,12 @@ export default function CollapsibleAnalytics({ activeStrategy }: Props) {
   };
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm">详细分析</CardTitle>
         <CardAction>
           <Button variant="ghost" size="sm" onClick={toggleOpen} className="text-xs text-muted-foreground">
-            {open ? "收起 ▲" : "展开 ▼"}
+            {open ? <>收起 <ChevronUp className="ml-0.5 h-3.5 w-3.5" /></> : <>展开 <ChevronDown className="ml-0.5 h-3.5 w-3.5" /></>}
           </Button>
         </CardAction>
       </CardHeader>
@@ -196,7 +197,7 @@ function InlineAllocationChart({ data, coverage }: { data: AllocationItem[]; cov
                   key={i}
                   fill={COLORS[i % COLORS.length]}
                   strokeWidth={selectedCategory === entry.name ? 3 : 1}
-                  stroke={selectedCategory === entry.name ? "#000" : undefined}
+                  stroke={selectedCategory === entry.name ? "var(--foreground)" : undefined}
                   opacity={selectedCategory && selectedCategory !== entry.name ? 0.4 : 1}
                 />
               ))}
@@ -266,7 +267,7 @@ function PlatformList({ data }: { data: PlatformBreakdown[] }) {
               <span className="text-sm font-medium">{p.platform}</span>
               <span className="text-xs text-muted-foreground ml-2">{p.count} 只基金</span>
             </div>
-            <div className="flex items-center gap-4 text-sm tabular-nums">
+            <div className="flex items-center gap-4 text-sm tabular-nums font-serif">
               <span>{formatCurrency(p.market_value)}</span>
               <span className={isProfit ? "text-red-500" : "text-green-500"}>
                 {isProfit ? "+" : ""}{formatCurrency(p.pnl)}

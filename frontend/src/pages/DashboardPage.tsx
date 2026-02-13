@@ -137,7 +137,7 @@ export default function DashboardPage() {
       {/* 2. Four Bucket Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Liquid */}
-        <Card className="shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-out border-t-2" style={{ borderTopColor: "oklch(0.55 0.12 230)" }}>
+        <Card className="shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-out border-t-2 border-t-bucket-liquid">
           <CardContent className="pt-5 pb-4 flex flex-col justify-between h-full">
             <div>
               <div className="flex items-center gap-2 mb-2">
@@ -166,7 +166,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Stable */}
-        <Card className="shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-out border-t-2" style={{ borderTopColor: "oklch(0.60 0.14 80)" }}>
+        <Card className="shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-out border-t-2 border-t-bucket-stable">
           <CardContent className="pt-5 pb-4 flex flex-col justify-between h-full">
             <div>
               <div className="flex items-center gap-2 mb-2">
@@ -233,7 +233,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Insurance */}
-        <Card className="shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-out border-t-2" style={{ borderTopColor: "oklch(0.55 0.12 310)" }}>
+        <Card className="shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-out border-t-2 border-t-bucket-insurance">
           <CardContent className="pt-5 pb-4 flex flex-col justify-between h-full">
             <div>
               <div className="flex items-center gap-2 mb-2">
@@ -242,8 +242,11 @@ export default function DashboardPage() {
                   {"\u4FDD\u969C"}
                 </span>
               </div>
-              <div className="text-2xl font-semibold tracking-tight tabular-nums font-serif">
-                {summary.buckets.insurance.active_count}{"\u4EFD\u751F\u6548\u4FDD\u5355"}
+              <div className="text-2xl font-semibold tracking-tight">
+                <span className="tabular-nums font-serif">{summary.buckets.insurance.active_count}</span>
+                <span className="text-sm font-normal text-muted-foreground ml-1">
+                  {"\u4EFD\u751F\u6548\u4FDD\u5355"}
+                </span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 {"\u5E74\u4FDD\u8D39"} <span className="font-serif">{formatCurrency(summary.buckets.insurance.annual_premium)}</span>

@@ -1,22 +1,59 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#0f766e"/>
-      <stop offset="100%" stop-color="#14b8a6"/>
+    <clipPath id="mask">
+      <rect width="128" height="128" rx="28"/>
+    </clipPath>
+
+    <!-- Deep jewel-tone gradients — each diagonal for 3D depth -->
+    <!-- Lapis Lazuli: 活钱 (Liquid) -->
+    <linearGradient id="lapis" x1="0" y1="0" x2="63" y2="62" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2d5090"/>
+      <stop offset="100%" stop-color="#1a3562"/>
     </linearGradient>
+
+    <!-- Amber: 稳钱 (Stable) -->
+    <linearGradient id="amber" x1="66" y1="0" x2="128" y2="62" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#a8892e"/>
+      <stop offset="100%" stop-color="#7a6418"/>
+    </linearGradient>
+
+    <!-- Amethyst: 保险 (Insurance) -->
+    <linearGradient id="amethyst" x1="0" y1="65" x2="56" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#5e3898"/>
+      <stop offset="100%" stop-color="#3e2268"/>
+    </linearGradient>
+
+    <!-- Jade: 长钱 (Growth) — primary brand anchor -->
+    <linearGradient id="jade" x1="59" y1="65" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#168f82"/>
+      <stop offset="100%" stop-color="#0a6258"/>
+    </linearGradient>
+
+    <!-- Subtle surface sheen — polished stone feel -->
+    <radialGradient id="sheen" cx="28%" cy="22%" r="72%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.09"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
   </defs>
 
-  <!-- Rounded square background with gradient -->
-  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <!-- All tiles clipped by the outer rounded square -->
+  <g clip-path="url(#mask)">
+    <!-- Dark mortar — near-black with warm undertone -->
+    <rect width="128" height="128" fill="#0c1210"/>
 
-  <!-- Three converging petals forming a gem/pinwheel — represents "聚" -->
-  <!-- Top petal -->
-  <path d="M64 22 C48 42, 44 56, 64 64 C84 56, 80 42, 64 22Z" fill="#fff" opacity="0.95"/>
-  <!-- Bottom-left petal -->
-  <path d="M26 90 C38 68, 48 58, 64 64 C54 80, 40 92, 26 90Z" fill="#fff" opacity="0.7"/>
-  <!-- Bottom-right petal -->
-  <path d="M102 90 C90 68, 80 58, 64 64 C74 80, 88 92, 102 90Z" fill="#fff" opacity="0.7"/>
+    <!-- Top-left: Lapis Lazuli (活钱) -->
+    <rect x="0" y="0" width="63" height="62" fill="url(#lapis)"/>
 
-  <!-- Center diamond accent — represents "宝" -->
-  <polygon points="64,48 74,64 64,78 54,64" fill="#5eead4" opacity="0.9"/>
+    <!-- Top-right: Amber (稳钱) -->
+    <rect x="66" y="0" width="62" height="62" fill="url(#amber)"/>
+
+    <!-- Bottom-left: Amethyst (保险) — shifted 7px for brick pattern -->
+    <rect x="0" y="65" width="56" height="63" fill="url(#amethyst)"/>
+
+    <!-- Bottom-right: Jade (长钱) — largest tile, brand anchor -->
+    <rect x="59" y="65" width="69" height="63" fill="url(#jade)"/>
+  </g>
+
+  <!-- Polished-stone sheen -->
+  <rect width="128" height="128" rx="28" fill="url(#sheen)"/>
 </svg>

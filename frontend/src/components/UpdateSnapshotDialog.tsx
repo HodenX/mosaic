@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -62,6 +63,7 @@ export default function UpdateSnapshotDialog({ holding, onUpdated }: Props) {
           <DialogTitle>
             更新持仓 — {holding.fund_name || holding.fund_code}({holding.fund_code})
           </DialogTitle>
+          <DialogDescription className="sr-only">更新份额和成本价信息</DialogDescription>
         </DialogHeader>
 
         <div className="text-sm text-muted-foreground space-y-1 mb-2">

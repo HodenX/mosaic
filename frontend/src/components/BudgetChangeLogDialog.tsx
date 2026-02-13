@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -36,6 +37,7 @@ export default function BudgetChangeLogDialog() {
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>预算变更记录</DialogTitle>
+          <DialogDescription className="sr-only">投资预算的历史调整记录</DialogDescription>
         </DialogHeader>
         {logs.length === 0 ? (
           <p className="text-sm text-muted-foreground py-4">暂无变更记录</p>
@@ -44,10 +46,10 @@ export default function BudgetChangeLogDialog() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/30">
-                  <TableHead>时间</TableHead>
-                  <TableHead className="text-right">调整前</TableHead>
-                  <TableHead className="text-right">调整后</TableHead>
-                  <TableHead>原因</TableHead>
+                  <TableHead className="whitespace-nowrap">时间</TableHead>
+                  <TableHead className="text-right whitespace-nowrap">调整前</TableHead>
+                  <TableHead className="text-right whitespace-nowrap">调整后</TableHead>
+                  <TableHead className="whitespace-nowrap">原因</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -56,10 +58,10 @@ export default function BudgetChangeLogDialog() {
                     <TableCell className="text-sm">
                       {new Date(log.created_at).toLocaleString("zh-CN")}
                     </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
+                    <TableCell className="text-right font-serif tabular-nums">
                       ¥{log.old_budget.toLocaleString()}
                     </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
+                    <TableCell className="text-right font-serif tabular-nums">
                       ¥{log.new_budget.toLocaleString()}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">

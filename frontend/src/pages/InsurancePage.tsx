@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -450,6 +451,7 @@ function AddPolicyDialog({ onCreated }: { onCreated: () => void }) {
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>添加保单</DialogTitle>
+          <DialogDescription className="sr-only">填写保单基本信息和保障内容</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <PolicyFormFields
@@ -521,6 +523,7 @@ function EditPolicyDialog({
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>编辑保单 — {policy.name}</DialogTitle>
+          <DialogDescription className="sr-only">修改保单信息</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <PolicyFormFields
@@ -616,16 +619,16 @@ function PolicyCard({
               <span className={renewal.level === "normal" ? "text-muted-foreground" : ""}>
                 续费
               </span>
-              <span className="tabular-nums font-serif">
-                {formatDate(policy.next_payment_date)}
-                {renewal.days !== null && ` (${renewal.days}天)`}
+              <span className="tabular-nums">
+                <span className="font-serif">{formatDate(policy.next_payment_date)}</span>
+                {renewal.days !== null && <> (<span className="font-serif">{renewal.days}</span>天)</>}
               </span>
             </div>
           )}
 
           {/* Collapsible Detail Section */}
           {expanded && (
-            <div className="mt-3 pt-3 border-t space-y-2 text-sm">
+            <div className="mt-3 pt-3 border-t space-y-1.5">
               {policy.policy_number && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">保单编号</span>
@@ -640,16 +643,16 @@ function PolicyCard({
               )}
               <div className="flex justify-between">
                 <span className="text-muted-foreground">生效日期</span>
-                <span>{formatDate(policy.start_date)}</span>
+                <span className="tabular-nums font-serif">{formatDate(policy.start_date)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">终止日期</span>
-                <span>{policy.end_date ? formatDate(policy.end_date) : "终身"}</span>
+                <span className={policy.end_date ? "tabular-nums font-serif" : ""}>{policy.end_date ? formatDate(policy.end_date) : "终身"}</span>
               </div>
               {policy.payment_years != null && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">缴费年限</span>
-                  <span>{policy.payment_years}年</span>
+                  <span><span className="tabular-nums font-serif">{policy.payment_years}</span>年</span>
                 </div>
               )}
             </div>
@@ -775,23 +778,29 @@ export default function InsurancePage() {
 
   return (
     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">保单管理</h2>
+        <AddPolicyDialog onCreated={fetchData} />
+      </div>
+
       {/* Summary Bar */}
       {data && (
         <div className="grid grid-cols-3 gap-4">
-          <Card className="shadow-sm border-t-2 border-t-primary transition-shadow duration-200 hover:shadow-md">
+          <Card className="shadow-sm border-t-2 border-t-bucket-insurance transition-shadow duration-200 hover:shadow-md">
             <CardContent className="pt-5 pb-4">
               <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">
                 保单数量
               </p>
-              <div className="text-2xl font-semibold tracking-tight tabular-nums font-serif">
-                {data.summary.active_count}
+              <div className="text-2xl font-semibold tracking-tight">
+                <span className="tabular-nums font-serif">{data.summary.active_count}</span>
                 <span className="text-sm font-normal text-muted-foreground ml-1">
-                  份生效 / {data.summary.total_count} 份总计
+                  份生效 / <span className="font-serif">{data.summary.total_count}</span> 份总计
                 </span>
               </div>
             </CardContent>
           </Card>
-          <Card className="shadow-sm border-t-2 border-t-primary transition-shadow duration-200 hover:shadow-md">
+          <Card className="shadow-sm border-t-2 border-t-bucket-insurance transition-shadow duration-200 hover:shadow-md">
             <CardContent className="pt-5 pb-4">
               <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">
                 年缴保费
@@ -801,13 +810,13 @@ export default function InsurancePage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="shadow-sm border-t-2 border-t-primary transition-shadow duration-200 hover:shadow-md">
+          <Card className="shadow-sm border-t-2 border-t-bucket-insurance transition-shadow duration-200 hover:shadow-md">
             <CardContent className="pt-5 pb-4">
               <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">
                 覆盖人数
               </p>
-              <div className="text-2xl font-semibold tracking-tight tabular-nums font-serif">
-                {data.summary.covered_persons}
+              <div className="text-2xl font-semibold tracking-tight">
+                <span className="tabular-nums font-serif">{data.summary.covered_persons}</span>
                 <span className="text-sm font-normal text-muted-foreground ml-1">人</span>
               </div>
             </CardContent>
@@ -815,15 +824,9 @@ export default function InsurancePage() {
         </div>
       )}
 
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">保单管理</h2>
-        <AddPolicyDialog onCreated={fetchData} />
-      </div>
-
       {/* Content */}
       {loading ? (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {Array.from({ length: 2 }).map((_, gi) => (
             <div key={gi} className="space-y-3">
               <Skeleton className="h-5 w-32" />
@@ -844,7 +847,7 @@ export default function InsurancePage() {
           ))}
         </div>
       ) : data && data.items.length > 0 ? (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {Object.entries(groupedPolicies).map(([person, policies]) => (
             <div key={person} className="space-y-3">
               {/* Group Header */}

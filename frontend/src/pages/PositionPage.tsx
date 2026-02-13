@@ -7,6 +7,7 @@ import BudgetChangeLogDialog from "@/components/BudgetChangeLogDialog";
 import StrategySuggestionDialog from "@/components/StrategySuggestionDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { positionApi } from "@/services/api";
+import { formatCurrency } from "@/lib/utils";
 import type { PositionStatus, StrategyInfo, StrategyResult } from "@/types";
 
 export default function PositionPage() {
@@ -46,7 +47,7 @@ export default function PositionPage() {
   };
 
   if (!position) return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Skeleton className="h-7 w-32" />
       <Skeleton className="h-[200px] rounded-xl" />
       <Skeleton className="h-[160px] rounded-xl" />
@@ -55,11 +56,11 @@ export default function PositionPage() {
   );
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-200">
+    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
       <h2 className="text-xl font-semibold">仓位管理</h2>
 
       {/* Budget management */}
-      <Card className="shadow-sm">
+      <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm">投资预算</CardTitle>
@@ -75,19 +76,19 @@ export default function PositionPage() {
               <div className="flex flex-wrap gap-x-8 gap-y-3">
                 <div className="min-w-0">
                   <p className="text-xs font-medium text-muted-foreground tracking-wide">总预算</p>
-                  <p className="text-xl font-semibold tracking-tight tabular-nums whitespace-nowrap">¥{position.total_budget.toLocaleString()}</p>
+                  <p className="text-xl font-semibold tracking-tight tabular-nums font-serif whitespace-nowrap">{formatCurrency(position.total_budget)}</p>
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-medium text-muted-foreground tracking-wide">已投入</p>
-                  <p className="text-xl font-semibold tracking-tight tabular-nums whitespace-nowrap">¥{position.total_value.toLocaleString()}</p>
+                  <p className="text-xl font-semibold tracking-tight tabular-nums font-serif whitespace-nowrap">{formatCurrency(position.total_value)}</p>
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-medium text-muted-foreground tracking-wide">可用资金</p>
-                  <p className="text-xl font-semibold tracking-tight tabular-nums whitespace-nowrap">¥{position.available_cash.toLocaleString()}</p>
+                  <p className="text-xl font-semibold tracking-tight tabular-nums font-serif whitespace-nowrap">{formatCurrency(position.available_cash)}</p>
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-medium text-muted-foreground tracking-wide">仓位比例</p>
-                  <p className="text-xl font-semibold tracking-tight tabular-nums whitespace-nowrap">{position.position_ratio.toFixed(1)}%</p>
+                  <p className="text-xl font-semibold tracking-tight tabular-nums font-serif whitespace-nowrap">{position.position_ratio.toFixed(1)}%</p>
                 </div>
               </div>
               <PositionGauge
@@ -113,7 +114,7 @@ export default function PositionPage() {
       </Card>
 
       {/* Strategy management */}
-      <Card className="shadow-sm">
+      <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
         <CardHeader>
           <CardTitle className="text-sm">策略管理</CardTitle>
         </CardHeader>
@@ -153,7 +154,7 @@ export default function PositionPage() {
       </Card>
 
       {/* Strategy suggestion result */}
-      <Card className="shadow-sm">
+      <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm">策略建议</CardTitle>
@@ -190,7 +191,7 @@ export default function PositionPage() {
                           {s.action === "buy" ? "买入" : s.action === "sell" ? "卖出" : "持有"}
                         </span>
                         {s.amount > 0 && (
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-muted-foreground font-serif tabular-nums">
                             ¥{s.amount.toLocaleString()}
                           </p>
                         )}

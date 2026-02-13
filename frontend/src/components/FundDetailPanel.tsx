@@ -12,7 +12,7 @@ import { useFundDetail } from "@/contexts/FundDetailContext";
 import type { AllocationItem, FundInfo, NavHistory, TopHolding } from "@/types";
 
 const navChartConfig = {
-  nav: { label: "单位净值", color: "#0d9488" },
+  nav: { label: "单位净值", color: "var(--chart-1)" },
 } satisfies ChartConfig;
 
 export default function FundDetailPanel() {
@@ -107,7 +107,7 @@ export default function FundDetailPanel() {
                         <XAxis dataKey="date" tickLine={false} axisLine={false} />
                         <YAxis tickLine={false} axisLine={false} domain={["auto", "auto"]} />
                         <ChartTooltip content={<ChartTooltipContent />} />
-                        <Line type="monotone" dataKey="nav" stroke="#0d9488" strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="nav" stroke="var(--chart-1)" strokeWidth={2} dot={false} />
                       </LineChart>
                     </ChartContainer>
                   </CardContent>
@@ -139,9 +139,9 @@ export default function FundDetailPanel() {
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-muted/30">
-                          <TableHead>股票代码</TableHead>
-                          <TableHead>股票名称</TableHead>
-                          <TableHead className="text-right">占净值比</TableHead>
+                          <TableHead className="whitespace-nowrap">股票代码</TableHead>
+                          <TableHead className="whitespace-nowrap">股票名称</TableHead>
+                          <TableHead className="text-right whitespace-nowrap">占净值比</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -149,7 +149,7 @@ export default function FundDetailPanel() {
                           <TableRow key={h.stock_code} className="hover:bg-muted/50 transition-colors">
                             <TableCell className="font-mono text-xs tabular-nums">{h.stock_code}</TableCell>
                             <TableCell>{h.stock_name}</TableCell>
-                            <TableCell className="text-right font-mono tabular-nums">{h.percentage.toFixed(2)}%</TableCell>
+                            <TableCell className="text-right font-serif tabular-nums">{h.percentage.toFixed(2)}%</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>

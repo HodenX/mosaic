@@ -3,6 +3,16 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import AddHoldingDialog from "@/components/AddHoldingDialog";
 import UpdateSnapshotDialog from "@/components/UpdateSnapshotDialog";
 import ChangeLogDialog from "@/components/ChangeLogDialog";
@@ -17,6 +27,7 @@ export default function HoldingsPage() {
   const [holdings, setHoldings] = useState<Holding[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState<Set<string>>(new Set());
+  const [deleteTarget, setDeleteTarget] = useState<Holding | null>(null);
 
   const fetchHoldings = useCallback(async () => {
     setLoading(true);
@@ -53,6 +64,7 @@ export default function HoldingsPage() {
 
   const handleDelete = async (id: number) => {
     await holdingsApi.delete(id);
+    setDeleteTarget(null);
     await fetchHoldings();
   };
 
@@ -107,22 +119,22 @@ export default function HoldingsPage() {
                   </TableCell>
                   <TableCell className="font-mono text-xs tabular-nums whitespace-nowrap">{h.fund_code}</TableCell>
                   <TableCell className="whitespace-nowrap">{h.platform}</TableCell>
-                  <TableCell className="text-right font-mono tabular-nums whitespace-nowrap">{h.shares.toFixed(2)}</TableCell>
-                  <TableCell className="text-right font-mono tabular-nums whitespace-nowrap">
+                  <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">{h.shares.toFixed(2)}</TableCell>
+                  <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">
                     {refreshing.has(h.fund_code) && !h.latest_nav
                       ? "加载中..."
                       : h.latest_nav?.toFixed(4) ?? "-"}
                   </TableCell>
-                  <TableCell className="text-right font-mono tabular-nums whitespace-nowrap">
+                  <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">
                     {refreshing.has(h.fund_code) && h.market_value == null
                       ? "加载中..."
                       : formatCurrency(h.market_value)}
                   </TableCell>
-                  <TableCell className="text-right font-mono tabular-nums whitespace-nowrap">
+                  <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">
                     {formatCurrency(h.shares * h.cost_price)}
                   </TableCell>
                   <TableCell
-                    className={`text-right font-mono tabular-nums whitespace-nowrap ${
+                    className={`text-right font-serif tabular-nums whitespace-nowrap ${
                       h.pnl != null && h.pnl >= 0 ? "text-red-500" : "text-green-500"
                     }`}
                   >
@@ -131,7 +143,7 @@ export default function HoldingsPage() {
                       : formatCurrency(h.pnl)}
                   </TableCell>
                   <TableCell
-                    className={`text-right font-mono tabular-nums whitespace-nowrap ${
+                    className={`text-right font-serif tabular-nums whitespace-nowrap ${
                       h.pnl_percent != null && h.pnl_percent >= 0
                         ? "text-red-500"
                         : "text-green-500"
@@ -154,7 +166,7 @@ export default function HoldingsPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="hover:text-primary active:scale-[0.97] transition-transform duration-100"
+                        className="hover:text-primary"
                         disabled={refreshing.has(h.fund_code)}
                         onClick={() => handleRefresh(h.fund_code)}
                       >
@@ -163,8 +175,8 @@ export default function HoldingsPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-destructive hover:text-destructive active:scale-[0.97] transition-transform duration-100"
-                        onClick={() => handleDelete(h.id)}
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => setDeleteTarget(h)}
                       >
                         删除
                       </Button>
@@ -183,6 +195,27 @@ export default function HoldingsPage() {
           </Table>
         </div>
       )}
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>确认删除</AlertDialogTitle>
+            <AlertDialogDescription>
+              确认删除持仓「{deleteTarget?.fund_name || deleteTarget?.fund_code}」？此操作不可恢复。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => deleteTarget && handleDelete(deleteTarget.id)}
+            >
+              确认删除
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

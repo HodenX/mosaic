@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -48,6 +49,7 @@ export default function AddHoldingDialog({ onCreated }: Props) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>添加基金持仓</DialogTitle>
+          <DialogDescription className="sr-only">填写基金代码、平台、份额等信息添加新的基金持仓</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">

@@ -33,7 +33,7 @@ export default function SummaryCards({ summary, position, onPositionUpdated }: P
       <Card className={`shadow-sm border-t-2 ${pnlBorder} transition-shadow duration-200 hover:shadow-md`}>
         <CardContent className="pt-5 pb-4">
           <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">总盈亏</p>
-          <div className={`text-2xl font-semibold tracking-tight tabular-nums ${pnlColor}`}>
+          <div className={`text-2xl font-semibold tracking-tight tabular-nums font-serif ${pnlColor}`}>
             {isProfit ? "+" : ""}{formatCurrency(summary.total_pnl)}
           </div>
         </CardContent>
@@ -43,7 +43,7 @@ export default function SummaryCards({ summary, position, onPositionUpdated }: P
       <Card className={`shadow-sm border-t-2 ${pnlBorder} transition-shadow duration-200 hover:shadow-md`}>
         <CardContent className="pt-5 pb-4">
           <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">收益率</p>
-          <div className={`text-2xl font-semibold tracking-tight tabular-nums ${pnlColor}`}>
+          <div className={`text-2xl font-semibold tracking-tight tabular-nums font-serif ${pnlColor}`}>
             {isProfit ? "+" : ""}{summary.pnl_percent.toFixed(2)}%
           </div>
         </CardContent>
@@ -53,7 +53,7 @@ export default function SummaryCards({ summary, position, onPositionUpdated }: P
       <Card className="shadow-sm border-t-2 border-t-primary transition-shadow duration-200 hover:shadow-md">
         <CardContent className="pt-5 pb-4">
           <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">总市值</p>
-          <div className="text-lg font-semibold tracking-tight tabular-nums text-muted-foreground">
+          <div className="text-lg font-semibold tracking-tight tabular-nums font-serif text-muted-foreground">
             {formatCurrency(summary.total_value)}
           </div>
         </CardContent>
@@ -75,7 +75,7 @@ export default function SummaryCards({ summary, position, onPositionUpdated }: P
                 }
               />
             </div>
-            <div className={`text-lg font-semibold tracking-tight tabular-nums ${posTextColor}`}>
+            <div className={`text-lg font-semibold tracking-tight tabular-nums font-serif ${posTextColor}`}>
               {position.position_ratio.toFixed(1)}%
             </div>
             <p className="text-[11px] text-muted-foreground mt-0.5 tabular-nums">

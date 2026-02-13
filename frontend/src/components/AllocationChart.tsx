@@ -6,7 +6,7 @@ import type { AllocationCoverage, AllocationItem } from "@/types";
 
 const COLORS = [
   "var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)",
-  "#8b5cf6", "#ec4899", "#f97316", "#14b8a6", "#06b6d4",
+  "var(--chart-6)", "var(--chart-7)", "var(--chart-8)", "var(--chart-9)", "var(--chart-10)",
 ];
 
 interface Props {
@@ -84,7 +84,7 @@ export default function AllocationChart({ title, data, coverage }: Props) {
                   key={i}
                   fill={COLORS[i % COLORS.length]}
                   strokeWidth={selectedCategory === entry.name ? 3 : 1}
-                  stroke={selectedCategory === entry.name ? "#000" : undefined}
+                  stroke={selectedCategory === entry.name ? "var(--foreground)" : undefined}
                   opacity={selectedCategory && selectedCategory !== entry.name ? 0.4 : 1}
                 />
               ))}

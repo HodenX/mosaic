@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -68,52 +67,54 @@ export default function BudgetSettingDialog({
           <DialogTitle>投资预算设置</DialogTitle>
           <DialogDescription>设置总投资预算和目标仓位区间</DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">总预算</Label>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSave();
+          }}
+          className="space-y-4"
+        >
+          <div className="space-y-2">
+            <Label>总预算</Label>
             <Input
-              className="col-span-3"
               type="number"
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
               placeholder="例如: 100000"
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">仓位下限(%)</Label>
-            <Input
-              className="col-span-3"
-              type="number"
-              value={min}
-              onChange={(e) => setMin(e.target.value)}
-              placeholder="0"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>仓位下限(%)</Label>
+              <Input
+                type="number"
+                value={min}
+                onChange={(e) => setMin(e.target.value)}
+                placeholder="0"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>仓位上限(%)</Label>
+              <Input
+                type="number"
+                value={max}
+                onChange={(e) => setMax(e.target.value)}
+                placeholder="100"
+              />
+            </div>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">仓位上限(%)</Label>
+          <div className="space-y-2">
+            <Label>调整原因</Label>
             <Input
-              className="col-span-3"
-              type="number"
-              value={max}
-              onChange={(e) => setMax(e.target.value)}
-              placeholder="100"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">调整原因</Label>
-            <Input
-              className="col-span-3"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="可选"
             />
           </div>
-        </div>
-        <DialogFooter>
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? "保存中..." : "保存"}
+          <Button type="submit" className="w-full" disabled={saving}>
+            {saving ? "保存中..." : "确认保存"}
           </Button>
-        </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

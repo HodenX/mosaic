@@ -38,7 +38,7 @@ export default function TrendChart({ data }: Props) {
   if (!data.length) return null;
 
   return (
-    <Card className="shadow-sm animate-in fade-in duration-300">
+    <Card className="shadow-sm hover:shadow-md transition-shadow duration-200 animate-in fade-in duration-300">
       <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
         <CardTitle className="text-sm">组合走势</CardTitle>
         <div className="flex gap-1">

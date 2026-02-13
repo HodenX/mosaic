@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -19,6 +20,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { liquidApi } from "@/services/api";
@@ -69,6 +80,7 @@ function AddLiquidDialog({ onCreated }: { onCreated: () => void }) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>添加活钱资产</DialogTitle>
+          <DialogDescription className="sr-only">填写名称、类型、金额等信息</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -186,6 +198,7 @@ function EditLiquidDialog({ asset, onUpdated }: { asset: LiquidAsset; onUpdated:
       <DialogContent>
         <DialogHeader>
           <DialogTitle>编辑活钱资产 — {asset.name}</DialogTitle>
+          <DialogDescription className="sr-only">修改活钱资产信息</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -260,6 +273,7 @@ function EditLiquidDialog({ asset, onUpdated }: { asset: LiquidAsset; onUpdated:
 export default function LiquidPage() {
   const [data, setData] = useState<LiquidAssetList | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<LiquidAsset | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -277,15 +291,22 @@ export default function LiquidPage() {
 
   const handleDelete = async (id: number) => {
     await liquidApi.delete(id);
+    setDeleteTarget(null);
     await fetchData();
   };
 
   return (
     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">活钱管理</h2>
+        <AddLiquidDialog onCreated={fetchData} />
+      </div>
+
       {/* Summary Bar */}
       {data && (
         <div className="grid grid-cols-2 gap-4">
-          <Card className="shadow-sm border-t-2 border-t-primary transition-shadow duration-200 hover:shadow-md">
+          <Card className="shadow-sm border-t-2 border-t-bucket-liquid transition-shadow duration-200 hover:shadow-md">
             <CardContent className="pt-5 pb-4">
               <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">总金额</p>
               <div className="text-2xl font-semibold tracking-tight tabular-nums font-serif">
@@ -293,7 +314,7 @@ export default function LiquidPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="shadow-sm border-t-2 border-t-primary transition-shadow duration-200 hover:shadow-md">
+          <Card className="shadow-sm border-t-2 border-t-bucket-liquid transition-shadow duration-200 hover:shadow-md">
             <CardContent className="pt-5 pb-4">
               <p className="text-xs font-medium text-muted-foreground tracking-wide mb-1">预估年收益</p>
               <div className="text-2xl font-semibold tracking-tight tabular-nums font-serif">
@@ -303,12 +324,6 @@ export default function LiquidPage() {
           </Card>
         </div>
       )}
-
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">活钱管理</h2>
-        <AddLiquidDialog onCreated={fetchData} />
-      </div>
 
       {/* Table */}
       {loading ? (
@@ -359,7 +374,7 @@ export default function LiquidPage() {
                         variant="ghost"
                         size="sm"
                         className="text-destructive hover:text-destructive"
-                        onClick={() => handleDelete(asset.id)}
+                        onClick={() => setDeleteTarget(asset)}
                       >
                         删除
                       </Button>
@@ -378,6 +393,27 @@ export default function LiquidPage() {
           </Table>
         </div>
       )}
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>确认删除</AlertDialogTitle>
+            <AlertDialogDescription>
+              确认删除「{deleteTarget?.name}」？此操作不可恢复。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => deleteTarget && handleDelete(deleteTarget.id)}
+            >
+              确认删除
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
