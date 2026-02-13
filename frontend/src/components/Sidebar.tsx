@@ -99,14 +99,15 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
   };
 
   const activeLinkClass =
-    "bg-sidebar-accent text-primary font-medium border-l-3 border-primary -ml-0.5";
+    "bg-sidebar-accent text-primary font-medium";
   const inactiveLinkClass =
     "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground";
 
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-30 flex flex-col border-r bg-sidebar text-sidebar-foreground transition-[width] duration-200",
+        "fixed inset-y-0 left-0 z-30 flex flex-col border-r bg-sidebar text-sidebar-foreground transition-[width] duration-300 ease-out",
+        "border-l-2 border-l-primary",
         collapsed ? "w-16" : "w-60"
       )}
     >
@@ -122,7 +123,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <span className="text-sm font-bold tracking-wide text-primary">
               FolioPal
             </span>
-            <span className="text-[10px] text-sidebar-foreground/50">聚宝</span>
+            <span className="text-[10px] text-sidebar-foreground/50 font-serif">聚宝</span>
           </div>
         )}
       </div>
@@ -133,7 +134,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         <Link
           to="/dashboard"
           className={cn(
-            "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-150",
+            "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-300 ease-out",
             location.pathname === "/dashboard"
               ? activeLinkClass
               : inactiveLinkClass
@@ -145,7 +146,14 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
               location.pathname === "/dashboard" && "text-primary"
             )}
           />
-          {!collapsed && <span className="truncate">资产总览</span>}
+          {!collapsed && (
+            <span className="truncate flex items-center gap-2">
+              {location.pathname === "/dashboard" && (
+                <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+              )}
+              资产总览
+            </span>
+          )}
         </Link>
 
         {/* Bucket groups */}
@@ -162,7 +170,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 <button
                   onClick={() => navigate(group.mainPath)}
                   className={cn(
-                    "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-150",
+                    "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-300 ease-out",
                     groupActive ? activeLinkClass : inactiveLinkClass
                   )}
                 >
@@ -178,7 +186,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 <button
                   onClick={() => toggleGroup(group.prefix)}
                   className={cn(
-                    "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-150",
+                    "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-300 ease-out",
                     groupActive
                       ? "text-primary font-medium"
                       : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
@@ -190,12 +198,12 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                       groupActive && "text-primary"
                     )}
                   />
-                  <span className="truncate flex-1 text-left">
+                  <span className="truncate flex-1 text-left tracking-wider">
                     {group.label}
                   </span>
                   <ChevronDown
                     className={cn(
-                      "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
+                      "h-3.5 w-3.5 shrink-0 transition-transform duration-300 ease-out",
                       expanded && "rotate-180"
                     )}
                   />
@@ -212,11 +220,16 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                         key={child.path}
                         to={child.path}
                         className={cn(
-                          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-150",
+                          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-300 ease-out",
                           childActive ? activeLinkClass : inactiveLinkClass
                         )}
                       >
-                        <span className="truncate">{child.label}</span>
+                        <span className="truncate flex items-center gap-2">
+                          {childActive && (
+                            <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                          )}
+                          {child.label}
+                        </span>
                       </Link>
                     );
                   })}
@@ -233,7 +246,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         <Link
           to="/data"
           className={cn(
-            "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-150",
+            "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-300 ease-out",
             location.pathname === "/data" ? activeLinkClass : inactiveLinkClass
           )}
         >
@@ -243,15 +256,22 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
               location.pathname === "/data" && "text-primary"
             )}
           />
-          {!collapsed && <span className="truncate">数据管理</span>}
+          {!collapsed && (
+            <span className="truncate flex items-center gap-2">
+              {location.pathname === "/data" && (
+                <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+              )}
+              数据管理
+            </span>
+          )}
         </Link>
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-sidebar-border px-2 py-3 space-y-0.5">
+      <div className="border-t border-sidebar-border/60 px-2 py-3 space-y-0.5">
         <button
           onClick={toggleDark}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-all duration-150"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-all duration-300 ease-out"
         >
           <Moon className="h-4 w-4 shrink-0 dark:hidden" />
           <Sun className="hidden h-4 w-4 shrink-0 dark:block" />
@@ -259,7 +279,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </button>
         <button
           onClick={onToggle}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-all duration-150"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-all duration-300 ease-out"
         >
           {collapsed ? (
             <PanelLeft className="h-4 w-4 shrink-0" />
