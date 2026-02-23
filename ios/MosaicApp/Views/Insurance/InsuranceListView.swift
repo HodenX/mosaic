@@ -54,10 +54,10 @@ struct InsuranceListView: View {
             List {
                 if let s = vm.summary {
                     Section {
-                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                             SummaryCard(title: "保单数", value: "\(s.activeCount)")
-                            SummaryCard(title: "年缴保费", value: Formatters.currency(s.totalAnnualPremium))
                             SummaryCard(title: "覆盖人数", value: "\(s.coveredPersons)")
+                            SummaryCard(title: "年缴保费", value: Formatters.currency(s.totalAnnualPremium))
                         }
                     }
                     .listRowInsets(EdgeInsets())

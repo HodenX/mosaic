@@ -16,6 +16,8 @@ struct SummaryCard: View {
                 .font(.title3.bold())
                 .monospacedDigit()
                 .foregroundStyle(color)
+                .minimumScaleFactor(0.7)
+                .lineLimit(1)
             if let subtitle {
                 Text(subtitle)
                     .font(.caption2)

@@ -63,16 +63,24 @@ struct DiagnosisView: View {
         case .bool(let b):
             AnyView(Text(b ? "是" : "否").font(.subheadline))
         case .array(let arr):
-            AnyView(VStack(alignment: .leading, spacing: 4) {
+            AnyView(VStack(alignment: .leading, spacing: 8) {
                 ForEach(Array(arr.enumerated()), id: \.offset) { _, item in
-                    renderValue(item)
+                    if case .dictionary = item {
+                        VStack(alignment: .leading, spacing: 4) { renderValue(item) }
+                            .padding(8)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.secondary.opacity(0.06))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    } else {
+                        renderValue(item)
+                    }
                 }
             })
         case .dictionary(let dict):
-            AnyView(VStack(alignment: .leading, spacing: 4) {
+            AnyView(VStack(alignment: .leading, spacing: 8) {
                 ForEach(dict.sorted(by: { $0.key < $1.key }), id: \.key) { key, val in
-                    HStack(alignment: .top) {
-                        Text(formatKey(key)).font(.caption.bold()).frame(width: 80, alignment: .leading)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(formatKey(key)).font(.caption).foregroundStyle(.secondary)
                         renderValue(val)
                     }
                 }
@@ -83,6 +91,26 @@ struct DiagnosisView: View {
     }
 
     private func formatKey(_ key: String) -> String {
-        key.replacingOccurrences(of: "_", with: " ").capitalized
+        let map: [String: String] = [
+            "report_date": "报告日期", "family_asset_overview": "家庭资产总览",
+            "market_snapshot": "市场快照", "holdings": "持仓分析",
+            "exposure_analysis": "风险暴露", "position_management": "仓位管理",
+            "diagnosis": "诊断结论", "issues_summary": "问题汇总",
+            "recommendations": "优化建议", "disclaimer": "免责声明",
+            "total_assets": "总资产", "total_return": "总收益",
+            "total_return_pct": "总收益率", "buckets": "四笔钱",
+            "liquid": "活钱", "stable": "稳钱", "growth": "长钱", "insurance": "保险",
+            "label": "类别", "amount": "金额", "pct_of_total": "占比",
+            "annual_income_est": "预估年收益", "count": "数量",
+            "market_value": "市值", "cost": "成本", "pnl": "盈亏",
+            "pnl_pct": "盈亏比例", "fund_count": "基金数量",
+            "severity": "严重程度", "issue": "问题", "detail": "详情",
+            "findings": "发现", "suggestion": "建议", "action": "操作建议",
+            "priority": "优先级", "category": "分类", "score": "评分",
+            "status": "状态", "name": "名称", "description": "描述",
+            "active_count": "有效保单数", "annual_premium": "年缴保费",
+            "covered_persons": "覆盖人数"
+        ]
+        return map[key] ?? key.replacingOccurrences(of: "_", with: " ").capitalized
     }
 }

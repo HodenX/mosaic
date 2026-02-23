@@ -57,6 +57,7 @@
 		C14F0F056EA264CACCD683B3 /* HoldingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6916991225E2C91949296CD /* HoldingsViewModel.swift */; };
 		C1B6BCC969F203FC56B61387 /* HoldingsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBAEA19535578D1DB460D76 /* HoldingsService.swift */; };
 		C47B0D7A33880C61DFEAAD00 /* OverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3373B9D1398E9DAF731569 /* OverviewView.swift */; };
+		C57B1B0B0A893E7633491037 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74CC5AF086CE04F53473DE9A /* Assets.xcassets */; };
 		C857463A018201A60516D238 /* FundDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B626E5317900E90876D6D6 /* FundDetailView.swift */; };
 		D57CF3D906ECC1206DB5DBB5 /* StableService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76FCCEA820CE35E6C3E0D4C7 /* StableService.swift */; };
 		D5D279AC49E71DA283D840B0 /* Insurance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8890FC8D94D7A23FE359DDB8 /* Insurance.swift */; };
@@ -96,6 +97,7 @@
 		6A453D75595F4B86B5EFBD22 /* DiagnosisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosisView.swift; sourceTree = "<group>"; };
 		735E07102A5E9674726E5F56 /* PnLText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PnLText.swift; sourceTree = "<group>"; };
 		73EBE8D3F69045700898C0C2 /* Diagnosis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diagnosis.swift; sourceTree = "<group>"; };
+		74CC5AF086CE04F53473DE9A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		76FCCEA820CE35E6C3E0D4C7 /* StableService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StableService.swift; sourceTree = "<group>"; };
 		776C7F8CE984B7135F52BA10 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7C597A2D0A46770C05C6B33E /* DataManagementViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagementViewModel.swift; sourceTree = "<group>"; };
@@ -353,6 +355,7 @@
 				986F11A009E3996616F83110 /* Utilities */,
 				3571556478A9374E99599509 /* ViewModels */,
 				7008D1C15707FB1F912B0C2E /* Views */,
+				74CC5AF086CE04F53473DE9A /* Assets.xcassets */,
 				776C7F8CE984B7135F52BA10 /* ContentView.swift */,
 				CA80D6629ADC2DF1819874B6 /* MosaicApp.swift */,
 			);
@@ -434,6 +437,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C57B1B0B0A893E7633491037 /* Assets.xcassets in Resources */,
 				9224C0B64328FF38A1972075 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

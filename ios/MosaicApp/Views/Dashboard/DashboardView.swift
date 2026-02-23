@@ -16,18 +16,33 @@ struct DashboardView: View {
                             totalAssetCard(summary)
 
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                                BucketSummaryCard(title: "活钱", icon: "drop.fill", color: .bucketLiquid,
-                                    amount: summary.buckets.liquid.amount,
-                                    subtitle: "\(summary.buckets.liquid.count) 笔")
-                                BucketSummaryCard(title: "稳钱", icon: "building.columns.fill", color: .bucketStable,
-                                    amount: summary.buckets.stable.amount,
-                                    subtitle: "\(summary.buckets.stable.count) 笔")
-                                BucketSummaryCard(title: "长钱", icon: "chart.line.uptrend.xyaxis", color: .bucketGrowth,
-                                    amount: summary.buckets.growth.totalAmount,
-                                    subtitle: "\(summary.buckets.growth.pnlPercent >= 0 ? "+" : "")\(Formatters.currency(summary.buckets.growth.totalPnl))")
-                                BucketSummaryCard(title: "保险", icon: "shield.fill", color: .bucketInsurance,
-                                    amount: summary.buckets.insurance.annualPremium,
-                                    subtitle: "\(summary.buckets.insurance.activeCount) 份保单")
+                                NavigationLink { LiquidListView() } label: {
+                                    BucketSummaryCard(title: "活钱", icon: "drop.fill", color: .bucketLiquid,
+                                        amount: summary.buckets.liquid.amount,
+                                        subtitle: "\(summary.buckets.liquid.count) 笔")
+                                }
+                                .buttonStyle(.plain)
+
+                                NavigationLink { StableListView() } label: {
+                                    BucketSummaryCard(title: "稳钱", icon: "building.columns.fill", color: .bucketStable,
+                                        amount: summary.buckets.stable.amount,
+                                        subtitle: "\(summary.buckets.stable.count) 笔")
+                                }
+                                .buttonStyle(.plain)
+
+                                NavigationLink { OverviewView() } label: {
+                                    BucketSummaryCard(title: "长钱", icon: "chart.line.uptrend.xyaxis", color: .bucketGrowth,
+                                        amount: summary.buckets.growth.totalAmount,
+                                        subtitle: "\(summary.buckets.growth.pnlPercent >= 0 ? "+" : "")\(Formatters.currency(summary.buckets.growth.totalPnl))")
+                                }
+                                .buttonStyle(.plain)
+
+                                NavigationLink { InsuranceListView() } label: {
+                                    BucketSummaryCard(title: "保险", icon: "shield.fill", color: .bucketInsurance,
+                                        amount: summary.buckets.insurance.annualPremium,
+                                        subtitle: "\(summary.buckets.insurance.activeCount) 份保单")
+                                }
+                                .buttonStyle(.plain)
                             }
 
                             AssetTrendChart(data: vm.trend, selectedDays: Binding(
