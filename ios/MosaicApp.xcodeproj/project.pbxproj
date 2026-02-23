@@ -8,8 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		0F050146A0CE9FB8B2BAB947 /* PnLText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735E07102A5E9674726E5F56 /* PnLText.swift */; };
+		130EF1F6A3847FD04938291D /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E353696B8E1484DF37F2FE2 /* DashboardViewModel.swift */; };
 		199A6EAD82BDF107C70E181E /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4E566D08A76351BE3DBFF0 /* APIClient.swift */; };
 		28303748AF9E8BB03DCB792E /* PercentText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C6A30D41B5D22E9F16AA4EC /* PercentText.swift */; };
+		2ACFFBE3D6D5A1D59D793438 /* LiquidViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1D43C3E262DDAD6B711406 /* LiquidViewModel.swift */; };
 		2C26CBAA59E8657241156DBE /* LiquidService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1CF1228A6BACEB53B553CF /* LiquidService.swift */; };
 		2D8C0C9B6167222FAE7F05C3 /* DiagnosisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD7E1CF56D596609F6DA885 /* DiagnosisService.swift */; };
 		33AA976CB8DDB57546563E57 /* Holding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 209B0667BA223F42A83DE628 /* Holding.swift */; };
@@ -20,36 +22,44 @@
 		3DC780521C5CB48377FFA250 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAF6212768AAA7A384704E20 /* AppConfig.swift */; };
 		44C7B04381D01A8E238755BC /* FundsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DCD0C1B4117B387AEF184E5 /* FundsService.swift */; };
 		499E07B36119068B04571644 /* Dashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCD532D31F8073EF3CCA5F1D /* Dashboard.swift */; };
+		525CA5BFD5F784062B440779 /* ReminderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DB2140B88D1DF00257CCD3 /* ReminderListView.swift */; };
 		5433E3BD84F920AEB867F2C6 /* MosaicApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA80D6629ADC2DF1819874B6 /* MosaicApp.swift */; };
 		5880E5FC92A89BEB3E4E5A96 /* PortfolioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360653C84BDB4C1C39DA4750 /* PortfolioService.swift */; };
 		646699332E0B891FF5133C34 /* PositionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61635EEBB211456AF4D939C1 /* PositionService.swift */; };
+		77F1B941B9FD2B360D4FAF05 /* AssetTrendChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF937198B65B085950F128B5 /* AssetTrendChart.swift */; };
+		81F4C2256445942806553520 /* LiquidFormSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB07EB8BCC4C68130E932460 /* LiquidFormSheet.swift */; };
 		8B842838846A7FF660C5DBB0 /* Fund.swift in Sources */ = {isa = PBXBuildFile; fileRef = F220220229B909610C38E38B /* Fund.swift */; };
 		90C289EE4243822989D63EF3 /* Diagnosis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73EBE8D3F69045700898C0C2 /* Diagnosis.swift */; };
 		9224C0B64328FF38A1972075 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 369F2B5909BBACB51E23B8F9 /* Assets.xcassets */; };
 		9E077530E542F6589E143311 /* ServerConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4D67542D41D3DAEA2EFAD1 /* ServerConfigView.swift */; };
 		A3AEA5A394885653D426F26C /* CurrencyText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8478428637AA7FB26A3494B3 /* CurrencyText.swift */; };
 		ABBE667CCD5ECF1278592C90 /* InsuranceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AAA573BEE550FF6C6268670 /* InsuranceService.swift */; };
+		BB46FEE3F00B331A32DE5E1A /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA2ED5273A38C8E6F364C8F /* DashboardView.swift */; };
 		C1B6BCC969F203FC56B61387 /* HoldingsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBAEA19535578D1DB460D76 /* HoldingsService.swift */; };
 		D57CF3D906ECC1206DB5DBB5 /* StableService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76FCCEA820CE35E6C3E0D4C7 /* StableService.swift */; };
 		D5D279AC49E71DA283D840B0 /* Insurance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8890FC8D94D7A23FE359DDB8 /* Insurance.swift */; };
 		DD70E59723868F1F43C89586 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = F074521647EB31C72AF84674 /* Position.swift */; };
 		E2E2C650C4BD53D8B74369BF /* SummaryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD90F85A801BEC5DC07B274 /* SummaryCard.swift */; };
+		E584859D8469669C3070D08A /* LiquidListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271A03A83BE605BBBDB46A12 /* LiquidListView.swift */; };
 		E5C70EE4C416765EA30DAC6A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F945F639200D01EDF80986A3 /* SettingsView.swift */; };
 		E686C303A45F5AFF93FA1D78 /* LiquidAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2565EDB757A2088D0FA7F83B /* LiquidAsset.swift */; };
 		E6EE56D0E594302E3EFE4A52 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E6081421CD8F5D64A6367B /* Colors.swift */; };
 		E83CD0514E151F997AD33424 /* Portfolio.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA59DE303C27F41692EE93C1 /* Portfolio.swift */; };
 		F2D4F63AD4E07B9E3EE1903E /* StableAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B1ECB869155CE212B08EFB /* StableAsset.swift */; };
+		FA70AB8F157FD44EB08A7013 /* BucketSummaryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C814D7099B24D5BE61CB1136 /* BucketSummaryCard.swift */; };
 		FAC25C99CC99CA892B42AE78 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6329B4121DBB5DAAB26C5896 /* EmptyStateView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		209B0667BA223F42A83DE628 /* Holding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Holding.swift; sourceTree = "<group>"; };
 		2565EDB757A2088D0FA7F83B /* LiquidAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidAsset.swift; sourceTree = "<group>"; };
+		271A03A83BE605BBBDB46A12 /* LiquidListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidListView.swift; sourceTree = "<group>"; };
 		2CD7E1CF56D596609F6DA885 /* DiagnosisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosisService.swift; sourceTree = "<group>"; };
 		360653C84BDB4C1C39DA4750 /* PortfolioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioService.swift; sourceTree = "<group>"; };
 		369F2B5909BBACB51E23B8F9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4011C5909BFF17E074B76A41 /* MosaicApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MosaicApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AAA573BEE550FF6C6268670 /* InsuranceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsuranceService.swift; sourceTree = "<group>"; };
+		59DB2140B88D1DF00257CCD3 /* ReminderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderListView.swift; sourceTree = "<group>"; };
 		5A1CF1228A6BACEB53B553CF /* LiquidService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidService.swift; sourceTree = "<group>"; };
 		5DCD0C1B4117B387AEF184E5 /* FundsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundsService.swift; sourceTree = "<group>"; };
 		61635EEBB211456AF4D939C1 /* PositionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionService.swift; sourceTree = "<group>"; };
@@ -61,18 +71,24 @@
 		76FCCEA820CE35E6C3E0D4C7 /* StableService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StableService.swift; sourceTree = "<group>"; };
 		776C7F8CE984B7135F52BA10 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7D4D67542D41D3DAEA2EFAD1 /* ServerConfigView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfigView.swift; sourceTree = "<group>"; };
+		7DA2ED5273A38C8E6F364C8F /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		8478428637AA7FB26A3494B3 /* CurrencyText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyText.swift; sourceTree = "<group>"; };
 		8890FC8D94D7A23FE359DDB8 /* Insurance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Insurance.swift; sourceTree = "<group>"; };
+		8E353696B8E1484DF37F2FE2 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		9C6A30D41B5D22E9F16AA4EC /* PercentText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentText.swift; sourceTree = "<group>"; };
+		9E1D43C3E262DDAD6B711406 /* LiquidViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidViewModel.swift; sourceTree = "<group>"; };
 		AF4E566D08A76351BE3DBFF0 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		B48D0A596D12338978E93E2C /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		BAF6212768AAA7A384704E20 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		BB07EB8BCC4C68130E932460 /* LiquidFormSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidFormSheet.swift; sourceTree = "<group>"; };
 		C0464301A6A780DF62E06625 /* DashboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardService.swift; sourceTree = "<group>"; };
+		C814D7099B24D5BE61CB1136 /* BucketSummaryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketSummaryCard.swift; sourceTree = "<group>"; };
 		CA80D6629ADC2DF1819874B6 /* MosaicApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MosaicApp.swift; sourceTree = "<group>"; };
 		CBD90F85A801BEC5DC07B274 /* SummaryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryCard.swift; sourceTree = "<group>"; };
 		E1B1ECB869155CE212B08EFB /* StableAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StableAsset.swift; sourceTree = "<group>"; };
 		EA59DE303C27F41692EE93C1 /* Portfolio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Portfolio.swift; sourceTree = "<group>"; };
 		ECBAEA19535578D1DB460D76 /* HoldingsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoldingsService.swift; sourceTree = "<group>"; };
+		EF937198B65B085950F128B5 /* AssetTrendChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetTrendChart.swift; sourceTree = "<group>"; };
 		F074521647EB31C72AF84674 /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
 		F220220229B909610C38E38B /* Fund.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fund.swift; sourceTree = "<group>"; };
 		F945F639200D01EDF80986A3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -94,6 +110,17 @@
 				E1B1ECB869155CE212B08EFB /* StableAsset.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		1DEF20D559B5749D3DDBAD0B /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				EF937198B65B085950F128B5 /* AssetTrendChart.swift */,
+				C814D7099B24D5BE61CB1136 /* BucketSummaryCard.swift */,
+				7DA2ED5273A38C8E6F364C8F /* DashboardView.swift */,
+				59DB2140B88D1DF00257CCD3 /* ReminderListView.swift */,
+			);
+			path = Dashboard;
 			sourceTree = "<group>";
 		};
 		25141DCAD819125E9DBBB490 = {
@@ -120,6 +147,15 @@
 			path = Config;
 			sourceTree = "<group>";
 		};
+		3571556478A9374E99599509 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				8E353696B8E1484DF37F2FE2 /* DashboardViewModel.swift */,
+				9E1D43C3E262DDAD6B711406 /* LiquidViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		3EB8118ABB158D1C82E1A35D /* Shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -144,6 +180,8 @@
 		7008D1C15707FB1F912B0C2E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				1DEF20D559B5749D3DDBAD0B /* Dashboard */,
+				EB3FA8FF52D1D73F588CDEF9 /* Liquid */,
 				BAFF224F0940EB538F7BFF0C /* Settings */,
 				3EB8118ABB158D1C82E1A35D /* Shared */,
 			);
@@ -193,11 +231,21 @@
 				288592295829EF4D9D8A972D /* Resources */,
 				A38F94E6BEDADFB54AAD5055 /* Services */,
 				986F11A009E3996616F83110 /* Utilities */,
+				3571556478A9374E99599509 /* ViewModels */,
 				7008D1C15707FB1F912B0C2E /* Views */,
 				776C7F8CE984B7135F52BA10 /* ContentView.swift */,
 				CA80D6629ADC2DF1819874B6 /* MosaicApp.swift */,
 			);
 			path = MosaicApp;
+			sourceTree = "<group>";
+		};
+		EB3FA8FF52D1D73F588CDEF9 /* Liquid */ = {
+			isa = PBXGroup;
+			children = (
+				BB07EB8BCC4C68130E932460 /* LiquidFormSheet.swift */,
+				271A03A83BE605BBBDB46A12 /* LiquidListView.swift */,
+			);
+			path = Liquid;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -267,11 +315,15 @@
 			files = (
 				199A6EAD82BDF107C70E181E /* APIClient.swift in Sources */,
 				3DC780521C5CB48377FFA250 /* AppConfig.swift in Sources */,
+				77F1B941B9FD2B360D4FAF05 /* AssetTrendChart.swift in Sources */,
+				FA70AB8F157FD44EB08A7013 /* BucketSummaryCard.swift in Sources */,
 				E6EE56D0E594302E3EFE4A52 /* Colors.swift in Sources */,
 				3C6CC5BED3D700649163981E /* ContentView.swift in Sources */,
 				A3AEA5A394885653D426F26C /* CurrencyText.swift in Sources */,
 				499E07B36119068B04571644 /* Dashboard.swift in Sources */,
 				357217B98CFF897C843E9896 /* DashboardService.swift in Sources */,
+				BB46FEE3F00B331A32DE5E1A /* DashboardView.swift in Sources */,
+				130EF1F6A3847FD04938291D /* DashboardViewModel.swift in Sources */,
 				90C289EE4243822989D63EF3 /* Diagnosis.swift in Sources */,
 				2D8C0C9B6167222FAE7F05C3 /* DiagnosisService.swift in Sources */,
 				FAC25C99CC99CA892B42AE78 /* EmptyStateView.swift in Sources */,
@@ -283,7 +335,10 @@
 				D5D279AC49E71DA283D840B0 /* Insurance.swift in Sources */,
 				ABBE667CCD5ECF1278592C90 /* InsuranceService.swift in Sources */,
 				E686C303A45F5AFF93FA1D78 /* LiquidAsset.swift in Sources */,
+				81F4C2256445942806553520 /* LiquidFormSheet.swift in Sources */,
+				E584859D8469669C3070D08A /* LiquidListView.swift in Sources */,
 				2C26CBAA59E8657241156DBE /* LiquidService.swift in Sources */,
+				2ACFFBE3D6D5A1D59D793438 /* LiquidViewModel.swift in Sources */,
 				3CF9B65E38C73E04DBF4A5BA /* LoadingView.swift in Sources */,
 				5433E3BD84F920AEB867F2C6 /* MosaicApp.swift in Sources */,
 				28303748AF9E8BB03DCB792E /* PercentText.swift in Sources */,
@@ -292,6 +347,7 @@
 				5880E5FC92A89BEB3E4E5A96 /* PortfolioService.swift in Sources */,
 				DD70E59723868F1F43C89586 /* Position.swift in Sources */,
 				646699332E0B891FF5133C34 /* PositionService.swift in Sources */,
+				525CA5BFD5F784062B440779 /* ReminderListView.swift in Sources */,
 				9E077530E542F6589E143311 /* ServerConfigView.swift in Sources */,
 				E5C70EE4C416765EA30DAC6A /* SettingsView.swift in Sources */,
 				F2D4F63AD4E07B9E3EE1903E /* StableAsset.swift in Sources */,
