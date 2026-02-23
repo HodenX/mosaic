@@ -90,18 +90,26 @@ struct StableListView: View {
 
     @ViewBuilder
     private func maturityBadge(_ dateStr: String) -> some View {
-        let df = DateFormatter()
-        let _ = (df.dateFormat = "yyyy-MM-dd")
-        if let date = df.date(from: dateStr) {
-            let days = Calendar.current.dateComponents([.day], from: Date(), to: date).day ?? 0
-            if days <= 0 {
-                Text("已到期").font(.caption2).padding(.horizontal, 6).padding(.vertical, 2)
-                    .background(Color.red.opacity(0.15), in: Capsule()).foregroundStyle(.red)
-            } else if days <= 30 {
-                Text("\(days)天到期").font(.caption2).padding(.horizontal, 6).padding(.vertical, 2)
-                    .background(Color.orange.opacity(0.15), in: Capsule()).foregroundStyle(.orange)
+        if let days = Formatters.daysBetween(from: dateStr) {
+            // days > 0 means the maturity date is in the past (expired)
+            // days < 0 means the maturity date is in the future
+            let daysUntil = -days
+            if daysUntil <= 0 {
+                HStack(spacing: 4) {
+                    Text("已到期")
+                    Text("· \(-daysUntil) 天前")
+                }
+                .font(.caption2).padding(.horizontal, 6).padding(.vertical, 2)
+                .background(Color.danger.opacity(0.15), in: Capsule()).foregroundStyle(Color.danger)
+            } else if daysUntil <= 30 {
+                HStack(spacing: 4) {
+                    Text("剩余 \(daysUntil) 天")
+                }
+                .font(.caption2).padding(.horizontal, 6).padding(.vertical, 2)
+                .background(Color.warning.opacity(0.15), in: Capsule()).foregroundStyle(Color.warning)
             } else {
-                Text("\(dateStr) 到期").font(.caption2).foregroundStyle(.secondary)
+                Text("\(dateStr) 到期 · 剩余 \(daysUntil) 天")
+                    .font(.caption2).foregroundStyle(.secondary)
             }
         }
     }

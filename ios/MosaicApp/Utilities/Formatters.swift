@@ -62,4 +62,27 @@ enum Formatters {
     static func parseDate(_ string: String) -> Date? {
         isoDateFormatter.date(from: string)
     }
+
+    static func daysBetween(from dateString: String, to: Date = Date()) -> Int? {
+        guard let date = isoDateFormatter.date(from: dateString) else { return nil }
+        return Calendar.current.dateComponents([.day], from: date, to: to).day
+    }
+
+    static func relativeDays(_ days: Int) -> String {
+        if days > 0 { return "已过期 \(days) 天" }
+        if days < 0 { return "剩余 \(-days) 天" }
+        return "今天到期"
+    }
+
+    static func platformDisplayName(_ raw: String) -> String {
+        let map: [String: String] = [
+            "alipay": "支付宝", "蚂蚁财富": "支付宝",
+            "tiantian": "天天基金", "天天": "天天基金",
+            "博时 app": "博时基金", "博时app": "博时基金",
+            "eastmoney": "天天基金", "danjuan": "蛋卷基金",
+            "wechat": "微信理财", "jd": "京东金融",
+            "cmb": "招商银行", "icbc": "工商银行",
+        ]
+        return map[raw.lowercased()] ?? map[raw] ?? raw
+    }
 }

@@ -13,7 +13,7 @@ struct PositionGaugeView: View {
                     .stroke(Color.secondary.opacity(0.2), lineWidth: 20)
                     .rotationEffect(.degrees(135))
                 Circle().trim(from: CGFloat(minTarget / 100 * 0.75), to: CGFloat(maxTarget / 100 * 0.75))
-                    .stroke(Color.green.opacity(0.3), lineWidth: 20)
+                    .stroke(Color.jade.opacity(0.2), lineWidth: 20)
                     .rotationEffect(.degrees(135))
                 Circle().trim(from: 0, to: CGFloat(min(ratio, 100) / 100 * 0.75))
                     .stroke(gaugeColor, lineWidth: 20)

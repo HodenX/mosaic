@@ -26,6 +26,9 @@ struct DataManagementView: View {
             ContentUnavailableView("加载失败", systemImage: "wifi.slash",
                 description: Text(error.localizedDescription))
         } else {
+            let funds = uniqueFunds(from: vm.holdings)
+            let staleCount = funds.filter { isStale($0.latestNavDate, threshold: 2) }.count
+
             List {
                 Section {
                     Button {
@@ -45,11 +48,19 @@ struct DataManagementView: View {
                         ProgressView(value: vm.refreshProgress)
                             .tint(.jade)
                     }
+
+                    if staleCount > 0 {
+                        WarningBanner(
+                            message: "\(staleCount) 只基金数据过期",
+                            level: staleCount > 3 ? .danger : .warning
+                        )
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                    }
                 }
 
                 Section("基金数据状态") {
-                    let uniqueFunds = uniqueFunds(from: vm.holdings)
-                    ForEach(uniqueFunds, id: \.fundCode) { h in
+                    ForEach(funds, id: \.fundCode) { h in
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(h.fundName).font(.subheadline)
@@ -61,7 +72,7 @@ struct DataManagementView: View {
                                     Text(String(format: "%.4f", nav)).font(.subheadline).monospacedDigit()
                                 }
                                 if let date = h.latestNavDate {
-                                    Text(date).font(.caption2).foregroundStyle(.secondary)
+                                    navDateLabel(date)
                                 }
                             }
                             Button {
@@ -80,6 +91,24 @@ struct DataManagementView: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func navDateLabel(_ date: String) -> some View {
+        if let days = Formatters.daysBetween(from: date), days > 2 {
+            HStack(spacing: 2) {
+                Text(date).font(.caption2)
+                Text("(过期)").font(.caption2)
+            }
+            .foregroundStyle(days > 7 ? Color.danger : Color.stale)
+        } else {
+            Text(date).font(.caption2).foregroundStyle(.secondary)
+        }
+    }
+
+    private func isStale(_ date: String?, threshold: Int) -> Bool {
+        guard let date, let days = Formatters.daysBetween(from: date) else { return false }
+        return days > threshold
     }
 
     private func uniqueFunds(from holdings: [HoldingResponse]) -> [HoldingResponse] {

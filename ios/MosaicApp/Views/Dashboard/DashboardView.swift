@@ -12,35 +12,39 @@ struct DashboardView: View {
                     LoadingView()
                 } else if let summary = vm.summary {
                     ScrollView {
-                        VStack(spacing: 16) {
+                        VStack(spacing: 12) {
                             totalAssetCard(summary)
 
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                                 NavigationLink { LiquidListView() } label: {
                                     BucketSummaryCard(title: "活钱", icon: "drop.fill", color: .bucketLiquid,
                                         amount: summary.buckets.liquid.amount,
-                                        subtitle: "\(summary.buckets.liquid.count) 笔")
+                                        subtitle: "\(summary.buckets.liquid.count) 笔",
+                                        percentage: summary.totalAssets > 0 ? summary.buckets.liquid.amount / summary.totalAssets * 100 : nil)
                                 }
                                 .buttonStyle(.plain)
 
                                 NavigationLink { StableListView() } label: {
                                     BucketSummaryCard(title: "稳钱", icon: "building.columns.fill", color: .bucketStable,
                                         amount: summary.buckets.stable.amount,
-                                        subtitle: "\(summary.buckets.stable.count) 笔")
+                                        subtitle: "\(summary.buckets.stable.count) 笔",
+                                        percentage: summary.totalAssets > 0 ? summary.buckets.stable.amount / summary.totalAssets * 100 : nil)
                                 }
                                 .buttonStyle(.plain)
 
                                 NavigationLink { OverviewView() } label: {
                                     BucketSummaryCard(title: "长钱", icon: "chart.line.uptrend.xyaxis", color: .bucketGrowth,
                                         amount: summary.buckets.growth.totalAmount,
-                                        subtitle: "\(summary.buckets.growth.pnlPercent >= 0 ? "+" : "")\(Formatters.currency(summary.buckets.growth.totalPnl))")
+                                        subtitle: "\(summary.buckets.growth.pnlPercent >= 0 ? "+" : "")\(Formatters.currency(summary.buckets.growth.totalPnl))",
+                                        percentage: summary.totalAssets > 0 ? summary.buckets.growth.totalAmount / summary.totalAssets * 100 : nil)
                                 }
                                 .buttonStyle(.plain)
 
                                 NavigationLink { InsuranceListView() } label: {
                                     BucketSummaryCard(title: "保险", icon: "shield.fill", color: .bucketInsurance,
                                         amount: summary.buckets.insurance.annualPremium,
-                                        subtitle: "\(summary.buckets.insurance.activeCount) 份保单")
+                                        subtitle: "\(summary.buckets.insurance.activeCount) 份保单",
+                                        percentage: summary.totalAssets > 0 ? summary.buckets.insurance.annualPremium / summary.totalAssets * 100 : nil)
                                 }
                                 .buttonStyle(.plain)
                             }
@@ -56,6 +60,7 @@ struct DashboardView: View {
                             }
                         }
                         .padding()
+                        .padding(.bottom, 20)
                     }
                     .refreshable { await vm.loadAll() }
                 } else if let error = vm.error {
@@ -82,6 +87,11 @@ struct DashboardView: View {
             HStack(spacing: 16) {
                 PnLText(value: s.totalReturn, font: .callout)
                 PercentText(value: s.totalReturnPercent, font: .callout)
+            }
+            if let vm, let lastDate = vm.trend.last?.date {
+                Text("更新于 \(lastDate)")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
             }
         }
         .frame(maxWidth: .infinity)

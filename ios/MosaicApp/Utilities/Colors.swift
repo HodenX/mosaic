@@ -12,6 +12,13 @@ extension Color {
     static let bucketGrowth = Color.orange
     static let bucketInsurance = Color.purple
 
+    // 语义颜色
+    static let warning = Color.orange
+    static let danger = Color.red
+    static let success = Color.green
+    static let info = Color.blue
+    static let stale = Color.orange
+
     // 盈亏颜色
     static let profit = Color.red       // 中国市场：红涨
     static let loss = Color.green       // 中国市场：绿跌

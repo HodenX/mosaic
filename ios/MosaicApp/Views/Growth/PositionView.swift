@@ -25,7 +25,7 @@ struct PositionView: View {
                                     }
                                     Spacer()
                                     VStack(alignment: .trailing) {
-                                        Text("可用资金").font(.caption).foregroundStyle(.secondary)
+                                        Text("可用资金（预算-已投资）").font(.caption).foregroundStyle(.secondary)
                                         CurrencyText(value: status.availableCash, font: .headline)
                                     }
                                 }
@@ -60,6 +60,10 @@ struct PositionView: View {
                                     }.padding(.vertical, 4)
                                 }
                             }.padding().background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+
+                            Text("基于当前仓位和启用策略，生成买入/卖出/持有建议")
+                                .font(.caption).foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
 
                             Button { showSuggestion = true; Task { await vm.loadSuggestion() } } label: {
                                 Label("获取策略建议", systemImage: "lightbulb").frame(maxWidth: .infinity)

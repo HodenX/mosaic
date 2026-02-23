@@ -7,11 +7,16 @@ struct BucketSummaryCard: View {
     let color: Color
     let amount: Double
     let subtitle: String
+    var percentage: Double? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label(title, systemImage: icon).font(.caption).foregroundStyle(color)
-            CurrencyText(value: amount, font: .headline)
+            CurrencyText(value: amount, useWan: true, font: .headline)
+            if let percentage {
+                Text(Formatters.percent(percentage))
+                    .font(.caption2).monospacedDigit().foregroundStyle(.secondary)
+            }
             Text(subtitle).font(.caption2).foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

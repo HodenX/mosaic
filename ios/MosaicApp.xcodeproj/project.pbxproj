@@ -63,6 +63,7 @@
 		D5D279AC49E71DA283D840B0 /* Insurance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8890FC8D94D7A23FE359DDB8 /* Insurance.swift */; };
 		DD70E59723868F1F43C89586 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = F074521647EB31C72AF84674 /* Position.swift */; };
 		E2E2C650C4BD53D8B74369BF /* SummaryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD90F85A801BEC5DC07B274 /* SummaryCard.swift */; };
+		WARN1NG8ANN3R000000000002 /* WarningBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = WARN1NG8ANN3R000000000001 /* WarningBanner.swift */; };
 		E584859D8469669C3070D08A /* LiquidListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271A03A83BE605BBBDB46A12 /* LiquidListView.swift */; };
 		E5C70EE4C416765EA30DAC6A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F945F639200D01EDF80986A3 /* SettingsView.swift */; };
 		E686C303A45F5AFF93FA1D78 /* LiquidAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2565EDB757A2088D0FA7F83B /* LiquidAsset.swift */; };
@@ -126,6 +127,7 @@
 		CA31E84449895BCFBC708543 /* PositionGaugeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionGaugeView.swift; sourceTree = "<group>"; };
 		CA80D6629ADC2DF1819874B6 /* MosaicApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MosaicApp.swift; sourceTree = "<group>"; };
 		CBD90F85A801BEC5DC07B274 /* SummaryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryCard.swift; sourceTree = "<group>"; };
+		WARN1NG8ANN3R000000000001 /* WarningBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningBanner.swift; sourceTree = "<group>"; };
 		CE42FF2893E449F88BA7248A /* InsuranceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsuranceListView.swift; sourceTree = "<group>"; };
 		D40789E6B173D0D5409BEC46 /* StableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StableViewModel.swift; sourceTree = "<group>"; };
 		D67AC20C59542AA93E10E945 /* DiagnosisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosisViewModel.swift; sourceTree = "<group>"; };
@@ -242,6 +244,7 @@
 				9C6A30D41B5D22E9F16AA4EC /* PercentText.swift */,
 				735E07102A5E9674726E5F56 /* PnLText.swift */,
 				CBD90F85A801BEC5DC07B274 /* SummaryCard.swift */,
+				WARN1NG8ANN3R000000000001 /* WarningBanner.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -513,6 +516,7 @@
 				8A625179E904DFCF45142A29 /* StableViewModel.swift in Sources */,
 				38A7F492AE0D8DB385F018D2 /* StrategyView.swift in Sources */,
 				E2E2C650C4BD53D8B74369BF /* SummaryCard.swift in Sources */,
+				WARN1NG8ANN3R000000000002 /* WarningBanner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

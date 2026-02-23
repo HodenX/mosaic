@@ -8,13 +8,17 @@ class FundDetailViewModel {
     var navHistory: [NavHistory] = []
     var allocation: FundAllocation = [:]
     var topHoldings: [TopHolding] = []
+    var myHoldings: [HoldingResponse] = []
     var isLoading = false
     var error: Error?
     private let service: FundsService
+    private let holdingsService: HoldingsService
     let fundCode: String
 
     init(api: APIClient, fundCode: String) {
-        self.service = FundsService(api: api); self.fundCode = fundCode
+        self.service = FundsService(api: api)
+        self.holdingsService = HoldingsService(api: api)
+        self.fundCode = fundCode
     }
 
     func load() async {
@@ -24,12 +28,24 @@ class FundDetailViewModel {
         async let n = service.navHistory(code: fundCode)
         async let a = service.allocation(code: fundCode)
         async let t = service.topHoldings(code: fundCode)
+        async let h = holdingsService.list()
         do {
             fundInfo = try await i; navHistory = try await n
             allocation = try await a; topHoldings = try await t
+            let allHoldings = try await h
+            myHoldings = allHoldings.filter { $0.fundCode == fundCode }
         } catch {
             self.error = error
         }
         isLoading = false
+    }
+
+    func loadNavHistory(days: Int) async {
+        let calendar = Calendar.current
+        let startDate = calendar.date(byAdding: .day, value: -days, to: Date())!
+        let startStr = Formatters.isoDate(startDate)
+        do {
+            navHistory = try await service.navHistory(code: fundCode, start: startStr)
+        } catch {}
     }
 }

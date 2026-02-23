@@ -15,7 +15,7 @@ struct SettingsView: View {
                     HStack {
                         Label("服务器地址", systemImage: "server.rack")
                         Spacer()
-                        Text("\(config.serverHost):\(config.serverPort)")
+                        Text(verbatim: "\(config.serverHost):\(config.serverPort)")
                             .foregroundStyle(.secondary)
                     }
                 }

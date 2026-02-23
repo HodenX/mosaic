@@ -93,7 +93,7 @@ struct InsuranceListView: View {
                 Text("年缴 \(Formatters.currency(policy.annualPremium))").font(.caption)
                 Spacer()
                 if let next = policy.nextPaymentDate {
-                    Text("下次缴费 \(next)").font(.caption2).foregroundStyle(.secondary)
+                    paymentCountdown(next)
                 }
             }
         }
@@ -112,9 +112,26 @@ struct InsuranceListView: View {
         Text(status == "active" ? "有效" : status == "lapsed" ? "脱保" : "已终止")
             .font(.caption2.bold())
             .padding(.horizontal, 8).padding(.vertical, 2)
-            .background(status == "active" ? Color.green.opacity(0.15) : Color.red.opacity(0.15))
-            .foregroundStyle(status == "active" ? .green : .red)
+            .background(status == "active" ? Color.success.opacity(0.15) : Color.danger.opacity(0.15))
+            .foregroundStyle(status == "active" ? Color.success : Color.danger)
             .clipShape(Capsule())
+    }
+
+    @ViewBuilder
+    private func paymentCountdown(_ dateStr: String) -> some View {
+        if let days = Formatters.daysBetween(from: dateStr) {
+            let daysUntil = -days
+            if daysUntil < 0 {
+                Text("已逾期 \(-daysUntil) 天")
+                    .font(.caption2).foregroundStyle(Color.danger)
+            } else if daysUntil <= 30 {
+                Text("还有 \(daysUntil) 天")
+                    .font(.caption2).foregroundStyle(Color.warning)
+            } else {
+                Text("下次缴费 \(dateStr)")
+                    .font(.caption2).foregroundStyle(.secondary)
+            }
+        }
     }
 
     private func typeLabel(_ type: String) -> String {

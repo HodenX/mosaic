@@ -2,32 +2,43 @@
 import SwiftUI
 
 struct BucketsListView: View {
+    @Environment(APIClient.self) private var api
+    @State private var summary: DashboardSummary?
+
     var body: some View {
         List {
             Section {
                 NavigationLink {
                     LiquidListView()
                 } label: {
-                    Label {
-                        VStack(alignment: .leading, spacing: 2) {
+                    HStack {
+                        Label {
                             Text("活钱").font(.headline)
-                            Text("活期存款、货币基金等流动资金").font(.caption).foregroundStyle(.secondary)
+                        } icon: {
+                            Image(systemName: "drop.fill").foregroundStyle(Color.bucketLiquid)
                         }
-                    } icon: {
-                        Image(systemName: "drop.fill").foregroundStyle(Color.bucketLiquid)
+                        Spacer()
+                        if let s = summary {
+                            Text(Formatters.wan(s.buckets.liquid.amount))
+                                .font(.subheadline).monospacedDigit().foregroundStyle(.secondary)
+                        }
                     }
                 }
 
                 NavigationLink {
                     StableListView()
                 } label: {
-                    Label {
-                        VStack(alignment: .leading, spacing: 2) {
+                    HStack {
+                        Label {
                             Text("稳钱").font(.headline)
-                            Text("定期存款、银行理财等中期资产").font(.caption).foregroundStyle(.secondary)
+                        } icon: {
+                            Image(systemName: "building.columns.fill").foregroundStyle(Color.bucketStable)
                         }
-                    } icon: {
-                        Image(systemName: "building.columns.fill").foregroundStyle(Color.bucketStable)
+                        Spacer()
+                        if let s = summary {
+                            Text(Formatters.wan(s.buckets.stable.amount))
+                                .font(.subheadline).monospacedDigit().foregroundStyle(.secondary)
+                        }
                     }
                 }
             }
@@ -36,13 +47,17 @@ struct BucketsListView: View {
                 NavigationLink {
                     OverviewView()
                 } label: {
-                    Label {
-                        VStack(alignment: .leading, spacing: 2) {
+                    HStack {
+                        Label {
                             Text("长钱 · 组合概览").font(.headline)
-                            Text("基金组合收益、配置与趋势").font(.caption).foregroundStyle(.secondary)
+                        } icon: {
+                            Image(systemName: "chart.line.uptrend.xyaxis").foregroundStyle(Color.bucketGrowth)
                         }
-                    } icon: {
-                        Image(systemName: "chart.line.uptrend.xyaxis").foregroundStyle(Color.bucketGrowth)
+                        Spacer()
+                        if let s = summary {
+                            Text(Formatters.wan(s.buckets.growth.totalAmount))
+                                .font(.subheadline).monospacedDigit().foregroundStyle(.secondary)
+                        }
                     }
                 }
 
@@ -50,10 +65,7 @@ struct BucketsListView: View {
                     HoldingsListView()
                 } label: {
                     Label {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("长钱 · 持仓明细").font(.headline)
-                            Text("基金持仓列表与基金详情").font(.caption).foregroundStyle(.secondary)
-                        }
+                        Text("长钱 · 持仓明细").font(.headline)
                     } icon: {
                         Image(systemName: "list.bullet.rectangle").foregroundStyle(Color.bucketGrowth)
                     }
@@ -63,10 +75,7 @@ struct BucketsListView: View {
                     PositionView()
                 } label: {
                     Label {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("长钱 · 仓位管理").font(.headline)
-                            Text("预算、仓位与投资策略").font(.caption).foregroundStyle(.secondary)
-                        }
+                        Text("长钱 · 仓位管理").font(.headline)
                     } icon: {
                         Image(systemName: "gauge.with.needle").foregroundStyle(Color.bucketGrowth)
                     }
@@ -77,17 +86,26 @@ struct BucketsListView: View {
                 NavigationLink {
                     InsuranceListView()
                 } label: {
-                    Label {
-                        VStack(alignment: .leading, spacing: 2) {
+                    HStack {
+                        Label {
                             Text("保险").font(.headline)
-                            Text("家庭保单管理与续费提醒").font(.caption).foregroundStyle(.secondary)
+                        } icon: {
+                            Image(systemName: "shield.fill").foregroundStyle(Color.bucketInsurance)
                         }
-                    } icon: {
-                        Image(systemName: "shield.fill").foregroundStyle(Color.bucketInsurance)
+                        Spacer()
+                        if let s = summary {
+                            Text("年缴 \(Formatters.currency(s.buckets.insurance.annualPremium))")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
                     }
                 }
             }
         }
         .navigationTitle("四笔钱")
+        .task {
+            do {
+                summary = try await DashboardService(api: api).summary()
+            } catch {}
+        }
     }
 }

@@ -17,11 +17,18 @@ struct OverviewView: View {
                                 statCard("总盈亏") { PnLText(value: summary.totalPnl, font: .headline) }
                                 statCard("收益率") { PercentText(value: summary.pnlPercent, font: .headline) }
                                 statCard("总市值") { CurrencyText(value: summary.totalValue, font: .headline) }
-                                statCard("仓位") {
-                                    Text(Formatters.percent(vm.positionStatus?.positionRatio ?? 0))
-                                        .font(.headline).monospacedDigit()
-                                }
+                                positionStatCard(vm)
                             }
+
+                            if let ps = vm.positionStatus, (ps.isBelowMin || ps.isAboveMax) {
+                                WarningBanner(
+                                    message: ps.isBelowMin
+                                        ? "仓位低于目标下限 \(Formatters.percent(ps.targetPositionMin))，建议适当加仓"
+                                        : "仓位高于目标上限 \(Formatters.percent(ps.targetPositionMax))，建议适当减仓",
+                                    level: ps.isAboveMax ? .danger : .warning
+                                )
+                            }
+
                             trendSection(vm.trend)
                             if !vm.platforms.isEmpty { platformSection(vm.platforms) }
                             if let alloc = vm.allocation, !alloc.items.isEmpty { allocationSection(alloc) }
@@ -50,6 +57,20 @@ struct OverviewView: View {
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
     }
 
+    private func positionStatCard(_ vm: OverviewViewModel) -> some View {
+        let ratio = vm.positionStatus?.positionRatio ?? 0
+        let isBelowMin = vm.positionStatus?.isBelowMin == true
+        let isAboveMax = vm.positionStatus?.isAboveMax == true
+        let color: Color = isAboveMax ? .danger : (isBelowMin ? .warning : .primary)
+        return VStack(spacing: 4) {
+            Text("仓位").font(.caption).foregroundStyle(.secondary)
+            Text(Formatters.percent(ratio))
+                .font(.headline).monospacedDigit()
+                .foregroundStyle(color)
+        }.frame(maxWidth: .infinity).padding()
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+    }
+
     private func trendSection(_ data: [PortfolioTrend]) -> some View {
         VStack(alignment: .leading) {
             Text("组合走势").font(.headline)
@@ -59,6 +80,10 @@ struct OverviewView: View {
                     LineMark(x: .value("日期", $0.date), y: .value("市值", $0.totalValue))
                         .foregroundStyle(Color.bucketGrowth)
                 }.chartYScale(domain: .automatic(includesZero: false)).frame(height: 200)
+                if data.count < 5 {
+                    Text("数据积累中，建议持续记录以获得完整走势")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
             }
         }.padding().background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
     }
@@ -68,7 +93,7 @@ struct OverviewView: View {
             Text("平台分布").font(.headline)
             ForEach(platforms) { p in
                 HStack {
-                    Text(p.platform)
+                    Text(Formatters.platformDisplayName(p.platform))
                     Spacer()
                     CurrencyText(value: p.marketValue, font: .subheadline)
                     PnLText(value: p.pnl, font: .caption)

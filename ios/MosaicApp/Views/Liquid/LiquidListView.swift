@@ -31,7 +31,10 @@ struct LiquidListView: View {
                             EmptyStateView(icon: "drop", title: "暂无活钱", message: "点击右上角添加")
                         }
                         ForEach(vm.items) { item in
-                            HStack {
+                            HStack(spacing: 12) {
+                                Image(systemName: item.type == "deposit" ? "banknote" : "chart.bar")
+                                    .foregroundStyle(Color.bucketLiquid)
+                                    .frame(width: 24)
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(item.name).font(.headline)
                                     Text("\(item.platform) · \(item.type == "deposit" ? "活期存款" : "货币基金")")
@@ -40,9 +43,8 @@ struct LiquidListView: View {
                                 Spacer()
                                 VStack(alignment: .trailing, spacing: 4) {
                                     CurrencyText(value: item.amount, font: .headline)
-                                    if let rate = item.annualRate, rate > 0 {
-                                        Text("年化 \(Formatters.percent(rate))").font(.caption).foregroundStyle(.secondary)
-                                    }
+                                    Text("年化 \(Formatters.percent(displayRate(item)))")
+                                        .font(.caption).foregroundStyle(.secondary)
                                 }
                             }
                             .swipeActions(edge: .trailing) {
@@ -78,5 +80,10 @@ struct LiquidListView: View {
             if vm == nil { vm = LiquidViewModel(api: api) }
             await vm?.load()
         }
+    }
+
+    private func displayRate(_ item: LiquidAsset) -> Double {
+        if let rate = item.annualRate, rate > 0 { return rate }
+        return item.type == "deposit" ? 0.20 : 0
     }
 }
