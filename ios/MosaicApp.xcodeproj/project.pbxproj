@@ -7,15 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		38B9989C2647EFD00243D5EF /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48D0A596D12338978E93E2C /* Formatters.swift */; };
 		3C6CC5BED3D700649163981E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 776C7F8CE984B7135F52BA10 /* ContentView.swift */; };
+		3DC780521C5CB48377FFA250 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAF6212768AAA7A384704E20 /* AppConfig.swift */; };
 		5433E3BD84F920AEB867F2C6 /* MosaicApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA80D6629ADC2DF1819874B6 /* MosaicApp.swift */; };
 		9224C0B64328FF38A1972075 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 369F2B5909BBACB51E23B8F9 /* Assets.xcassets */; };
+		E6EE56D0E594302E3EFE4A52 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E6081421CD8F5D64A6367B /* Colors.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		369F2B5909BBACB51E23B8F9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4011C5909BFF17E074B76A41 /* MosaicApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MosaicApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		66E6081421CD8F5D64A6367B /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		776C7F8CE984B7135F52BA10 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B48D0A596D12338978E93E2C /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
+		BAF6212768AAA7A384704E20 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		CA80D6629ADC2DF1819874B6 /* MosaicApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MosaicApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -36,6 +42,14 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		2B82D5AD20BC37E282168BB9 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				BAF6212768AAA7A384704E20 /* AppConfig.swift */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 		49F9BFF351473B4436830195 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -44,17 +58,28 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		986F11A009E3996616F83110 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				66E6081421CD8F5D64A6367B /* Colors.swift */,
+				B48D0A596D12338978E93E2C /* Formatters.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		BC484DD907796024B6499603 /* MosaicApp */ = {
 			isa = PBXGroup;
 			children = (
+				2B82D5AD20BC37E282168BB9 /* Config */,
 				288592295829EF4D9D8A972D /* Resources */,
+				986F11A009E3996616F83110 /* Utilities */,
 				776C7F8CE984B7135F52BA10 /* ContentView.swift */,
 				CA80D6629ADC2DF1819874B6 /* MosaicApp.swift */,
 			);
 			path = MosaicApp;
 			sourceTree = "<group>";
 		};
-		"TEMP_884E7D7C-4196-4413-A8D1-9E0B2A8BBF90" /* Views */ = {
+		"TEMP_D541585F-472D-4A54-A71C-F0AC90B660A4" /* Views */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -126,7 +151,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3DC780521C5CB48377FFA250 /* AppConfig.swift in Sources */,
+				E6EE56D0E594302E3EFE4A52 /* Colors.swift in Sources */,
 				3C6CC5BED3D700649163981E /* ContentView.swift in Sources */,
+				38B9989C2647EFD00243D5EF /* Formatters.swift in Sources */,
 				5433E3BD84F920AEB867F2C6 /* MosaicApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
