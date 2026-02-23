@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -82,7 +82,7 @@
 		2CD7E1CF56D596609F6DA885 /* DiagnosisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosisService.swift; sourceTree = "<group>"; };
 		360653C84BDB4C1C39DA4750 /* PortfolioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioService.swift; sourceTree = "<group>"; };
 		369F2B5909BBACB51E23B8F9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4011C5909BFF17E074B76A41 /* MosaicApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MosaicApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4011C5909BFF17E074B76A41 /* 知合 Mosaic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "知合 Mosaic.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AAA573BEE550FF6C6268670 /* InsuranceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsuranceService.swift; sourceTree = "<group>"; };
 		4EC30A29F1405CFD3A4E08D1 /* OverviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewViewModel.swift; sourceTree = "<group>"; };
 		58EE64FAC993B8DB1B12D8F2 /* PositionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionViewModel.swift; sourceTree = "<group>"; };
@@ -247,7 +247,7 @@
 		49F9BFF351473B4436830195 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4011C5909BFF17E074B76A41 /* MosaicApp.app */,
+				4011C5909BFF17E074B76A41 /* 知合 Mosaic.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -394,7 +394,7 @@
 			packageProductDependencies = (
 			);
 			productName = MosaicApp;
-			productReference = 4011C5909BFF17E074B76A41 /* MosaicApp.app */;
+			productReference = 4011C5909BFF17E074B76A41 /* 知合 Mosaic.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -405,6 +405,11 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					65D512F56B32A57BD15F61FD = {
+						ProvisioningStyle = Automatic;
+					};
+				};
 			};
 			buildConfigurationList = CC4FBB9EE8CB47C8E350E781 /* Build configuration list for PBXProject "MosaicApp" */;
 			compatibilityVersion = "Xcode 14.0";
@@ -416,7 +421,6 @@
 			);
 			mainGroup = 25141DCAD819125E9DBBB490;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -517,19 +521,16 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				DEVELOPMENT_TEAM = 9498D5XLZ9;
+				INFOPLIST_FILE = MosaicApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mosaic.MosaicApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.liulingfeng.MosaicApp;
 				PRODUCT_NAME = "知合 Mosaic";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
@@ -606,19 +607,16 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				DEVELOPMENT_TEAM = 9498D5XLZ9;
+				INFOPLIST_FILE = MosaicApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mosaic.MosaicApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.liulingfeng.MosaicApp;
 				PRODUCT_NAME = "知合 Mosaic";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;

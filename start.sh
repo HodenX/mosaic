@@ -6,7 +6,7 @@ BACKEND_PORT=8011
 # 启动后端
 cd "$PROJECT_DIR/backend"
 source venv/bin/activate
-uvicorn app.main:app --reload --port "$BACKEND_PORT" &
+uvicorn app.main:app --reload --host 0.0.0.0 --port "$BACKEND_PORT" &
 BACKEND_PID=$!
 
 # 启动前端

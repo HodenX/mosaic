@@ -16,35 +16,30 @@ struct ContentView: View {
 struct MainTabView: View {
     var body: some View {
         TabView {
-            Tab("总览", systemImage: "house.fill") {
-                NavigationStack {
-                    DashboardView()
-                }
+            NavigationStack {
+                DashboardView()
             }
+            .tabItem { Label("总览", systemImage: "house.fill") }
 
-            Tab("四笔钱", systemImage: "wallet.fill") {
-                NavigationStack {
-                    BucketsListView()
-                }
+            NavigationStack {
+                BucketsListView()
             }
+            .tabItem { Label("四笔钱", systemImage: "banknote.fill") }
 
-            Tab("诊断", systemImage: "heart.text.square.fill") {
-                NavigationStack {
-                    DiagnosisView()
-                }
+            NavigationStack {
+                DiagnosisView()
             }
+            .tabItem { Label("诊断", systemImage: "heart.text.square.fill") }
 
-            Tab("数据", systemImage: "arrow.triangle.2.circlepath") {
-                NavigationStack {
-                    DataManagementView()
-                }
+            NavigationStack {
+                DataManagementView()
             }
+            .tabItem { Label("数据", systemImage: "arrow.triangle.2.circlepath") }
 
-            Tab("设置", systemImage: "gearshape.fill") {
-                NavigationStack {
-                    SettingsView()
-                }
+            NavigationStack {
+                SettingsView()
             }
+            .tabItem { Label("设置", systemImage: "gearshape.fill") }
         }
         .tint(.jade)
     }

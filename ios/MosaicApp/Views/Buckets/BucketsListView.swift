@@ -14,7 +14,7 @@ struct BucketsListView: View {
                             Text("活期存款、货币基金等流动资金").font(.caption).foregroundStyle(.secondary)
                         }
                     } icon: {
-                        Image(systemName: "drop.fill").foregroundStyle(.bucketLiquid)
+                        Image(systemName: "drop.fill").foregroundStyle(Color.bucketLiquid)
                     }
                 }
 
@@ -27,7 +27,7 @@ struct BucketsListView: View {
                             Text("定期存款、银行理财等中期资产").font(.caption).foregroundStyle(.secondary)
                         }
                     } icon: {
-                        Image(systemName: "building.columns.fill").foregroundStyle(.bucketStable)
+                        Image(systemName: "building.columns.fill").foregroundStyle(Color.bucketStable)
                     }
                 }
             }
@@ -42,7 +42,7 @@ struct BucketsListView: View {
                             Text("基金组合收益、配置与趋势").font(.caption).foregroundStyle(.secondary)
                         }
                     } icon: {
-                        Image(systemName: "chart.line.uptrend.xyaxis").foregroundStyle(.bucketGrowth)
+                        Image(systemName: "chart.line.uptrend.xyaxis").foregroundStyle(Color.bucketGrowth)
                     }
                 }
 
@@ -55,7 +55,7 @@ struct BucketsListView: View {
                             Text("基金持仓列表与基金详情").font(.caption).foregroundStyle(.secondary)
                         }
                     } icon: {
-                        Image(systemName: "list.bullet.rectangle").foregroundStyle(.bucketGrowth)
+                        Image(systemName: "list.bullet.rectangle").foregroundStyle(Color.bucketGrowth)
                     }
                 }
 
@@ -68,7 +68,7 @@ struct BucketsListView: View {
                             Text("预算、仓位与投资策略").font(.caption).foregroundStyle(.secondary)
                         }
                     } icon: {
-                        Image(systemName: "gauge.with.needle").foregroundStyle(.bucketGrowth)
+                        Image(systemName: "gauge.with.needle").foregroundStyle(Color.bucketGrowth)
                     }
                 }
             }
@@ -83,7 +83,7 @@ struct BucketsListView: View {
                             Text("家庭保单管理与续费提醒").font(.caption).foregroundStyle(.secondary)
                         }
                     } icon: {
-                        Image(systemName: "shield.fill").foregroundStyle(.bucketInsurance)
+                        Image(systemName: "shield.fill").foregroundStyle(Color.bucketInsurance)
                     }
                 }
             }

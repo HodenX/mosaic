@@ -52,34 +52,33 @@ struct DiagnosisView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
-    @ViewBuilder
-    private func renderValue(_ value: AnyCodableValue) -> some View {
+    private func renderValue(_ value: AnyCodableValue) -> AnyView {
         switch value {
         case .string(let s):
-            Text(s).font(.subheadline)
+            AnyView(Text(s).font(.subheadline))
         case .int(let i):
-            Text("\(i)").font(.subheadline).monospacedDigit()
+            AnyView(Text("\(i)").font(.subheadline).monospacedDigit())
         case .double(let d):
-            Text(String(format: "%.2f", d)).font(.subheadline).monospacedDigit()
+            AnyView(Text(String(format: "%.2f", d)).font(.subheadline).monospacedDigit())
         case .bool(let b):
-            Text(b ? "是" : "否").font(.subheadline)
+            AnyView(Text(b ? "是" : "否").font(.subheadline))
         case .array(let arr):
-            VStack(alignment: .leading, spacing: 4) {
+            AnyView(VStack(alignment: .leading, spacing: 4) {
                 ForEach(Array(arr.enumerated()), id: \.offset) { _, item in
                     renderValue(item)
                 }
-            }
+            })
         case .dictionary(let dict):
-            VStack(alignment: .leading, spacing: 4) {
+            AnyView(VStack(alignment: .leading, spacing: 4) {
                 ForEach(dict.sorted(by: { $0.key < $1.key }), id: \.key) { key, val in
                     HStack(alignment: .top) {
                         Text(formatKey(key)).font(.caption.bold()).frame(width: 80, alignment: .leading)
                         renderValue(val)
                     }
                 }
-            }
+            })
         case .null:
-            Text("-").foregroundStyle(.secondary)
+            AnyView(Text("-").foregroundStyle(.secondary))
         }
     }
 

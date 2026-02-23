@@ -30,7 +30,10 @@ struct DashboardView: View {
                                     subtitle: "\(summary.buckets.insurance.activeCount) 份保单")
                             }
 
-                            AssetTrendChart(data: vm.trend, selectedDays: $vm.selectedDays)
+                            AssetTrendChart(data: vm.trend, selectedDays: Binding(
+                                get: { vm.selectedDays },
+                                set: { vm.selectedDays = $0 }
+                            ))
                                 .onChange(of: vm.selectedDays) { Task { await vm.loadTrend() } }
 
                             if !vm.reminders.isEmpty {
@@ -43,7 +46,11 @@ struct DashboardView: View {
                 } else if let error = vm.error {
                     ContentUnavailableView("加载失败", systemImage: "wifi.slash",
                         description: Text(error.localizedDescription))
+                } else {
+                    LoadingView()
                 }
+            } else {
+                LoadingView()
             }
         }
         .navigationTitle("资产总览")

@@ -47,19 +47,15 @@ class DataManagementViewModel {
         let codes = Array(Set(holdings.map(\.fundCode)))
         let total = Double(codes.count)
 
-        await withTaskGroup(of: Void.self) { group in
-            var index = 0
-            for code in codes {
-                group.addTask {
-                    await self.refreshFund(code: code)
-                }
-                index += 1
-                if index % 3 == 0 {
-                    for await _ in group.prefix(3) {}
-                }
-                refreshProgress = Double(index) / total
+        for (index, code) in codes.enumerated() {
+            refreshingCodes.insert(code)
+            do {
+                _ = try await fundsService.refresh(code: code)
+            } catch {
+                self.error = error
             }
-            for await _ in group {}
+            refreshingCodes.remove(code)
+            refreshProgress = Double(index + 1) / total
         }
 
         refreshProgress = 1.0
