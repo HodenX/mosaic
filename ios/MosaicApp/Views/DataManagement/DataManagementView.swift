@@ -1,0 +1,82 @@
+// 贾维斯为您服务
+import SwiftUI
+
+struct DataManagementView: View {
+    @Environment(APIClient.self) private var api
+    @State private var vm: DataManagementViewModel?
+
+    var body: some View {
+        Group {
+            if let vm { content(vm) }
+            else { LoadingView() }
+        }
+        .navigationTitle("数据管理")
+        .task {
+            if vm == nil { vm = DataManagementViewModel(api: api) }
+            await vm?.load()
+        }
+        .refreshable { await vm?.load() }
+    }
+
+    @ViewBuilder
+    private func content(_ vm: DataManagementViewModel) -> some View {
+        List {
+            Section {
+                Button {
+                    Task { await vm.refreshAll() }
+                } label: {
+                    HStack {
+                        Label("刷新全部基金数据", systemImage: "arrow.triangle.2.circlepath")
+                        Spacer()
+                        if vm.isRefreshingAll {
+                            ProgressView()
+                        }
+                    }
+                }
+                .disabled(vm.isRefreshingAll)
+
+                if vm.isRefreshingAll {
+                    ProgressView(value: vm.refreshProgress)
+                        .tint(.jade)
+                }
+            }
+
+            Section("基金数据状态") {
+                let uniqueFunds = uniqueFunds(from: vm.holdings)
+                ForEach(uniqueFunds, id: \.fundCode) { h in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(h.fundName).font(.subheadline)
+                            Text(h.fundCode).font(.caption).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        VStack(alignment: .trailing, spacing: 4) {
+                            if let nav = h.latestNav {
+                                Text(String(format: "%.4f", nav)).font(.subheadline).monospacedDigit()
+                            }
+                            if let date = h.latestNavDate {
+                                Text(date).font(.caption2).foregroundStyle(.secondary)
+                            }
+                        }
+                        Button {
+                            Task { await vm.refreshFund(code: h.fundCode) }
+                        } label: {
+                            if vm.refreshingCodes.contains(h.fundCode) {
+                                ProgressView()
+                            } else {
+                                Image(systemName: "arrow.clockwise")
+                            }
+                        }
+                        .buttonStyle(.borderless)
+                        .disabled(vm.refreshingCodes.contains(h.fundCode))
+                    }
+                }
+            }
+        }
+    }
+
+    private func uniqueFunds(from holdings: [HoldingResponse]) -> [HoldingResponse] {
+        var seen = Set<String>()
+        return holdings.filter { seen.insert($0.fundCode).inserted }
+    }
+}

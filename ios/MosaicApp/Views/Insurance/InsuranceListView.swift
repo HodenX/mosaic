@@ -1,0 +1,134 @@
+// 贾维斯为您服务
+import SwiftUI
+
+struct InsuranceListView: View {
+    @Environment(APIClient.self) private var api
+    @State private var vm: InsuranceViewModel?
+    @State private var showForm = false
+    @State private var editingPolicy: InsurancePolicy?
+
+    var body: some View {
+        Group {
+            if let vm { content(vm) }
+            else { LoadingView() }
+        }
+        .navigationTitle("保险")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { showForm = true } label: { Image(systemName: "plus") }
+            }
+        }
+        .sheet(isPresented: $showForm) {
+            InsuranceFormSheet(editing: nil) { data in Task { await vm?.create(data) } }
+        }
+        .sheet(item: $editingPolicy) { policy in
+            InsuranceFormSheet(editing: policy) { data in
+                let update = InsurancePolicyUpdate(
+                    name: data.name, type: data.type, policyNumber: data.policyNumber,
+                    insurer: data.insurer, insuredPerson: data.insuredPerson,
+                    annualPremium: data.annualPremium, coverageAmount: data.coverageAmount,
+                    coverageSummary: data.coverageSummary, startDate: data.startDate,
+                    endDate: data.endDate, paymentYears: data.paymentYears,
+                    nextPaymentDate: data.nextPaymentDate, status: data.status
+                )
+                Task { await vm?.update(id: policy.id, update) }
+            }
+        }
+        .task {
+            if vm == nil { vm = InsuranceViewModel(api: api) }
+            await vm?.load()
+        }
+        .refreshable { await vm?.load() }
+    }
+
+    @ViewBuilder
+    private func content(_ vm: InsuranceViewModel) -> some View {
+        if vm.items.isEmpty && !vm.isLoading {
+            EmptyStateView(icon: "shield", title: "暂无保单")
+        } else {
+            List {
+                if let s = vm.summary {
+                    Section {
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                            SummaryCard(title: "保单数", value: "\(s.activeCount)")
+                            SummaryCard(title: "年缴保费", value: Formatters.currency(s.totalAnnualPremium))
+                            SummaryCard(title: "覆盖人数", value: "\(s.coveredPersons)")
+                        }
+                    }
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
+                }
+
+                ForEach(vm.groupedByPerson, id: \.person) { group in
+                    Section(group.person) {
+                        ForEach(group.policies) { policy in
+                            policyRow(policy, vm: vm)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func policyRow(_ policy: InsurancePolicy, vm: InsuranceViewModel) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text(policy.name).font(.subheadline.bold())
+                Spacer()
+                statusBadge(policy.status)
+            }
+            HStack(spacing: 12) {
+                Label(typeLabel(policy.type), systemImage: typeIcon(policy.type))
+                    .font(.caption)
+                if !policy.insurer.isEmpty {
+                    Text(policy.insurer).font(.caption).foregroundStyle(.secondary)
+                }
+            }
+            HStack {
+                Text("年缴 \(Formatters.currency(policy.annualPremium))").font(.caption)
+                Spacer()
+                if let next = policy.nextPaymentDate {
+                    Text("下次缴费 \(next)").font(.caption2).foregroundStyle(.secondary)
+                }
+            }
+        }
+        .swipeActions(edge: .trailing) {
+            Button(role: .destructive) {
+                Task { await vm.delete(id: policy.id) }
+            } label: { Label("删除", systemImage: "trash") }
+            Button { editingPolicy = policy } label: { Label("编辑", systemImage: "pencil") }.tint(.blue)
+            Button {
+                Task { await vm.renew(id: policy.id) }
+            } label: { Label("续费", systemImage: "arrow.clockwise") }.tint(.green)
+        }
+    }
+
+    private func statusBadge(_ status: String) -> some View {
+        Text(status == "active" ? "有效" : status == "lapsed" ? "脱保" : "已终止")
+            .font(.caption2.bold())
+            .padding(.horizontal, 8).padding(.vertical, 2)
+            .background(status == "active" ? Color.green.opacity(0.15) : Color.red.opacity(0.15))
+            .foregroundStyle(status == "active" ? .green : .red)
+            .clipShape(Capsule())
+    }
+
+    private func typeLabel(_ type: String) -> String {
+        switch type {
+        case "critical_illness": return "重疾险"
+        case "medical": return "医疗险"
+        case "accident": return "意外险"
+        case "life": return "寿险"
+        default: return type
+        }
+    }
+
+    private func typeIcon(_ type: String) -> String {
+        switch type {
+        case "critical_illness": return "heart.fill"
+        case "medical": return "cross.case.fill"
+        case "accident": return "bandage.fill"
+        case "life": return "person.fill"
+        default: return "shield.fill"
+        }
+    }
+}

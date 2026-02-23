@@ -18,25 +18,25 @@ struct MainTabView: View {
         TabView {
             Tab("总览", systemImage: "house.fill") {
                 NavigationStack {
-                    DashboardPlaceholder()
+                    DashboardView()
                 }
             }
 
             Tab("四笔钱", systemImage: "wallet.fill") {
                 NavigationStack {
-                    BucketsPlaceholder()
+                    BucketsListView()
                 }
             }
 
             Tab("诊断", systemImage: "heart.text.square.fill") {
                 NavigationStack {
-                    DiagnosisPlaceholder()
+                    DiagnosisView()
                 }
             }
 
             Tab("数据", systemImage: "arrow.triangle.2.circlepath") {
                 NavigationStack {
-                    DataPlaceholder()
+                    DataManagementView()
                 }
             }
 
@@ -47,30 +47,5 @@ struct MainTabView: View {
             }
         }
         .tint(.jade)
-    }
-}
-
-// 临时占位视图，后续 Task 逐一替换
-struct DashboardPlaceholder: View {
-    var body: some View {
-        Text("总览").navigationTitle("资产总览")
-    }
-}
-
-struct BucketsPlaceholder: View {
-    var body: some View {
-        Text("四笔钱").navigationTitle("四笔钱")
-    }
-}
-
-struct DiagnosisPlaceholder: View {
-    var body: some View {
-        Text("诊断").navigationTitle("资产诊断")
-    }
-}
-
-struct DataPlaceholder: View {
-    var body: some View {
-        Text("数据管理").navigationTitle("数据管理")
     }
 }
