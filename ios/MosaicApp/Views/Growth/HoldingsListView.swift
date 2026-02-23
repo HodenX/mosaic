@@ -15,7 +15,7 @@ struct HoldingsListView: View {
                     ContentUnavailableView("加载失败", systemImage: "wifi.slash",
                         description: Text(error.localizedDescription))
                 } else if vm.holdings.isEmpty {
-                    EmptyStateView(title: "暂无持仓", icon: "list.bullet.rectangle",
+                    EmptyStateView(icon: "list.bullet.rectangle", title: "暂无持仓",
                         message: "点击右上角 + 添加基金持仓")
                 } else {
                     List {
