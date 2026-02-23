@@ -1,10 +1,38 @@
 import datetime
+import logging
 import re
+import threading
+import time
 
 import akshare as ak
 from sqlmodel import Session, select
 
 from app.models import Fund, FundAllocation, FundNavHistory, FundTopHolding
+
+logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# TTL cache for ak.fund_name_em() — the full fund list rarely changes,
+# so we cache it in memory and refresh every 4 hours at most.
+# ---------------------------------------------------------------------------
+_fund_list_cache_lock = threading.Lock()
+_fund_list_cache: dict = {"df": None, "ts": 0.0}
+_FUND_LIST_TTL = 4 * 3600  # 4 hours
+
+
+def _get_fund_list():
+    """Return the cached fund list DataFrame, refreshing if stale."""
+    now = time.monotonic()
+    with _fund_list_cache_lock:
+        if _fund_list_cache["df"] is not None and now - _fund_list_cache["ts"] < _FUND_LIST_TTL:
+            return _fund_list_cache["df"]
+
+    # Fetch outside the lock to avoid blocking other threads
+    df = ak.fund_name_em()
+    with _fund_list_cache_lock:
+        _fund_list_cache["df"] = df
+        _fund_list_cache["ts"] = time.monotonic()
+    return df
 
 
 _QDII_GEOGRAPHY_KEYWORDS: list[tuple[list[str], str]] = [
@@ -183,14 +211,22 @@ def _parse_benchmark_geography(benchmark: str) -> list[tuple[str, float]] | None
     return result
 
 
-def fetch_fund_info(fund_code: str, session: Session) -> Fund:
-    """Fetch fund metadata from akshare and update database."""
+def fetch_fund_info(fund_code: str, session: Session, *, force: bool = False) -> Fund:
+    """Fetch fund metadata from akshare and update database.
+
+    If the fund already has a name in the DB, skip the remote call unless
+    *force* is True.
+    """
     fund = session.get(Fund, fund_code)
     if not fund:
         fund = Fund(fund_code=fund_code)
 
+    # Skip expensive remote call when we already have the name
+    if not force and fund.fund_name and fund.fund_type:
+        return fund
+
     try:
-        df = ak.fund_name_em()
+        df = _get_fund_list()
         row = df[df["基金代码"] == fund_code]
         if not row.empty:
             fund.fund_name = str(row.iloc[0]["基金简称"])

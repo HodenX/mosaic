@@ -5,6 +5,7 @@ import type {
   BudgetUpdate,
   ChangeLog,
   DashboardSummary,
+  DiagnosisResult,
   FundAllocation,
   FundInfo,
   Holding,
@@ -141,4 +142,8 @@ export const dashboardApi = {
   trend: (days?: number) =>
     api.get<TotalAssetTrend[]>("/dashboard/trend", { params: { days } }).then((r) => r.data),
   snapshot: () => api.post("/dashboard/snapshot"),
+};
+
+export const diagnosisApi = {
+  report: () => api.get<DiagnosisResult>("/diagnosis/report").then((r) => r.data),
 };

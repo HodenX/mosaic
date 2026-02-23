@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Progress } from "@/components/ui/progress";
 import { holdingsApi, fundsApi } from "@/services/api";
 import type { Holding } from "@/types";
 
@@ -13,6 +14,8 @@ export default function DataManagementPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState<Set<string>>(new Set());
   const [refreshAll, setRefreshAll] = useState(false);
+  const [refreshProgress, setRefreshProgress] = useState<{ completed: number; total: number } | null>(null);
+  const progressRef = useRef(0);
 
   const fetchHoldings = useCallback(async () => {
     setLoading(true);
@@ -46,13 +49,38 @@ export default function DataManagementPage() {
 
   const handleRefreshAll = async () => {
     setRefreshAll(true);
+    const total = uniqueFunds.length;
+    progressRef.current = 0;
+    setRefreshProgress({ completed: 0, total });
     try {
-      for (const f of uniqueFunds) {
-        await fundsApi.refresh(f.fund_code);
-      }
+      const CONCURRENCY = 3;
+      const queue = [...uniqueFunds];
+      const runBatch = async () => {
+        while (queue.length > 0) {
+          const fund = queue.shift();
+          if (fund) {
+            setRefreshing((prev) => new Set(prev).add(fund.fund_code));
+            try {
+              await fundsApi.refresh(fund.fund_code);
+            } finally {
+              setRefreshing((prev) => {
+                const next = new Set(prev);
+                next.delete(fund.fund_code);
+                return next;
+              });
+              progressRef.current += 1;
+              setRefreshProgress({ completed: progressRef.current, total });
+            }
+          }
+        }
+      };
+      await Promise.allSettled(
+        Array.from({ length: Math.min(CONCURRENCY, total) }, () => runBatch())
+      );
       await fetchHoldings();
     } finally {
       setRefreshAll(false);
+      setRefreshProgress(null);
     }
   };
 
@@ -61,9 +89,23 @@ export default function DataManagementPage() {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">数据管理</h2>
         <Button onClick={handleRefreshAll} disabled={refreshAll}>
-          {refreshAll ? "刷新中..." : "刷新全部基金"}
+          {refreshProgress
+            ? `刷新中 (${refreshProgress.completed}/${refreshProgress.total})`
+            : "刷新全部基金"}
         </Button>
       </div>
+
+      {refreshProgress && (
+        <div className="space-y-1">
+          <Progress
+            value={(refreshProgress.completed / refreshProgress.total) * 100}
+            className="h-2"
+          />
+          <p className="text-xs text-muted-foreground text-right">
+            已刷新 {refreshProgress.completed}/{refreshProgress.total} 只基金
+          </p>
+        </div>
+      )}
 
       <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
         <CardHeader>

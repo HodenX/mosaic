@@ -358,3 +358,48 @@ export interface TotalAssetTrend {
   insurance_premium: number;
   total_assets: number;
 }
+
+// --- Diagnosis Report Types (flexible, adapts to actual skill output) ---
+
+// The diagnosis JSON is semi-structured — the skill may produce
+// varying key names across runs.  We type what we can and use
+// loose types where the shape is unpredictable.
+
+export interface DiagnosisFinding {
+  issue: string;
+  severity: string;   // "high" | "medium" | "info"
+  detail: string;
+}
+
+export interface DiagnosisScanSection {
+  theory: string;
+  findings: DiagnosisFinding[];
+  // optional fields that some scans include
+  scenarios_covered?: number;
+  scenarios_total?: number;
+  core_pct?: number;
+  satellite_pct?: number;
+  [key: string]: unknown;
+}
+
+export interface DiagnosisIssueSummary {
+  id?: number;
+  issue: string;
+  severity: string;
+  source: string;
+  detail: string;
+}
+
+export interface DiagnosisRecommendation {
+  id?: number;
+  title: string;
+  resolves_issues: number[];
+  approach: string;
+}
+
+/** The full JSON blob — we keep it deliberately loose so the page
+ *  doesn't crash when the skill tweaks its output format. */
+export interface DiagnosisResult {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}

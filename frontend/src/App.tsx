@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Layout from "@/components/Layout";
 import DashboardPage from "@/pages/DashboardPage";
+import DiagnosisPage from "@/pages/DiagnosisPage";
 import OverviewPage from "@/pages/OverviewPage";
 import HoldingsPage from "@/pages/HoldingsPage";
 import DataManagementPage from "@/pages/DataManagementPage";
@@ -16,6 +17,7 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/diagnosis" element={<DiagnosisPage />} />
           <Route path="/liquid" element={<LiquidPage />} />
           <Route path="/stable" element={<StablePage />} />
           <Route path="/growth/overview" element={<OverviewPage />} />

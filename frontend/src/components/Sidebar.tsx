@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
+  HeartPulse,
   Droplets,
   Landmark,
   TrendingUp,
@@ -152,6 +153,32 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
               )}
               资产总览
+            </span>
+          )}
+        </Link>
+
+        {/* Diagnosis */}
+        <Link
+          to="/diagnosis"
+          className={cn(
+            "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-300 ease-out",
+            location.pathname === "/diagnosis"
+              ? activeLinkClass
+              : inactiveLinkClass
+          )}
+        >
+          <HeartPulse
+            className={cn(
+              "h-4 w-4 shrink-0",
+              location.pathname === "/diagnosis" && "text-primary"
+            )}
+          />
+          {!collapsed && (
+            <span className="truncate flex items-center gap-2">
+              {location.pathname === "/diagnosis" && (
+                <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+              )}
+              资产诊断
             </span>
           )}
         </Link>

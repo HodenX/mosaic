@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import create_db_and_tables
-from app.routers import dashboard, funds, holdings, insurance, liquid, portfolio, position, stable
+from app.routers import dashboard, diagnosis, funds, holdings, insurance, liquid, portfolio, position, stable
 from app.scheduler import scheduler
 
 
@@ -35,6 +35,7 @@ app.include_router(liquid.router)
 app.include_router(insurance.router)
 app.include_router(stable.router)
 app.include_router(dashboard.router)
+app.include_router(diagnosis.router)
 
 
 @app.get("/api/health")
