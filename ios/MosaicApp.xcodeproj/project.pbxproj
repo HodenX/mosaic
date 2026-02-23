@@ -26,6 +26,7 @@
 		8B842838846A7FF660C5DBB0 /* Fund.swift in Sources */ = {isa = PBXBuildFile; fileRef = F220220229B909610C38E38B /* Fund.swift */; };
 		90C289EE4243822989D63EF3 /* Diagnosis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73EBE8D3F69045700898C0C2 /* Diagnosis.swift */; };
 		9224C0B64328FF38A1972075 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 369F2B5909BBACB51E23B8F9 /* Assets.xcassets */; };
+		9E077530E542F6589E143311 /* ServerConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4D67542D41D3DAEA2EFAD1 /* ServerConfigView.swift */; };
 		A3AEA5A394885653D426F26C /* CurrencyText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8478428637AA7FB26A3494B3 /* CurrencyText.swift */; };
 		ABBE667CCD5ECF1278592C90 /* InsuranceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AAA573BEE550FF6C6268670 /* InsuranceService.swift */; };
 		C1B6BCC969F203FC56B61387 /* HoldingsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBAEA19535578D1DB460D76 /* HoldingsService.swift */; };
@@ -33,6 +34,7 @@
 		D5D279AC49E71DA283D840B0 /* Insurance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8890FC8D94D7A23FE359DDB8 /* Insurance.swift */; };
 		DD70E59723868F1F43C89586 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = F074521647EB31C72AF84674 /* Position.swift */; };
 		E2E2C650C4BD53D8B74369BF /* SummaryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD90F85A801BEC5DC07B274 /* SummaryCard.swift */; };
+		E5C70EE4C416765EA30DAC6A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F945F639200D01EDF80986A3 /* SettingsView.swift */; };
 		E686C303A45F5AFF93FA1D78 /* LiquidAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2565EDB757A2088D0FA7F83B /* LiquidAsset.swift */; };
 		E6EE56D0E594302E3EFE4A52 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E6081421CD8F5D64A6367B /* Colors.swift */; };
 		E83CD0514E151F997AD33424 /* Portfolio.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA59DE303C27F41692EE93C1 /* Portfolio.swift */; };
@@ -58,6 +60,7 @@
 		73EBE8D3F69045700898C0C2 /* Diagnosis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diagnosis.swift; sourceTree = "<group>"; };
 		76FCCEA820CE35E6C3E0D4C7 /* StableService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StableService.swift; sourceTree = "<group>"; };
 		776C7F8CE984B7135F52BA10 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		7D4D67542D41D3DAEA2EFAD1 /* ServerConfigView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfigView.swift; sourceTree = "<group>"; };
 		8478428637AA7FB26A3494B3 /* CurrencyText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyText.swift; sourceTree = "<group>"; };
 		8890FC8D94D7A23FE359DDB8 /* Insurance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Insurance.swift; sourceTree = "<group>"; };
 		9C6A30D41B5D22E9F16AA4EC /* PercentText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentText.swift; sourceTree = "<group>"; };
@@ -72,6 +75,7 @@
 		ECBAEA19535578D1DB460D76 /* HoldingsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoldingsService.swift; sourceTree = "<group>"; };
 		F074521647EB31C72AF84674 /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
 		F220220229B909610C38E38B /* Fund.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fund.swift; sourceTree = "<group>"; };
+		F945F639200D01EDF80986A3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		FCD532D31F8073EF3CCA5F1D /* Dashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -140,6 +144,7 @@
 		7008D1C15707FB1F912B0C2E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BAFF224F0940EB538F7BFF0C /* Settings */,
 				3EB8118ABB158D1C82E1A35D /* Shared */,
 			);
 			path = Views;
@@ -169,6 +174,15 @@
 				76FCCEA820CE35E6C3E0D4C7 /* StableService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		BAFF224F0940EB538F7BFF0C /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				7D4D67542D41D3DAEA2EFAD1 /* ServerConfigView.swift */,
+				F945F639200D01EDF80986A3 /* SettingsView.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		BC484DD907796024B6499603 /* MosaicApp */ = {
@@ -278,6 +292,8 @@
 				5880E5FC92A89BEB3E4E5A96 /* PortfolioService.swift in Sources */,
 				DD70E59723868F1F43C89586 /* Position.swift in Sources */,
 				646699332E0B891FF5133C34 /* PositionService.swift in Sources */,
+				9E077530E542F6589E143311 /* ServerConfigView.swift in Sources */,
+				E5C70EE4C416765EA30DAC6A /* SettingsView.swift in Sources */,
 				F2D4F63AD4E07B9E3EE1903E /* StableAsset.swift in Sources */,
 				D57CF3D906ECC1206DB5DBB5 /* StableService.swift in Sources */,
 				E2E2C650C4BD53D8B74369BF /* SummaryCard.swift in Sources */,
