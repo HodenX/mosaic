@@ -10,54 +10,61 @@ struct StableListView: View {
     var body: some View {
         Group {
             if let vm {
-                List {
-                    if let s = vm.summary {
-                        Section {
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text("总金额").font(.caption).foregroundStyle(.secondary)
-                                    CurrencyText(value: s.totalAmount, font: .title2)
+                if vm.isLoading && vm.items.isEmpty {
+                    LoadingView()
+                } else if let error = vm.error, vm.items.isEmpty {
+                    ContentUnavailableView("加载失败", systemImage: "wifi.slash",
+                        description: Text(error.localizedDescription))
+                } else {
+                    List {
+                        if let s = vm.summary {
+                            Section {
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text("总金额").font(.caption).foregroundStyle(.secondary)
+                                        CurrencyText(value: s.totalAmount, font: .title2)
+                                    }
+                                    Spacer()
+                                    VStack(alignment: .trailing) {
+                                        Text("预估年收益").font(.caption).foregroundStyle(.secondary)
+                                        CurrencyText(value: s.estimatedAnnualReturn, font: .headline)
+                                    }
                                 }
-                                Spacer()
-                                VStack(alignment: .trailing) {
-                                    Text("预估年收益").font(.caption).foregroundStyle(.secondary)
-                                    CurrencyText(value: s.estimatedAnnualReturn, font: .headline)
+                            }
+                        }
+                        Section("资产列表") {
+                            if vm.items.isEmpty {
+                                EmptyStateView(icon: "building.columns", title: "暂无稳钱", message: "点击右上角添加")
+                            }
+                            ForEach(vm.items) { item in
+                                VStack(alignment: .leading, spacing: 4) {
+                                    HStack {
+                                        Text(item.name).font(.headline)
+                                        Spacer()
+                                        CurrencyText(value: item.amount, font: .headline)
+                                    }
+                                    HStack {
+                                        Text("\(item.platform) · \(item.type == "term_deposit" ? "定期存款" : "银行理财")")
+                                            .font(.caption).foregroundStyle(.secondary)
+                                        Spacer()
+                                        Text("年化 \(Formatters.percent(item.annualRate))").font(.caption).foregroundStyle(.secondary)
+                                    }
+                                    if let maturity = item.maturityDate {
+                                        maturityBadge(maturity)
+                                    }
+                                }
+                                .swipeActions(edge: .trailing) {
+                                    Button(role: .destructive) {
+                                        Task { try? await vm.delete(id: item.id) }
+                                    } label: { Label("删除", systemImage: "trash") }
+                                    Button { editingItem = item } label: { Label("编辑", systemImage: "pencil") }
+                                        .tint(.blue)
                                 }
                             }
                         }
                     }
-                    Section("资产列表") {
-                        if vm.items.isEmpty {
-                            EmptyStateView(icon: "building.columns", title: "暂无稳钱", message: "点击右上角添加")
-                        }
-                        ForEach(vm.items) { item in
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack {
-                                    Text(item.name).font(.headline)
-                                    Spacer()
-                                    CurrencyText(value: item.amount, font: .headline)
-                                }
-                                HStack {
-                                    Text("\(item.platform) · \(item.type == "term_deposit" ? "定期存款" : "银行理财")")
-                                        .font(.caption).foregroundStyle(.secondary)
-                                    Spacer()
-                                    Text("年化 \(Formatters.percent(item.annualRate))").font(.caption).foregroundStyle(.secondary)
-                                }
-                                if let maturity = item.maturityDate {
-                                    maturityBadge(maturity)
-                                }
-                            }
-                            .swipeActions(edge: .trailing) {
-                                Button(role: .destructive) {
-                                    Task { try? await vm.delete(id: item.id) }
-                                } label: { Label("删除", systemImage: "trash") }
-                                Button { editingItem = item } label: { Label("编辑", systemImage: "pencil") }
-                                    .tint(.blue)
-                            }
-                        }
-                    }
+                    .refreshable { await vm.load() }
                 }
-                .refreshable { await vm.load() }
             } else { LoadingView() }
         }
         .navigationTitle("稳钱")

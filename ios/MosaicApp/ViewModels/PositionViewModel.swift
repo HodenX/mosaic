@@ -8,15 +8,19 @@ class PositionViewModel {
     var strategies: [StrategyInfo] = []
     var suggestion: StrategyResult?
     var isLoading = false
+    var error: Error?
     private let service: PositionService
 
     init(api: APIClient) { self.service = PositionService(api: api) }
 
     func load() async {
         isLoading = true
+        error = nil
         async let s = service.getBudget()
         async let strats = service.strategies()
-        do { status = try await s; strategies = try await strats } catch {}
+        do { status = try await s; strategies = try await strats } catch {
+            self.error = error
+        }
         isLoading = false
     }
 

@@ -20,55 +20,62 @@ struct DataManagementView: View {
 
     @ViewBuilder
     private func content(_ vm: DataManagementViewModel) -> some View {
-        List {
-            Section {
-                Button {
-                    Task { await vm.refreshAll() }
-                } label: {
-                    HStack {
-                        Label("刷新全部基金数据", systemImage: "arrow.triangle.2.circlepath")
-                        Spacer()
-                        if vm.isRefreshingAll {
-                            ProgressView()
+        if vm.isLoading && vm.holdings.isEmpty {
+            LoadingView()
+        } else if let error = vm.error, vm.holdings.isEmpty {
+            ContentUnavailableView("加载失败", systemImage: "wifi.slash",
+                description: Text(error.localizedDescription))
+        } else {
+            List {
+                Section {
+                    Button {
+                        Task { await vm.refreshAll() }
+                    } label: {
+                        HStack {
+                            Label("刷新全部基金数据", systemImage: "arrow.triangle.2.circlepath")
+                            Spacer()
+                            if vm.isRefreshingAll {
+                                ProgressView()
+                            }
                         }
                     }
-                }
-                .disabled(vm.isRefreshingAll)
+                    .disabled(vm.isRefreshingAll)
 
-                if vm.isRefreshingAll {
-                    ProgressView(value: vm.refreshProgress)
-                        .tint(.jade)
+                    if vm.isRefreshingAll {
+                        ProgressView(value: vm.refreshProgress)
+                            .tint(.jade)
+                    }
                 }
-            }
 
-            Section("基金数据状态") {
-                let uniqueFunds = uniqueFunds(from: vm.holdings)
-                ForEach(uniqueFunds, id: \.fundCode) { h in
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(h.fundName).font(.subheadline)
-                            Text(h.fundCode).font(.caption).foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                        VStack(alignment: .trailing, spacing: 4) {
-                            if let nav = h.latestNav {
-                                Text(String(format: "%.4f", nav)).font(.subheadline).monospacedDigit()
+                Section("基金数据状态") {
+                    let uniqueFunds = uniqueFunds(from: vm.holdings)
+                    ForEach(uniqueFunds, id: \.fundCode) { h in
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(h.fundName).font(.subheadline)
+                                Text(h.fundCode).font(.caption).foregroundStyle(.secondary)
                             }
-                            if let date = h.latestNavDate {
-                                Text(date).font(.caption2).foregroundStyle(.secondary)
+                            Spacer()
+                            VStack(alignment: .trailing, spacing: 4) {
+                                if let nav = h.latestNav {
+                                    Text(String(format: "%.4f", nav)).font(.subheadline).monospacedDigit()
+                                }
+                                if let date = h.latestNavDate {
+                                    Text(date).font(.caption2).foregroundStyle(.secondary)
+                                }
                             }
-                        }
-                        Button {
-                            Task { await vm.refreshFund(code: h.fundCode) }
-                        } label: {
-                            if vm.refreshingCodes.contains(h.fundCode) {
-                                ProgressView()
-                            } else {
-                                Image(systemName: "arrow.clockwise")
+                            Button {
+                                Task { await vm.refreshFund(code: h.fundCode) }
+                            } label: {
+                                if vm.refreshingCodes.contains(h.fundCode) {
+                                    ProgressView()
+                                } else {
+                                    Image(systemName: "arrow.clockwise")
+                                }
                             }
+                            .buttonStyle(.borderless)
+                            .disabled(vm.refreshingCodes.contains(h.fundCode))
                         }
-                        .buttonStyle(.borderless)
-                        .disabled(vm.refreshingCodes.contains(h.fundCode))
                     }
                 }
             }

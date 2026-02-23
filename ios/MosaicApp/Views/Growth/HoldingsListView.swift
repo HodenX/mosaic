@@ -9,8 +9,15 @@ struct HoldingsListView: View {
     var body: some View {
         Group {
             if let vm {
-                if vm.isLoading && vm.holdings.isEmpty { LoadingView() }
-                else {
+                if vm.isLoading && vm.holdings.isEmpty {
+                    LoadingView()
+                } else if let error = vm.error {
+                    ContentUnavailableView("加载失败", systemImage: "wifi.slash",
+                        description: Text(error.localizedDescription))
+                } else if vm.holdings.isEmpty {
+                    EmptyStateView(title: "暂无持仓", icon: "list.bullet.rectangle",
+                        message: "点击右上角 + 添加基金持仓")
+                } else {
                     List {
                         ForEach(vm.holdings) { h in
                             NavigationLink { FundDetailView(fundCode: h.fundCode) } label: {
@@ -39,7 +46,9 @@ struct HoldingsListView: View {
                     }
                     .refreshable { await vm.load() }
                 }
-            } else { LoadingView() }
+            } else {
+                LoadingView()
+            }
         }
         .navigationTitle("持仓明细")
         .toolbar { Button { showAdd = true } label: { Image(systemName: "plus") } }

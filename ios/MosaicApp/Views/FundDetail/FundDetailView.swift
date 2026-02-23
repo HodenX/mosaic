@@ -35,7 +35,14 @@ struct FundDetailView: View {
                             if !vm.topHoldings.isEmpty { topHoldingsSection(vm.topHoldings) }
                         }.padding()
                     }
+                } else if let error = vm.error {
+                    ContentUnavailableView("加载失败", systemImage: "wifi.slash",
+                        description: Text(error.localizedDescription))
+                } else {
+                    LoadingView()
                 }
+            } else {
+                LoadingView()
             }
         }
         .navigationTitle(fundCode)

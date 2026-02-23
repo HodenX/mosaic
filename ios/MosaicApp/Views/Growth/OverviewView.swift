@@ -27,6 +27,11 @@ struct OverviewView: View {
                             if let alloc = vm.allocation, !alloc.items.isEmpty { allocationSection(alloc) }
                         }.padding()
                     }.refreshable { await vm.load() }
+                } else if let error = vm.error {
+                    ContentUnavailableView("加载失败", systemImage: "wifi.slash",
+                        description: Text(error.localizedDescription))
+                } else {
+                    LoadingView()
                 }
             } else { LoadingView() }
         }

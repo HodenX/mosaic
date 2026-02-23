@@ -9,6 +9,7 @@ class FundDetailViewModel {
     var allocation: FundAllocation = [:]
     var topHoldings: [TopHolding] = []
     var isLoading = false
+    var error: Error?
     private let service: FundsService
     let fundCode: String
 
@@ -18,6 +19,7 @@ class FundDetailViewModel {
 
     func load() async {
         isLoading = true
+        error = nil
         async let i = service.get(code: fundCode)
         async let n = service.navHistory(code: fundCode)
         async let a = service.allocation(code: fundCode)
@@ -25,7 +27,9 @@ class FundDetailViewModel {
         do {
             fundInfo = try await i; navHistory = try await n
             allocation = try await a; topHoldings = try await t
-        } catch {}
+        } catch {
+            self.error = error
+        }
         isLoading = false
     }
 }

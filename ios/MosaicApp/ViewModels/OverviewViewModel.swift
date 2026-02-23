@@ -10,6 +10,7 @@ class OverviewViewModel {
     var allocation: AllocationResponse?
     var positionStatus: PositionStatus?
     var isLoading = false
+    var error: Error?
     private let portfolioService: PortfolioService
     private let positionService: PositionService
 
@@ -20,6 +21,7 @@ class OverviewViewModel {
 
     func load() async {
         isLoading = true
+        error = nil
         async let s = portfolioService.summary()
         async let t = portfolioService.trend()
         async let p = portfolioService.byPlatform()
@@ -28,7 +30,9 @@ class OverviewViewModel {
         do {
             summary = try await s; trend = try await t; platforms = try await p
             allocation = try await a; positionStatus = try await pos
-        } catch {}
+        } catch {
+            self.error = error
+        }
         isLoading = false
     }
 }

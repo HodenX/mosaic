@@ -43,7 +43,12 @@ struct InsuranceListView: View {
 
     @ViewBuilder
     private func content(_ vm: InsuranceViewModel) -> some View {
-        if vm.items.isEmpty && !vm.isLoading {
+        if vm.isLoading && vm.items.isEmpty {
+            LoadingView()
+        } else if let error = vm.error, vm.items.isEmpty {
+            ContentUnavailableView("加载失败", systemImage: "wifi.slash",
+                description: Text(error.localizedDescription))
+        } else if vm.items.isEmpty {
             EmptyStateView(icon: "shield", title: "暂无保单")
         } else {
             List {
