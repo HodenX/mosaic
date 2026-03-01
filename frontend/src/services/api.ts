@@ -1,6 +1,7 @@
 import axios from "axios";
 import type {
   AllocationResponse,
+  AllocationTarget,
   BudgetChangeLogEntry,
   BudgetUpdate,
   ChangeLog,
@@ -79,6 +80,8 @@ export const portfolioApi = {
     api.get<PortfolioTrend[]>("/portfolio/trend", { params: { start, end } }).then((r) => r.data),
   allocation: (dimension: string) =>
     api.get<AllocationResponse>("/portfolio/allocation", { params: { dimension } }).then((r) => r.data),
+  snapshot: () =>
+    api.post("/portfolio/snapshot").then((r) => r.data),
 };
 
 export const positionApi = {
@@ -142,6 +145,10 @@ export const dashboardApi = {
   trend: (days?: number) =>
     api.get<TotalAssetTrend[]>("/dashboard/trend", { params: { days } }).then((r) => r.data),
   snapshot: () => api.post("/dashboard/snapshot"),
+  allocationTargets: () =>
+    api.get<AllocationTarget | null>("/dashboard/allocation-targets").then((r) => r.data),
+  updateAllocationTargets: (data: AllocationTarget) =>
+    api.put<AllocationTarget>("/dashboard/allocation-targets", data).then((r) => r.data),
 };
 
 export const diagnosisApi = {

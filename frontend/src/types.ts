@@ -359,6 +359,12 @@ export interface TotalAssetTrend {
   total_assets: number;
 }
 
+export interface AllocationTarget {
+  liquid_target: number;
+  stable_target: number;
+  growth_target: number;
+}
+
 // --- Diagnosis Report Types (flexible, adapts to actual skill output) ---
 
 // The diagnosis JSON is semi-structured — the skill may produce

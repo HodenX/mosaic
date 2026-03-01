@@ -35,6 +35,15 @@ export default function TrendChart({ data }: Props) {
     return data.filter((d) => d.date >= cutoffStr);
   }, [data, range]);
 
+  const yDomain = useMemo((): [number | string, number | string] => {
+    if (!filteredData.length) return ["auto", "auto"];
+    const values = filteredData.map((d) => d.total_value).filter(Boolean);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const pad = (max - min) * 0.3 || max * 0.01;
+    return [min - pad, max + pad];
+  }, [filteredData]);
+
   if (!data.length) return null;
 
   return (
@@ -68,7 +77,7 @@ export default function TrendChart({ data }: Props) {
             </defs>
             <CartesianGrid vertical={false} strokeOpacity={0.3} />
             <XAxis dataKey="date" tickLine={false} axisLine={false} />
-            <YAxis tickLine={false} axisLine={false} tickFormatter={formatWan} />
+            <YAxis tickLine={false} axisLine={false} tickFormatter={formatWan} domain={yDomain} />
             <ChartTooltip content={<ChartTooltipContent />} />
             <Area type="monotone" dataKey="total_value" fill="url(#fillValue)" stroke="none" />
             <Line type="monotone" dataKey="total_value" stroke="var(--chart-1)" strokeWidth={2} dot={false} />
