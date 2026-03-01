@@ -13,6 +13,7 @@ from app.models import (
     InsurancePolicy,
     PositionBudget,
     TotalAssetSnapshot,
+    AllocationTarget,
 )
 
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
@@ -282,4 +283,49 @@ def take_snapshot(session: SessionDep):
         "growth_amount": result.growth_amount,
         "insurance_premium": result.insurance_premium,
         "total_assets": result.total_assets,
+    }
+
+
+@router.get("/allocation-targets")
+def get_allocation_targets(session: SessionDep):
+    """Return user-configured bucket allocation targets (percentages)."""
+    target = session.exec(select(AllocationTarget)).first()
+    if not target:
+        return None
+    return {
+        "liquid_target": target.liquid_target,
+        "stable_target": target.stable_target,
+        "growth_target": target.growth_target,
+    }
+
+
+@router.put("/allocation-targets")
+def update_allocation_targets(
+    body: dict,
+    session: SessionDep,
+):
+    """Upsert bucket allocation targets. Expects {liquid_target, stable_target, growth_target}."""
+    liquid = float(body.get("liquid_target", 0))
+    stable = float(body.get("stable_target", 0))
+    growth = float(body.get("growth_target", 0))
+
+    target = session.exec(select(AllocationTarget)).first()
+    if target:
+        target.liquid_target = liquid
+        target.stable_target = stable
+        target.growth_target = growth
+        target.updated_at = dt.datetime.now()
+    else:
+        target = AllocationTarget(
+            liquid_target=liquid,
+            stable_target=stable,
+            growth_target=growth,
+        )
+        session.add(target)
+    session.commit()
+    session.refresh(target)
+    return {
+        "liquid_target": target.liquid_target,
+        "stable_target": target.stable_target,
+        "growth_target": target.growth_target,
     }
