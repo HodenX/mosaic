@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Droplets, Landmark, TrendingUp, Shield, ChevronRight, Pencil } from "lucide-react";
 import { Area, CartesianGrid, ComposedChart, Line, XAxis, YAxis } from "recharts";
@@ -81,7 +81,7 @@ interface WaterBucketProps {
   animated: boolean;
 }
 
-function WaterBucket({ id, color, label, amount, totalAssets, targetPct, animated }: WaterBucketProps) {
+function WaterBucket({ id: _id, color, label, amount, totalAssets, targetPct, animated }: WaterBucketProps) {
   const currentPct = totalAssets > 0 ? (amount / totalAssets) * 100 : 0;
   const fillRatio = targetPct
     ? Math.min(currentPct / targetPct, 1.0)
@@ -98,7 +98,8 @@ function WaterBucket({ id, color, label, amount, totalAssets, targetPct, animate
   const isOnTarget = deviation !== null && Math.abs(currentPct - (targetPct ?? 0)) <= 5;
   const isOver = deviation !== null && deviation > 0 && !isOnTarget;
 
-  const clipId = `bucket-clip-${id}`;
+  const uid = useId();
+  const clipId = `bucket-clip-${uid}`;
 
   return (
     <div className="flex flex-col items-center gap-2">
