@@ -183,3 +183,9 @@ class InsurancePolicyUpdate(SQLModel):
     payment_years: int | None = None
     next_payment_date: date | None = None
     status: str | None = None
+
+
+class AllocationTargetRequest(SQLModel):
+    liquid_target: float
+    stable_target: float
+    growth_target: float

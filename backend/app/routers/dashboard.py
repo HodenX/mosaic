@@ -15,6 +15,7 @@ from app.models import (
     TotalAssetSnapshot,
     AllocationTarget,
 )
+from app.schemas import AllocationTargetRequest
 
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 SessionDep = Annotated[Session, Depends(get_session)]
@@ -301,13 +302,13 @@ def get_allocation_targets(session: SessionDep):
 
 @router.put("/allocation-targets")
 def update_allocation_targets(
-    body: dict,
+    data: AllocationTargetRequest,
     session: SessionDep,
 ):
     """Upsert bucket allocation targets. Expects {liquid_target, stable_target, growth_target}."""
-    liquid = float(body.get("liquid_target", 0))
-    stable = float(body.get("stable_target", 0))
-    growth = float(body.get("growth_target", 0))
+    liquid = data.liquid_target
+    stable = data.stable_target
+    growth = data.growth_target
 
     target = session.exec(select(AllocationTarget)).first()
     if target:

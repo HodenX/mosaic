@@ -95,12 +95,11 @@ function BucketRow({ color, label, amount, totalAssets, targetPct, animated }: B
           />
           {targetPct !== null && (
             <div
-              className="absolute top-[-3px] bottom-[-3px] w-0.5 rounded-full transition-opacity duration-300"
+              className={`absolute top-[-3px] bottom-[-3px] w-0.5 rounded-full transition-opacity duration-300 ${
+                isOnTarget ? "bg-emerald-500" : "bg-foreground/50"
+              }`}
               style={{
                 left: `${Math.min(targetPct, 100)}%`,
-                backgroundColor: isOnTarget
-                  ? "oklch(0.60 0.15 145)"
-                  : "oklch(0.40 0.01 0)",
                 opacity: animated ? 0.9 : 0,
                 transitionDelay: animated ? "400ms" : "0ms",
               }}
@@ -124,21 +123,17 @@ function BucketRow({ color, label, amount, totalAssets, targetPct, animated }: B
 
         {deviation !== null && (
           <div
-            className="shrink-0 text-xs tabular-nums font-serif font-medium px-1.5 py-0.5 rounded-md transition-all duration-300"
+            className={`shrink-0 text-xs tabular-nums font-serif font-medium px-1.5 py-0.5 rounded-md transition-all duration-300 ${
+              isOnTarget
+                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
+                : isOver
+                ? "bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400"
+                : "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
+            }`}
             style={{
               opacity: animated ? 1 : 0,
               transform: animated ? "translateX(0)" : "translateX(8px)",
               transitionDelay: animated ? "600ms" : "0ms",
-              backgroundColor: isOnTarget
-                ? "oklch(0.93 0.05 145)"
-                : isOver
-                ? "oklch(0.95 0.04 25)"
-                : "oklch(0.95 0.06 80)",
-              color: isOnTarget
-                ? "oklch(0.45 0.12 145)"
-                : isOver
-                ? "oklch(0.50 0.18 25)"
-                : "oklch(0.55 0.14 75)",
             }}
           >
             {isOnTarget
