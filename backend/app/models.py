@@ -162,3 +162,13 @@ class InsurancePolicy(SQLModel, table=True):
     next_payment_date: datetime.date | None = None
     status: str = "active"  # "active" | "expired" | "lapsed"
     updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+
+
+class AllocationTarget(SQLModel, table=True):
+    __tablename__ = "allocation_targets"
+
+    id: int | None = Field(default=None, primary_key=True)
+    liquid_target: float = 0.0
+    stable_target: float = 0.0
+    growth_target: float = 0.0
+    updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
