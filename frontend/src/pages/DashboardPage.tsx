@@ -25,17 +25,36 @@ const trendChartConfig = {
 
 type TrendRange = "1M" | "3M" | "6M" | "1Y" | "ALL";
 
-// --- useCountUp hook ---
-function useCountUp(target: number, duration: number, trigger: boolean): number {
+// --- SVG bucket constants ---
+const B_TOP_Y = 18;
+const B_BOT_Y = 95;
+const B_HEIGHT = B_BOT_Y - B_TOP_Y; // 77
+const BUCKET_BODY = `M 8 ${B_TOP_Y} L 72 ${B_TOP_Y} L 64 ${B_BOT_Y} L 16 ${B_BOT_Y} Z`;
+
+function makeWavePath(waterY: number): string {
+  let d = `M 0 ${waterY}`;
+  for (let i = 0; i < 8; i++) {
+    const x = i * 20;
+    const dir = i % 2 === 0 ? -1 : 1;
+    d += ` C ${x + 5} ${waterY + dir * 4} ${x + 15} ${waterY + dir * 4} ${x + 20} ${waterY}`;
+  }
+  d += ` L 160 ${B_BOT_Y} L 0 ${B_BOT_Y} Z`;
+  return d;
+}
+
+// --- useFillAnimation hook ---
+function useFillAnimation(target: number, trigger: boolean): number {
   const [value, setValue] = useState(0);
   const rafRef = useRef<number>(0);
 
   useEffect(() => {
+    cancelAnimationFrame(rafRef.current);
     if (!trigger) {
       setValue(0);
       return;
     }
     const startTime = performance.now();
+    const duration = 1000;
     const animate = (now: number) => {
       const progress = Math.min((now - startTime) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
@@ -46,13 +65,14 @@ function useCountUp(target: number, duration: number, trigger: boolean): number 
     };
     rafRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [target, duration, trigger]);
+  }, [target, trigger]);
 
   return value;
 }
 
-// --- BucketRow sub-component ---
-interface BucketRowProps {
+// --- WaterBucket sub-component ---
+interface WaterBucketProps {
+  id: string;
   color: string;
   label: string;
   amount: number;
@@ -61,87 +81,138 @@ interface BucketRowProps {
   animated: boolean;
 }
 
-function BucketRow({ color, label, amount, totalAssets, targetPct, animated }: BucketRowProps) {
+function WaterBucket({ id, color, label, amount, totalAssets, targetPct, animated }: WaterBucketProps) {
   const currentPct = totalAssets > 0 ? (amount / totalAssets) * 100 : 0;
-  const targetAmount = targetPct !== null && totalAssets > 0 ? (targetPct / 100) * totalAssets : null;
-  const deviation = targetAmount !== null ? amount - targetAmount : null;
+  const fillRatio = targetPct
+    ? Math.min(currentPct / targetPct, 1.0)
+    : currentPct / 100;
+  const isOverflow = targetPct !== null && currentPct > targetPct * 1.05;
 
+  const displayFillRatio = useFillAnimation(fillRatio, animated);
+  const waterY = B_TOP_Y + (1 - displayFillRatio) * B_HEIGHT;
+
+  const targetAmount = targetPct !== null && totalAssets > 0
+    ? (targetPct / 100) * totalAssets
+    : null;
+  const deviation = targetAmount !== null ? amount - targetAmount : null;
   const isOnTarget = deviation !== null && Math.abs(currentPct - (targetPct ?? 0)) <= 5;
   const isOver = deviation !== null && deviation > 0 && !isOnTarget;
 
-  const animatedPct = useCountUp(currentPct, 800, animated);
+  const clipId = `bucket-clip-${id}`;
 
   return (
-    <div className="group py-2.5 px-1 rounded-lg hover:bg-muted/40 transition-colors duration-150">
-      <div className="flex items-center justify-between mb-1.5">
-        <div className="flex items-center gap-2">
-          <div className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
-          <span className="text-sm font-medium">{label}</span>
-        </div>
-        <span className="text-sm tabular-nums font-serif font-medium">
-          {formatCurrency(amount)}
-        </span>
-      </div>
+    <div className="flex flex-col items-center gap-2">
+      <div className={isOverflow ? "animate-[bucket-shake_0.5s_ease-in-out]" : ""}>
+        <svg viewBox="0 0 80 110" className="w-full max-w-[96px]">
+          <defs>
+            <clipPath id={clipId}>
+              <path d={BUCKET_BODY} />
+            </clipPath>
+          </defs>
 
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 h-2 bg-muted rounded-full overflow-visible">
-          <div
-            className="absolute inset-y-0 left-0 rounded-full transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
-            style={{
-              width: animated ? `${Math.min(currentPct, 100)}%` : "0%",
-              backgroundColor: color,
-              opacity: 0.85,
-            }}
+          {/* Handle */}
+          <path
+            d="M 22 14 A 18 12 0 0 1 58 14"
+            fill="none"
+            stroke={color}
+            strokeWidth="3"
+            strokeLinecap={"round" as const}
+            opacity="0.55"
           />
-          {targetPct !== null && (
-            <div
-              className={`absolute top-[-3px] bottom-[-3px] w-0.5 rounded-full transition-opacity duration-300 ${
-                isOnTarget ? "bg-emerald-500" : "bg-foreground/50"
-              }`}
-              style={{
-                left: `${Math.min(targetPct, 100)}%`,
-                opacity: animated ? 0.9 : 0,
-                transitionDelay: animated ? "400ms" : "0ms",
-              }}
+
+          {/* Water fill (solid base) */}
+          {displayFillRatio > 0 && (
+            <rect
+              clipPath={`url(#${clipId})`}
+              x="0"
+              y={waterY}
+              width="80"
+              height={B_BOT_Y - waterY + 5}
+              fill={color}
+              opacity="0.65"
             />
           )}
-        </div>
 
-        <div
-          className="flex items-center gap-1.5 transition-opacity duration-300"
-          style={{ opacity: animated ? 1 : 0, transitionDelay: animated ? "200ms" : "0ms" }}
-        >
-          <span className="text-sm tabular-nums font-serif font-semibold w-12 text-right">
-            {animatedPct.toFixed(1)}%
-          </span>
-          {targetPct !== null && (
-            <span className="text-xs text-muted-foreground tabular-nums">
-              / {targetPct}%
-            </span>
+          {/* Wave overlay (SMIL animation) */}
+          {displayFillRatio > 0.02 && (
+            <g clipPath={`url(#${clipId})`}>
+              <path d={makeWavePath(waterY)} fill={color} opacity="0.35">
+                {/* @ts-ignore */}
+                <animateTransform
+                  attributeName="transform"
+                  type="translate"
+                  from="0 0"
+                  to="-80 0"
+                  dur="3s"
+                  repeatCount="indefinite"
+                />
+              </path>
+            </g>
           )}
-        </div>
 
+          {/* Bucket outline (above water) */}
+          <path
+            d={BUCKET_BODY}
+            fill="none"
+            stroke={color}
+            strokeWidth="2.5"
+            strokeLinejoin={"round" as const}
+          />
+
+          {/* Overflow drops */}
+          {isOverflow && (
+            <>
+              <circle cx="20" cy="16" r="3" fill={color} opacity="0">
+                {/* @ts-ignore */}
+                <animate attributeName="cy" from="16" to="36" dur="1.8s" repeatCount="indefinite" begin="0s" />
+                {/* @ts-ignore */}
+                <animate attributeName="opacity" values="0;0.7;0" dur="1.8s" repeatCount="indefinite" begin="0s" />
+              </circle>
+              <circle cx="40" cy="16" r="2.5" fill={color} opacity="0">
+                {/* @ts-ignore */}
+                <animate attributeName="cy" from="16" to="34" dur="1.8s" repeatCount="indefinite" begin="0.6s" />
+                {/* @ts-ignore */}
+                <animate attributeName="opacity" values="0;0.6;0" dur="1.8s" repeatCount="indefinite" begin="0.6s" />
+              </circle>
+              <circle cx="60" cy="16" r="2" fill={color} opacity="0">
+                {/* @ts-ignore */}
+                <animate attributeName="cy" from="16" to="32" dur="1.8s" repeatCount="indefinite" begin="1.2s" />
+                {/* @ts-ignore */}
+                <animate attributeName="opacity" values="0;0.5;0" dur="1.8s" repeatCount="indefinite" begin="1.2s" />
+              </circle>
+            </>
+          )}
+        </svg>
+      </div>
+
+      <div className="text-center w-full space-y-1">
+        <div className="flex items-center justify-center gap-1.5">
+          <div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+          <span className="text-xs font-medium">{label}</span>
+        </div>
+        <div className="text-sm font-semibold tabular-nums font-serif leading-tight">
+          {formatCurrency(amount)}
+        </div>
+        <div className="text-xs text-muted-foreground tabular-nums">
+          {currentPct.toFixed(1)}%
+          {targetPct !== null && <> / 目标{targetPct}%</>}
+        </div>
         {deviation !== null && (
-          <div
-            className={`shrink-0 text-xs tabular-nums font-serif font-medium px-1.5 py-0.5 rounded-md transition-all duration-300 ${
+          <span
+            className={`inline-block text-xs tabular-nums font-serif font-medium px-1.5 py-0.5 rounded-md ${
               isOnTarget
                 ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
                 : isOver
                 ? "bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400"
                 : "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
             }`}
-            style={{
-              opacity: animated ? 1 : 0,
-              transform: animated ? "translateX(0)" : "translateX(8px)",
-              transitionDelay: animated ? "600ms" : "0ms",
-            }}
           >
             {isOnTarget
               ? "达标"
               : isOver
               ? `超 +${formatWan(deviation)}`
               : `欠 ${formatWan(deviation)}`}
-          </div>
+          </span>
         )}
       </div>
     </div>
@@ -447,39 +518,44 @@ export default function DashboardPage() {
             {"编辑目标"}
           </button>
         </CardHeader>
-        <CardContent className="space-y-0">
+        <CardContent className="pt-4 pb-3">
           {!targets && targetsLoaded && (
             <button
               onClick={() => setTargetsDialogOpen(true)}
-              className="w-full mb-3 rounded-md border border-dashed border-muted-foreground/30 py-2.5 text-xs text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors text-center"
+              className="w-full mb-4 rounded-md border border-dashed border-muted-foreground/30 py-2.5 text-xs text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors text-center"
             >
               {"尚未设置目标比例，点此配置 →"}
             </button>
           )}
-          <BucketRow
-            color="var(--bucket-liquid)"
-            label={"活钱"}
-            amount={summary.buckets.liquid.amount}
-            totalAssets={summary.total_assets}
-            targetPct={targets?.liquid_target ?? null}
-            animated={barAnimated}
-          />
-          <BucketRow
-            color="var(--bucket-stable)"
-            label={"稳钱"}
-            amount={summary.buckets.stable.amount}
-            totalAssets={summary.total_assets}
-            targetPct={targets?.stable_target ?? null}
-            animated={barAnimated}
-          />
-          <BucketRow
-            color="var(--color-primary, var(--chart-1))"
-            label={"长钱"}
-            amount={summary.buckets.growth.total_amount}
-            totalAssets={summary.total_assets}
-            targetPct={targets?.growth_target ?? null}
-            animated={barAnimated}
-          />
+          <div className="grid grid-cols-3 gap-3">
+            <WaterBucket
+              id="liquid"
+              color="var(--bucket-liquid)"
+              label={"活钱"}
+              amount={summary.buckets.liquid.amount}
+              totalAssets={summary.total_assets}
+              targetPct={targets?.liquid_target ?? null}
+              animated={barAnimated}
+            />
+            <WaterBucket
+              id="stable"
+              color="var(--bucket-stable)"
+              label={"稳钱"}
+              amount={summary.buckets.stable.amount}
+              totalAssets={summary.total_assets}
+              targetPct={targets?.stable_target ?? null}
+              animated={barAnimated}
+            />
+            <WaterBucket
+              id="growth"
+              color="var(--color-primary)"
+              label={"长钱"}
+              amount={summary.buckets.growth.total_amount}
+              totalAssets={summary.total_assets}
+              targetPct={targets?.growth_target ?? null}
+              animated={barAnimated}
+            />
+          </div>
         </CardContent>
       </Card>
 
