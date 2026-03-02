@@ -10,6 +10,8 @@ export default defineConfig({
     },
   },
   server: {
+    host: true,
+    allowedHosts: true,
     proxy: {
       "/api": "http://localhost:8011",
     },

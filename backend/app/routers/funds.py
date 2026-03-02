@@ -1,5 +1,4 @@
 import datetime
-from concurrent.futures import ThreadPoolExecutor
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -57,20 +56,10 @@ def refresh_fund(fund_code: str, session: SessionDep):
     # fetch_fund_info uses the cached fund list — fast path when name exists
     fund = fetch_fund_info(fund_code, session)
 
-    # Run NAV fetch and allocation fetch in parallel (each uses its own session)
-    def _nav():
-        with Session(engine) as s:
-            fetch_fund_nav(fund_code, s)
-
-    def _alloc():
-        with Session(engine) as s:
-            fetch_fund_allocation(fund_code, s)
-
-    with ThreadPoolExecutor(max_workers=2) as pool:
-        fut_nav = pool.submit(_nav)
-        fut_alloc = pool.submit(_alloc)
-        fut_nav.result()
-        fut_alloc.result()
+    with Session(engine) as s:
+        fetch_fund_nav(fund_code, s)
+    with Session(engine) as s:
+        fetch_fund_allocation(fund_code, s)
 
     return {"ok": True, "fund_name": fund.fund_name}
 

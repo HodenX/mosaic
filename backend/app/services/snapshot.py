@@ -14,42 +14,68 @@ from app.models import (
 
 
 def take_portfolio_snapshot(session: Session) -> None:
-    """Calculate and store today's portfolio value snapshot."""
+    """Backfill portfolio snapshots for all NAV dates since the last snapshot."""
     holdings = session.exec(select(Holding)).all()
+    if not holdings:
+        return
 
-    total_value = 0.0
-    total_cost = 0.0
+    fund_codes = [h.fund_code for h in holdings]
 
-    for h in holdings:
-        total_cost += h.shares * h.cost_price
-        nav_record = session.exec(
-            select(FundNavHistory)
-            .where(FundNavHistory.fund_code == h.fund_code)
-            .order_by(FundNavHistory.date.desc())
-            .limit(1)
-        ).first()
-        if nav_record:
-            total_value += h.shares * nav_record.nav
+    # Find the last snapshot date so we only fill forward from there
+    last_snapshot = session.exec(
+        select(PortfolioSnapshot).order_by(PortfolioSnapshot.date.desc()).limit(1)
+    ).first()
+    last_date = last_snapshot.date if last_snapshot else None
 
-    today = datetime.date.today()
-    existing = session.get(PortfolioSnapshot, today)
-    if existing:
-        existing.total_value = total_value
-        existing.total_cost = total_cost
-        existing.total_pnl = total_value - total_cost
-        session.add(existing)
-    else:
-        session.add(PortfolioSnapshot(
-            date=today,
-            total_value=round(total_value, 2),
-            total_cost=round(total_cost, 2),
-            total_pnl=round(total_value - total_cost, 2),
-        ))
-    session.commit()
+    # Collect all unique NAV dates across held funds that have no snapshot yet
+    dates_query = (
+        select(FundNavHistory.date)
+        .where(FundNavHistory.fund_code.in_(fund_codes))
+        .distinct()
+        .order_by(FundNavHistory.date)
+    )
+    if last_date:
+        dates_query = dates_query.where(FundNavHistory.date > last_date)
+
+    dates_to_fill = session.exec(dates_query).all()
+
+    for nav_date in dates_to_fill:
+        total_value = 0.0
+        total_cost = 0.0
+
+        for h in holdings:
+            total_cost += h.shares * h.cost_price
+            # Use the NAV on or most recently before this date
+            nav_record = session.exec(
+                select(FundNavHistory)
+                .where(FundNavHistory.fund_code == h.fund_code)
+                .where(FundNavHistory.date <= nav_date)
+                .order_by(FundNavHistory.date.desc())
+                .limit(1)
+            ).first()
+            if nav_record:
+                total_value += h.shares * nav_record.nav
+
+        existing = session.get(PortfolioSnapshot, nav_date)
+        if existing:
+            existing.total_value = round(total_value, 2)
+            existing.total_cost = round(total_cost, 2)
+            existing.total_pnl = round(total_value - total_cost, 2)
+            session.add(existing)
+        else:
+            session.add(PortfolioSnapshot(
+                date=nav_date,
+                total_value=round(total_value, 2),
+                total_cost=round(total_cost, 2),
+                total_pnl=round(total_value - total_cost, 2),
+            ))
+
+    if dates_to_fill:
+        session.commit()
 
 
 def take_total_asset_snapshot(session: Session) -> TotalAssetSnapshot:
-    """Calculate and store today's total asset snapshot across all four buckets."""
+    """Calculate and store total asset snapshot across all four buckets, keyed to the latest NAV date."""
     # Liquid bucket
     liquid_assets = session.exec(select(LiquidAsset)).all()
     liquid_amount = sum(a.amount for a in liquid_assets)
@@ -61,6 +87,7 @@ def take_total_asset_snapshot(session: Session) -> TotalAssetSnapshot:
     # Growth bucket (funds)
     holdings = session.exec(select(Holding)).all()
     growth_amount = 0.0
+    latest_nav_date = None
     for h in holdings:
         nav_record = session.exec(
             select(FundNavHistory)
@@ -70,6 +97,8 @@ def take_total_asset_snapshot(session: Session) -> TotalAssetSnapshot:
         ).first()
         if nav_record:
             growth_amount += h.shares * nav_record.nav
+            if latest_nav_date is None or nav_record.date > latest_nav_date:
+                latest_nav_date = nav_record.date
 
     # Insurance bucket
     policies = session.exec(
@@ -80,8 +109,8 @@ def take_total_asset_snapshot(session: Session) -> TotalAssetSnapshot:
     # Total (insurance excluded from asset total, same as dashboard summary)
     total_assets = liquid_amount + stable_amount + growth_amount
 
-    today = datetime.date.today()
-    existing = session.get(TotalAssetSnapshot, today)
+    snapshot_date = latest_nav_date if latest_nav_date else datetime.date.today()
+    existing = session.get(TotalAssetSnapshot, snapshot_date)
     if existing:
         existing.liquid_amount = round(liquid_amount, 2)
         existing.stable_amount = round(stable_amount, 2)
@@ -91,7 +120,7 @@ def take_total_asset_snapshot(session: Session) -> TotalAssetSnapshot:
         session.add(existing)
     else:
         existing = TotalAssetSnapshot(
-            date=today,
+            date=snapshot_date,
             liquid_amount=round(liquid_amount, 2),
             stable_amount=round(stable_amount, 2),
             growth_amount=round(growth_amount, 2),

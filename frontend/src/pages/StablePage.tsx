@@ -34,6 +34,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { stableApi } from "@/services/api";
 import { formatCurrency } from "@/lib/utils";
+import { PLATFORMS, PlatformBadge } from "@/components/PlatformBadge";
 import type { StableAsset, StableAssetCreate, StableAssetList, StableAssetUpdate } from "@/types";
 
 const TYPE_LABELS: Record<string, string> = {
@@ -163,11 +164,21 @@ function AddStableDialog({ onCreated }: { onCreated: () => void }) {
             </div>
             <div className="space-y-2">
               <Label>平台</Label>
-              <Input
+              <Select
                 value={form.platform ?? ""}
-                onChange={(e) => setForm({ ...form, platform: e.target.value })}
-                placeholder="例如 工商银行"
-              />
+                onValueChange={(v) => setForm({ ...form, platform: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="选择平台" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PLATFORMS.map((p) => (
+                    <SelectItem key={p.name} value={p.name}>
+                      <PlatformBadge platform={p.name} />
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -300,10 +311,21 @@ function EditStableDialog({
             </div>
             <div className="space-y-2">
               <Label>平台</Label>
-              <Input
+              <Select
                 value={form.platform ?? ""}
-                onChange={(e) => setForm({ ...form, platform: e.target.value })}
-              />
+                onValueChange={(v) => setForm({ ...form, platform: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="选择平台" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PLATFORMS.map((p) => (
+                    <SelectItem key={p.name} value={p.name}>
+                      <PlatformBadge platform={p.name} />
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -454,7 +476,7 @@ export default function StablePage() {
                   <TableCell className="whitespace-nowrap">
                     {TYPE_LABELS[item.type] ?? item.type}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap">{item.platform || "-"}</TableCell>
+                  <TableCell className="whitespace-nowrap"><PlatformBadge platform={item.platform ?? ""} /></TableCell>
                   <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">
                     {formatCurrency(item.amount)}
                   </TableCell>

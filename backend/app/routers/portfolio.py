@@ -4,9 +4,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session, select
 
-from app.database import get_session
+from app.database import get_session, engine
 from app.models import FundNavHistory, Holding, PortfolioSnapshot
 from app.services.allocation import get_weighted_allocation
+from app.services.snapshot import take_portfolio_snapshot, take_total_asset_snapshot
 
 router = APIRouter(prefix="/api/portfolio", tags=["portfolio"])
 
@@ -77,6 +78,15 @@ def portfolio_by_platform(session: SessionDep):
 @router.get("/allocation")
 def portfolio_allocation(dimension: str, session: SessionDep):
     return get_weighted_allocation(dimension, session)
+
+
+@router.post("/snapshot")
+def manual_snapshot(session: SessionDep):
+    """Manually trigger portfolio and total asset snapshots for today."""
+    take_portfolio_snapshot(session)
+    with Session(engine) as s:
+        take_total_asset_snapshot(s)
+    return {"ok": True}
 
 
 @router.get("/trend")

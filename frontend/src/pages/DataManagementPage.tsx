@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
-import { holdingsApi, fundsApi } from "@/services/api";
+import { holdingsApi, fundsApi, portfolioApi } from "@/services/api";
 import type { Holding } from "@/types";
 
 export default function DataManagementPage() {
@@ -77,6 +77,7 @@ export default function DataManagementPage() {
       await Promise.allSettled(
         Array.from({ length: Math.min(CONCURRENCY, total) }, () => runBatch())
       );
+      await portfolioApi.snapshot();
       await fetchHoldings();
     } finally {
       setRefreshAll(false);

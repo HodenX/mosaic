@@ -10,7 +10,15 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { holdingsApi } from "@/services/api";
+import { PLATFORMS, PlatformBadge } from "@/components/PlatformBadge";
 import type { HoldingCreate } from "@/types";
 
 interface Props {
@@ -63,12 +71,22 @@ export default function AddHoldingDialog({ onCreated }: Props) {
           </div>
           <div className="space-y-2">
             <Label>购买平台</Label>
-            <Input
+            <Select
               value={form.platform}
-              onChange={(e) => setForm({ ...form, platform: e.target.value })}
-              placeholder="例如 支付宝"
+              onValueChange={(value) => setForm({ ...form, platform: value })}
               required
-            />
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="选择购买平台" />
+              </SelectTrigger>
+              <SelectContent>
+                {PLATFORMS.map((p) => (
+                  <SelectItem key={p.name} value={p.name}>
+                    <PlatformBadge platform={p.name} />
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">

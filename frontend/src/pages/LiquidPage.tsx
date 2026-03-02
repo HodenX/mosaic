@@ -34,6 +34,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { liquidApi } from "@/services/api";
 import { formatCurrency } from "@/lib/utils";
+import { PLATFORMS, PlatformBadge } from "@/components/PlatformBadge";
 import type { LiquidAsset, LiquidAssetCreate, LiquidAssetList, LiquidAssetUpdate } from "@/types";
 
 const TYPE_LABELS: Record<string, string> = {
@@ -110,11 +111,21 @@ function AddLiquidDialog({ onCreated }: { onCreated: () => void }) {
             </div>
             <div className="space-y-2">
               <Label>平台</Label>
-              <Input
+              <Select
                 value={form.platform ?? ""}
-                onChange={(e) => setForm({ ...form, platform: e.target.value })}
-                placeholder="例如 支付宝"
-              />
+                onValueChange={(v) => setForm({ ...form, platform: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="选择平台" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PLATFORMS.map((p) => (
+                    <SelectItem key={p.name} value={p.name}>
+                      <PlatformBadge platform={p.name} />
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -228,11 +239,21 @@ function EditLiquidDialog({ asset, onUpdated }: { asset: LiquidAsset; onUpdated:
             </div>
             <div className="space-y-2">
               <Label>平台</Label>
-              <Input
+              <Select
                 value={form.platform ?? ""}
-                onChange={(e) => setForm({ ...form, platform: e.target.value })}
-                placeholder="例如 支付宝"
-              />
+                onValueChange={(v) => setForm({ ...form, platform: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="选择平台" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PLATFORMS.map((p) => (
+                    <SelectItem key={p.name} value={p.name}>
+                      <PlatformBadge platform={p.name} />
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -359,7 +380,7 @@ export default function LiquidPage() {
                 <TableRow key={asset.id} className="hover:bg-muted/50 transition-colors">
                   <TableCell className="font-medium whitespace-nowrap">{asset.name}</TableCell>
                   <TableCell className="whitespace-nowrap">{TYPE_LABELS[asset.type] ?? asset.type}</TableCell>
-                  <TableCell className="whitespace-nowrap">{asset.platform}</TableCell>
+                  <TableCell className="whitespace-nowrap"><PlatformBadge platform={asset.platform ?? ""} /></TableCell>
                   <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">
                     {formatCurrency(asset.amount)}
                   </TableCell>

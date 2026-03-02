@@ -16,6 +16,7 @@ import {
 import AddHoldingDialog from "@/components/AddHoldingDialog";
 import UpdateSnapshotDialog from "@/components/UpdateSnapshotDialog";
 import ChangeLogDialog from "@/components/ChangeLogDialog";
+import { PlatformBadge } from "@/components/PlatformBadge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { holdingsApi, fundsApi } from "@/services/api";
 import { useFundDetail } from "@/contexts/FundDetailContext";
@@ -118,7 +119,7 @@ export default function HoldingsPage() {
                     </button>
                   </TableCell>
                   <TableCell className="font-mono text-xs tabular-nums whitespace-nowrap">{h.fund_code}</TableCell>
-                  <TableCell className="whitespace-nowrap">{h.platform}</TableCell>
+                  <TableCell className="whitespace-nowrap"><PlatformBadge platform={h.platform} /></TableCell>
                   <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">{h.shares.toFixed(2)}</TableCell>
                   <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">
                     {refreshing.has(h.fund_code) && !h.latest_nav

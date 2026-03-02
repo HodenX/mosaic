@@ -1,11 +1,11 @@
 {
   "mcpServers": {
     "finance": {
-      "command": "/Users/liulingfeng/finance_mgr/backend/venv/bin/python",
+      "command": "/Users/liulingfeng/Projects/finance_mgr/backend/venv/bin/python",
       "args": ["-m", "mcp_server.server"],
-      "cwd": "/Users/liulingfeng/finance_mgr/backend",
+      "cwd": "/Users/liulingfeng/Projects/finance_mgr/backend",
       "env": {
-        "PYTHONPATH": "/Users/liulingfeng/finance_mgr/backend"
+        "PYTHONPATH": "/Users/liulingfeng/Projects/finance_mgr/backend"
       }
     }
   }
