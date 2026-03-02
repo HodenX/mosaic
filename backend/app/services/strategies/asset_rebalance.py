@@ -23,12 +23,14 @@ ASSET_CLASS_LABELS = {
 }
 
 
-def classify_fund(fund_type: str) -> str:
-    """Classify a fund into equity/bond/gold based on its fund_type string."""
+def classify_fund(fund_type: str, fund_name: str = "") -> str:
+    """Classify a fund into equity/bond/gold based on its fund_type and fund_name."""
     ft = fund_type.lower()
     if "债" in ft:
         return "bond"
     if "黄金" in ft or "贵金属" in ft:
+        return "gold"
+    if "黄金" in fund_name or "贵金属" in fund_name:
         return "gold"
     return "equity"
 
@@ -111,7 +113,8 @@ class AssetRebalanceStrategy:
         for h in context.holdings:
             fund = session.get(Fund, h["fund_code"])
             fund_type = fund.fund_type if fund else ""
-            cls = classify_fund(fund_type)
+            fund_name = fund.fund_name if fund else ""
+            cls = classify_fund(fund_type, fund_name)
             class_values[cls] += h.get("market_value", 0.0)
 
         total_value = sum(class_values.values())

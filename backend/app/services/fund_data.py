@@ -288,6 +288,17 @@ def _recent_quarter_dates() -> list[str]:
     return quarters
 
 
+_GOLD_FUND_KEYWORDS = ["黄金", "Gold", "gold", "AU", "贵金属"]
+
+
+def _is_gold_fund(fund_code: str, session: Session) -> bool:
+    fund = session.get(Fund, fund_code)
+    if not fund:
+        return False
+    name = fund.fund_name or ""
+    return any(kw in name for kw in _GOLD_FUND_KEYWORDS)
+
+
 def _fetch_asset_class_allocation(fund_code: str, session: Session) -> None:
     """Fetch asset class allocation (股票/债券/现金/其他) from xueqiu."""
     try:
@@ -305,11 +316,16 @@ def _fetch_asset_class_allocation(fund_code: str, session: Session) -> None:
         for o in old:
             session.delete(o)
 
+        is_gold = _is_gold_fund(fund_code, session)
         for _, row in df.iterrows():
+            category = str(row["资产类型"])
+            # 黄金ETF的底层资产在雪球被标记为"其他"，修正为"黄金"
+            if is_gold and category == "其他":
+                category = "黄金"
             session.add(FundAllocation(
                 fund_code=fund_code,
                 dimension="asset_class",
-                category=str(row["资产类型"]),
+                category=category,
                 percentage=float(row["仓位占比"]),
                 source="auto",
             ))
