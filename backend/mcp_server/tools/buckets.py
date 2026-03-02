@@ -6,6 +6,7 @@ from sqlmodel import Session, select
 
 from app.database import engine
 from app.models import (
+    AllocationTarget,
     FundNavHistory,
     Holding,
     InsurancePolicy,
@@ -225,6 +226,9 @@ def get_family_asset_summary() -> str:
         total_return = liquid_return + stable_return + growth_pnl
         total_return_pct = (total_return / total_cost_base * 100) if total_cost_base > 0 else 0.0
 
+        # --- Bucket allocation targets ---
+        alloc_target = session.exec(select(AllocationTarget)).first()
+
         lines = [
             "## 家庭资产四桶总览\n",
             "| 指标 | 数值 |",
@@ -233,13 +237,41 @@ def get_family_asset_summary() -> str:
             f"| 综合收益 | {_fmt_money(total_return)} ({_fmt_pct(total_return_pct)}) |",
             "",
             "### 各桶明细\n",
-            "| 桶 | 金额/市值 | 收益/盈亏 | 数量 |",
-            "|------|---------|---------|------|",
-            f"| 活钱 | {_fmt_money(liquid_amount)} | 预估年收益 {_fmt_money(liquid_return)} | {len(liquid_assets)} 笔 |",
-            f"| 稳钱 | {_fmt_money(stable_amount)} | 预估年收益 {_fmt_money(stable_return)} | {len(stable_assets)} 笔 |",
-            f"| 长钱 | {_fmt_money(growth_value)} | 盈亏 {_fmt_money(growth_pnl)} ({_fmt_pct(growth_pnl_pct)}) | {len(holdings)} 笔 |",
-            f"| 保险 | 年保费 {_fmt_money(total_premium)} | {len(active_policies)} 份生效 | 覆盖 {covered_persons} 人 |",
+            "| 桶 | 金额/市值 | 目标占比 | 目标金额 | 实际占比 | 收益/盈亏 | 数量 |",
+            "|------|---------|---------|---------|---------|---------|------|",
         ]
+
+        def _bucket_row(name: str, amount: float, target_pct: float | None, detail: str, count: str) -> str:
+            actual_pct = (amount / total_assets * 100) if total_assets > 0 else 0.0
+            target_amt = _fmt_money(total_assets * target_pct / 100) if target_pct is not None else "未设置"
+            target_str = f"{target_pct:.0f}%" if target_pct is not None else "未设置"
+            return (
+                f"| {name} | {_fmt_money(amount)} | {target_str} | {target_amt} | "
+                f"{actual_pct:.1f}% | {detail} | {count} |"
+            )
+
+        lines.append(_bucket_row(
+            "活钱", liquid_amount,
+            alloc_target.liquid_target if alloc_target else None,
+            f"预估年收益 {_fmt_money(liquid_return)}",
+            f"{len(liquid_assets)} 笔",
+        ))
+        lines.append(_bucket_row(
+            "稳钱", stable_amount,
+            alloc_target.stable_target if alloc_target else None,
+            f"预估年收益 {_fmt_money(stable_return)}",
+            f"{len(stable_assets)} 笔",
+        ))
+        lines.append(_bucket_row(
+            "长钱", growth_value,
+            alloc_target.growth_target if alloc_target else None,
+            f"盈亏 {_fmt_money(growth_pnl)} ({_fmt_pct(growth_pnl_pct)})",
+            f"{len(holdings)} 笔",
+        ))
+        lines.append(
+            f"| 保险 | 年保费 {_fmt_money(total_premium)} | — | — | — | "
+            f"{len(active_policies)} 份生效 | 覆盖 {covered_persons} 人 |"
+        )
 
         # --- Active reminders ---
         reminders: list[str] = []
