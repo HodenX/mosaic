@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { portfolioApi, positionApi } from "@/services/api";
+import { portfolioApi, positionApi, dashboardApi } from "@/services/api";
 import SummaryCards from "@/components/SummaryCards";
 import AssetAllocationTarget from "@/components/AssetAllocationTarget";
 import TrendChart from "@/components/TrendChart";
 import CollapsibleAnalytics from "@/components/CollapsibleAnalytics";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { PortfolioSummary, PortfolioTrend, PositionStatus, StrategyResult } from "@/types";
+import type { PortfolioSummary, PortfolioTrend, PositionStatus, StrategyResult, AllocationTarget } from "@/types";
 
 export default function OverviewPage() {
   const [summary, setSummary] = useState<PortfolioSummary | null>(null);
@@ -13,6 +13,7 @@ export default function OverviewPage() {
   const [position, setPosition] = useState<PositionStatus | null>(null);
   const [suggestion, setSuggestion] = useState<StrategyResult | null>(null);
   const [strategyTargets, setStrategyTargets] = useState<Record<string, { target: number; min: number; max: number }> | null>(null);
+  const [growthBudget, setGrowthBudget] = useState<number | null>(null);
 
   useEffect(() => {
     portfolioApi.summary().then(setSummary);
@@ -27,6 +28,15 @@ export default function OverviewPage() {
         }).catch(() => setStrategyTargets(null));
       }
     });
+    // Compute 长钱 target amount from family overview allocation
+    Promise.all([
+      dashboardApi.summary(),
+      dashboardApi.allocationTargets(),
+    ]).then(([dash, alloc]: [{ total_assets: number }, AllocationTarget | null]) => {
+      if (alloc && dash.total_assets > 0) {
+        setGrowthBudget(dash.total_assets * alloc.growth_target / 100);
+      }
+    }).catch(() => {});
   }, []);
 
   if (!summary) return (
@@ -55,13 +65,13 @@ export default function OverviewPage() {
       {/* Asset allocation target gauges (only for asset_rebalance strategy) */}
       {position?.active_strategy === "asset_rebalance" && suggestion?.extra?.class_ratios != null && (
         <AssetAllocationTarget
-          classRatios={suggestion.extra.class_ratios as Record<string, number>}
           classValues={(suggestion.extra.class_values ?? {}) as Record<string, number>}
           targets={strategyTargets ?? {
             equity: { target: 70, min: 65, max: 75 },
             bond: { target: 10, min: 8, max: 12 },
             gold: { target: 20, min: 16, max: 24 },
           }}
+          totalBudget={growthBudget ?? undefined}
         />
       )}
 
