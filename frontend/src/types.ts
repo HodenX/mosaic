@@ -45,6 +45,16 @@ export interface PlatformBreakdown {
   count: number;
 }
 
+export interface Fund {
+  fund_code: string;
+  fund_name: string;
+  fund_type: string;
+  management_company: string;
+  index_type?: string;
+  region?: string;
+  last_updated?: string;
+}
+
 export interface FundInfo {
   fund_code: string;
   fund_name: string;
