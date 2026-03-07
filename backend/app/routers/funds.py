@@ -111,9 +111,9 @@ def override_allocation(fund_code: str, data: list[dict], session: SessionDep):
 @router.put("/{fund_code}/tags")
 def update_fund_tags(fund_code: str, data: FundTagsUpdate, session: SessionDep):
     """更新基金标签"""
-    fund = session.exec(select(Fund).where(Fund.fund_code == fund_code)).first()
+    fund = session.get(Fund, fund_code)
     if not fund:
-        raise HTTPException(status_code=404, detail=f"Fund '{fund_code}' not found")
+        raise HTTPException(status_code=404, detail="Fund not found")
 
     if data.index_type is not None:
         fund.index_type = data.index_type
@@ -121,13 +121,7 @@ def update_fund_tags(fund_code: str, data: FundTagsUpdate, session: SessionDep):
         fund.region = data.region
     fund.last_updated = datetime.datetime.now()
 
-    session.add(fund)
     session.commit()
     session.refresh(fund)
 
-    return {
-        "fund_code": fund.fund_code,
-        "fund_name": fund.fund_name,
-        "index_type": fund.index_type,
-        "region": fund.region,
-    }
+    return fund.model_dump()
