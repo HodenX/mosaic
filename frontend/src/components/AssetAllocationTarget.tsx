@@ -186,7 +186,7 @@ export default function AssetAllocationTarget({ classValues, targets, totalBudge
 
     return (
       <div
-        className={`grid grid-cols-[2fr_4.5rem_3.5rem_1fr_4rem] gap-x-3 items-center py-1.5 transition-all duration-300 ${indent > 0 ? "pl-4 opacity-90" : ""} ${rowBg}`}
+        className={`grid grid-cols-[8rem_4.5rem_3.5rem_1fr_4rem] gap-x-2 items-center py-1.5 transition-all duration-300 ${indent > 0 ? "pl-4 opacity-90" : ""} ${rowBg}`}
         style={{ paddingLeft: `${indent * 0.75}rem` }}
         onClick={onClick}
       >
@@ -379,7 +379,7 @@ export default function AssetAllocationTarget({ classValues, targets, totalBudge
           ) : (
             <>
               {/* 表头 */}
-              <div className="grid grid-cols-[2fr_4.5rem_3.5rem_1fr_4rem] gap-x-3 items-center px-1 pb-2 border-b border-border/50">
+              <div className="grid grid-cols-[8rem_4.5rem_3.5rem_1fr_4rem] gap-x-2 items-center px-1 pb-2 border-b border-border/50">
                 <span className="text-xs text-muted-foreground font-medium">资产类别</span>
                 <span className="text-right text-xs text-muted-foreground">市值</span>
                 <span className="text-right text-xs text-muted-foreground">达成率</span>
