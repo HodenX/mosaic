@@ -164,7 +164,8 @@ export default function AssetAllocationTarget({ classValues, targets, totalBudge
     minPercent: number,
     maxPercent: number,
     indent: number = 0,
-    isSubItem: boolean = false
+    isSubItem: boolean = false,
+    onClick?: () => void
   ) => {
     const targetAmount = referenceTotal * targetPercent / 100;
     const ratio = targetAmount > 0 ? (value / targetAmount * 100) : 0;
@@ -181,22 +182,27 @@ export default function AssetAllocationTarget({ classValues, targets, totalBudge
 
     const gradient = getGradientKey(code);
     const barHeight = isSubItem ? "h-1.5" : "h-2";
+    const rowBg = onClick ? "hover:bg-muted/30 cursor-pointer" : "";
 
     return (
       <div
-        className={`grid grid-cols-[2fr_4.5rem_3.5rem_1fr_4rem] gap-x-3 items-center py-1.5 transition-all duration-300 ${indent > 0 ? "pl-4 opacity-90" : "font-medium"}`}
+        className={`grid grid-cols-[2fr_4.5rem_3.5rem_1fr_4rem] gap-x-3 items-center py-1.5 transition-all duration-300 ${indent > 0 ? "pl-4 opacity-90" : ""} ${rowBg}`}
         style={{ paddingLeft: `${indent * 0.75}rem` }}
+        onClick={onClick}
       >
-        <span className={`text-sm ${indent > 0 ? "text-muted-foreground" : "text-foreground"}`}>{label}</span>
+        <span className={`text-sm ${indent > 0 ? "text-muted-foreground" : "text-foreground"}`}>
+          {label}
+          {onClick && <ChevronRight className={`inline-block w-3 h-3 ml-1.5 transition-transform ${equityExpanded ? "rotate-90" : ""}`} />}
+        </span>
         <span className="text-right text-sm tabular-nums font-serif">
           ¥{(value / 10000).toFixed(1)}万
         </span>
         <span className={`text-right text-sm font-semibold tabular-nums font-serif ${statusColor}`}>
           {ratio.toFixed(0)}%
         </span>
-        <div className="relative rounded-full bg-muted/50 overflow-hidden">
-          <div className={`absolute inset-0 bg-gradient-to-r ${gradient}`} style={{ width: `${fillW}%` }} />
-          <div className="absolute inset-y-0 w-px bg-white/60" style={{ left: `${targetX}%` }} />
+        <div className={`relative ${barHeight} rounded-full bg-muted/50 overflow-hidden`}>
+          <div className={`absolute inset-y-0 left-0 rounded-full bg-gradient-to-r ${gradient} transition-all duration-500`} style={{ width: `${fillW}%` }} />
+          <div className="absolute inset-y-0 w-0.5 bg-white/80" style={{ left: `${targetX}%` }} />
         </div>
         <span className={`text-right text-xs tabular-nums ${gap > 0 ? "text-muted-foreground" : "text-emerald-600"}`}>
           {gap > 0 ? `-${(gap / 10000).toFixed(1)}万` : `+${(-gap / 10000).toFixed(1)}万`}
@@ -298,23 +304,47 @@ export default function AssetAllocationTarget({ classValues, targets, totalBudge
                   const label = CLASS_LABELS[cls] ?? cls;
                   const item = assetClass.find((a) => a.code === cls);
                   const t = targets[cls] ?? { target: 0, min: 0, max: 100 };
+                  const isEquity = cls === "equity";
 
                   return (
                     <div key={cls} className="space-y-1">
-                      {renderEditRow(
-                        label,
-                        item?.target_ratio ?? t.target,
-                        item?.float_ratio ?? 5,
-                        (v) => updateAssetClass(cls, "target_ratio", v),
-                        (v) => updateAssetClass(cls, "float_ratio", v)
-                      )}
+                      <div
+                        className={`flex items-center gap-3 py-2 ${isEquity ? "cursor-pointer hover:bg-muted/30" : ""}`}
+                        onClick={isEquity ? () => setEquityExpanded(!equityExpanded) : undefined}
+                      >
+                        <span className="w-20 text-sm text-foreground">
+                          {label}
+                          {isEquity && <ChevronRight className={`inline-block w-3 h-3 ml-1.5 transition-transform ${equityExpanded ? "rotate-90" : ""}`} />}
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <Input
+                            type="number"
+                            min={0}
+                            max={100}
+                            step={1}
+                            value={item?.target_ratio ?? t.target}
+                            onChange={(e) => updateAssetClass(cls, "target_ratio", parseFloat(e.target.value) || 0)}
+                            className="h-8 w-14 text-right text-sm tabular-nums font-serif"
+                          />
+                          <span className="text-xs text-muted-foreground">%</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground">±</span>
+                        <div className="flex items-center gap-1.5">
+                          <Input
+                            type="number"
+                            min={0}
+                            max={50}
+                            step={1}
+                            value={item?.float_ratio ?? 5}
+                            onChange={(e) => updateAssetClass(cls, "float_ratio", parseFloat(e.target.value) || 0)}
+                            className="h-8 w-12 text-right text-sm tabular-nums font-serif"
+                          />
+                          <span className="text-xs text-muted-foreground">%</span>
+                        </div>
+                      </div>
 
-                      {cls === "equity" && (
+                      {isEquity && (
                         <Collapsible open={equityExpanded} onOpenChange={setEquityExpanded}>
-                          <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-muted-foreground pl-5 py-1.5 hover:text-foreground transition-colors">
-                            {equityExpanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-                            <span>权益内部配置</span>
-                          </CollapsibleTrigger>
                           <CollapsibleContent className="space-y-1 pt-1">
                             {Object.entries(equityGroups).map(([group, items]) => (
                               <div key={group}>
@@ -362,18 +392,25 @@ export default function AssetAllocationTarget({ classValues, targets, totalBudge
                   const label = CLASS_LABELS[cls] ?? cls;
                   const value = classValues[cls] ?? 0;
                   const t = targets[cls] ?? { target: 0, min: 0, max: 100 };
+                  const isEquity = cls === "equity";
 
                   return (
                     <div key={cls} className="space-y-0.5">
-                      {renderProgressRow(label, cls, value, t.target, t.min, t.max)}
+                      {renderProgressRow(
+                        label,
+                        cls,
+                        value,
+                        t.target,
+                        t.min,
+                        t.max,
+                        0,
+                        false,
+                        isEquity ? () => setEquityExpanded(!equityExpanded) : undefined
+                      )}
 
-                      {cls === "equity" && (
+                      {isEquity && (
                         <Collapsible open={equityExpanded} onOpenChange={setEquityExpanded}>
-                          <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-muted-foreground pl-2 py-1.5 hover:text-foreground transition-colors">
-                            {equityExpanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-                            <span>权益内部配置</span>
-                          </CollapsibleTrigger>
-                          <CollapsibleContent className="space-y-0.5 pt-1">
+                          <CollapsibleContent className="space-y-0.5 pt-0.5">
                             {Object.entries(equityGroups).map(([group, items]) => (
                               <div key={group}>
                                 <div className="text-xs text-muted-foreground pl-4 py-1 font-medium">{group}</div>
