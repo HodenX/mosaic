@@ -204,11 +204,16 @@ export default function AssetAllocationTarget({ classValues, targets, totalBudge
           <div className={`relative ${barHeight} rounded-full bg-muted/50 overflow-hidden`}>
             <div className={`absolute inset-y-0 left-0 rounded-full bg-gradient-to-r ${gradient} transition-all duration-500`} style={{ width: `${fillW}%` }} />
             <div className="absolute inset-y-0 w-0.5 bg-white/80" style={{ left: `${targetX}%` }} />
-          </div>
-          <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5 -mx-1 px-1">
-            <span>{Math.round(minThreshold)}%</span>
-            <span className="font-medium">{targetPercent}%</span>
-            <span>{Math.round(maxThreshold)}%</span>
+            {/* 刻度标签 */}
+            <span className="absolute top-3 text-[9px] text-muted-foreground leading-none" style={{ left: `${minThreshold / BAR_SCALE * 100}%` }}>
+              {Math.round(minThreshold)}%
+            </span>
+            <span className="absolute top-3 text-[9px] text-foreground/80 font-medium leading-none" style={{ left: `calc(${targetX}% - 4px)` }}>
+              {targetPercent}%
+            </span>
+            <span className="absolute top-3 text-[9px] text-muted-foreground leading-none" style={{ right: `${(100 - Math.min(maxThreshold / BAR_SCALE * 100, 100))}%` }}>
+              {Math.round(maxThreshold)}%
+            </span>
           </div>
         </div>
         <span className={`text-right text-xs tabular-nums ${gap > 0 ? "text-muted-foreground" : "text-emerald-600"}`}>
