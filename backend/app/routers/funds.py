@@ -6,6 +6,7 @@ from sqlmodel import Session, select
 
 from app.database import get_session, engine
 from app.models import Fund, FundAllocation, FundNavHistory, FundTopHolding
+from app.schemas import FundTagsUpdate
 from app.services.fund_data import fetch_fund_allocation, fetch_fund_info, fetch_fund_nav
 
 router = APIRouter(prefix="/api/funds", tags=["funds"])
@@ -105,3 +106,28 @@ def override_allocation(fund_code: str, data: list[dict], session: SessionDep):
         ))
     session.commit()
     return {"ok": True}
+
+
+@router.put("/{fund_code}/tags")
+def update_fund_tags(fund_code: str, data: FundTagsUpdate, session: SessionDep):
+    """更新基金标签"""
+    fund = session.exec(select(Fund).where(Fund.fund_code == fund_code)).first()
+    if not fund:
+        raise HTTPException(status_code=404, detail=f"Fund '{fund_code}' not found")
+
+    if data.index_type is not None:
+        fund.index_type = data.index_type
+    if data.region is not None:
+        fund.region = data.region
+    fund.last_updated = datetime.datetime.now()
+
+    session.add(fund)
+    session.commit()
+    session.refresh(fund)
+
+    return {
+        "fund_code": fund.fund_code,
+        "fund_name": fund.fund_name,
+        "index_type": fund.index_type,
+        "region": fund.region,
+    }
