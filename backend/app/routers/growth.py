@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
 from app.database import get_session
-from app.models import GrowthAllocationTarget
+from app.models import GrowthAllocationTarget, StrategyConfig
 from app.schemas import GrowthAllocationItem, GrowthAllocationRequest, GrowthAllocationResponse
 
 router = APIRouter(prefix="/api/growth", tags=["growth"])
@@ -96,6 +96,31 @@ def update_allocation_targets(
             float_ratio=item.float_ratio,
             updated_at=now,
         ))
+
+    # 同步更新 asset_rebalance 策略的 targets 配置
+    # 构建 targets 格式
+    synced_targets = {}
+    for item in data.asset_class:
+        synced_targets[item.code] = {
+            "target": item.target_ratio,
+            "min": max(0, item.target_ratio - item.float_ratio),
+            "max": min(100, item.target_ratio + item.float_ratio),
+        }
+
+    # 查找或创建 asset_rebalance 策略配置
+    cfg_row = session.exec(
+        select(StrategyConfig).where(StrategyConfig.strategy_name == "asset_rebalance").limit(1)
+    ).first()
+
+    if cfg_row is None:
+        cfg_row = StrategyConfig(strategy_name="asset_rebalance")
+
+    import json
+    cfg = json.loads(cfg_row.config_json)
+    cfg["targets"] = synced_targets
+    cfg_row.config_json = json.dumps(cfg, ensure_ascii=False)
+    cfg_row.updated_at = now
+    session.add(cfg_row)
 
     session.commit()
     return get_allocation_targets(session)

@@ -79,7 +79,12 @@ export default function OverviewPage() {
           totalBudget={growthBudget ?? undefined}
           equitySubValues={(suggestion.extra.equity_sub_values ?? {}) as Record<string, number>}
           onUpdated={() => {
+            // 刷新 suggestion 和策略配置
             positionApi.suggestion().then(setSuggestion);
+            positionApi.getStrategyConfig("asset_rebalance").then((res) => {
+              const cfg = res?.config as Record<string, unknown> | undefined;
+              setStrategyTargets((cfg?.targets as typeof strategyTargets) ?? null);
+            }).catch(() => {});
           }}
         />
       )}
