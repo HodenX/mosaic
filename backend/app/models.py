@@ -168,7 +168,30 @@ class AllocationTarget(SQLModel, table=True):
     __tablename__ = "allocation_targets"
 
     id: int | None = Field(default=None, primary_key=True)
+    # 活钱目标：绝对值（金额）
     liquid_target: float = 0.0
+    # 稳钱目标：在剩余资产（总资产 - 活钱）中的百分比
     stable_target: float = 0.0
+    # 长钱目标：在剩余资产（总资产 - 活钱）中的百分比
     growth_target: float = 0.0
+    updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+
+
+class GrowthAllocationTarget(SQLModel, table=True):
+    __tablename__ = "growth_allocation_targets"
+
+    id: int | None = Field(default=None, primary_key=True)
+    # 层级类型: "asset_class" | "equity_sub"
+    level: str
+    # 资产类别代码
+    # asset_class: equity/bond/gold
+    # equity_sub: spx/nasdaq/csi300/dividend/hkt
+    code: str
+    # 父类别（仅 equity_sub 层级使用）
+    parent_code: str | None = None
+    # 预期占比 (%)
+    target_ratio: float = 0.0
+    # 浮动比例 (%)
+    float_ratio: float = 5.0
+    # 更新时间
     updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)

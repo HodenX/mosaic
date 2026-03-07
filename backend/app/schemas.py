@@ -1,5 +1,6 @@
 from datetime import date, datetime
 
+from pydantic import BaseModel
 from sqlmodel import SQLModel
 
 
@@ -189,3 +190,21 @@ class AllocationTargetRequest(SQLModel):
     liquid_target: float
     stable_target: float
     growth_target: float
+
+
+# --- Growth Allocation Target schemas ---
+
+class GrowthAllocationItem(BaseModel):
+    code: str
+    target_ratio: float
+    float_ratio: float
+
+
+class GrowthAllocationRequest(BaseModel):
+    asset_class: list[GrowthAllocationItem]
+    equity_sub: list[GrowthAllocationItem]
+
+
+class GrowthAllocationResponse(BaseModel):
+    asset_class: list[GrowthAllocationItem]
+    equity_sub: list[GrowthAllocationItem]
