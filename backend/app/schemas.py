@@ -208,3 +208,21 @@ class GrowthAllocationRequest(BaseModel):
 class GrowthAllocationResponse(BaseModel):
     asset_class: list[GrowthAllocationItem]
     equity_sub: list[GrowthAllocationItem]
+
+
+# --- Fund schemas ---
+
+
+class FundTagsUpdate(SQLModel):
+    index_type: str | None = None
+    region: str | None = None
+
+
+class FundDetailResponse(SQLModel):
+    fund_code: str
+    fund_name: str
+    fund_type: str = ""
+    management_company: str = ""
+    index_type: str | None = None
+    region: str | None = None
+    last_updated: datetime.datetime | None = None
