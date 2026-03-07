@@ -60,6 +60,8 @@ export interface FundInfo {
   fund_name: string;
   fund_type: string;
   management_company: string;
+  index_type?: string | null;
+  region?: string | null;
   latest_nav: number | null;
   latest_nav_date: string | null;
 }
