@@ -7,6 +7,7 @@ import {
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import AllocationChart from "@/components/AllocationChart";
+import FundTagsSelector, { type FundTags } from "@/components/FundTagsSelector";
 import { fundsApi } from "@/services/api";
 import { useFundDetail } from "@/contexts/FundDetailContext";
 import type { AllocationItem, FundInfo, NavHistory, TopHolding } from "@/types";
@@ -22,6 +23,30 @@ export default function FundDetailPanel() {
   const [allocation, setAllocation] = useState<Record<string, AllocationItem[]>>({});
   const [topHoldings, setTopHoldings] = useState<TopHolding[]>([]);
   const [loading, setLoading] = useState(false);
+  const [tags, setTags] = useState<FundTags>({});
+
+  useEffect(() => {
+    if (!fund) return;
+    setTags({
+      index_type: fund.index_type,
+      region: fund.region,
+    });
+  }, [fund]);
+
+  const handleTagUpdate = async (field: "index_type" | "region", value: string | null) => {
+    if (!fund) return;
+    const oldTags = { ...tags };
+    const newTags = { ...tags, [field]: value };
+    setTags(newTags);
+    try {
+      await fundsApi.updateTags(fund.fund_code, newTags.index_type, newTags.region);
+      setFund({ ...fund, ...newTags });
+    } catch (error) {
+      // 回滚状态
+      setTags(oldTags);
+      console.error("Failed to update tags:", error);
+    }
+  };
 
   useEffect(() => {
     if (!selectedFundCode) {
@@ -112,6 +137,15 @@ export default function FundDetailPanel() {
                     </ChartContainer>
                   </CardContent>
                 </Card>
+              )}
+
+              {/* Fund Tags Selector */}
+              {fund && (
+                <FundTagsSelector
+                  tags={tags}
+                  onIndexTypeChange={(v) => handleTagUpdate("index_type", v)}
+                  onRegionChange={(v) => handleTagUpdate("region", v)}
+                />
               )}
 
               {/* Allocations */}
