@@ -360,8 +360,11 @@ export interface TotalAssetTrend {
 }
 
 export interface AllocationTarget {
+  // 活钱目标：绝对值（金额）
   liquid_target: number;
+  // 稳钱目标：在剩余资产（总资产 - 活钱）中的百分比
   stable_target: number;
+  // 长钱目标：在剩余资产（总资产 - 活钱）中的百分比
   growth_target: number;
 }
 
@@ -409,3 +412,18 @@ export interface DiagnosisResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
+
+// --- Growth Allocation Target Types ---
+
+export interface GrowthAllocationItem {
+  code: string;
+  target_ratio: number;
+  float_ratio: number;
+}
+
+export interface GrowthAllocationRequest {
+  asset_class: GrowthAllocationItem[];
+  equity_sub: GrowthAllocationItem[];
+}
+
+export type GrowthAllocationResponse = GrowthAllocationRequest;

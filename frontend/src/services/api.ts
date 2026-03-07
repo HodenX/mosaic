@@ -9,6 +9,8 @@ import type {
   DiagnosisResult,
   FundAllocation,
   FundInfo,
+  GrowthAllocationRequest,
+  GrowthAllocationResponse,
   Holding,
   HoldingCreate,
   HoldingUpdate,
@@ -153,4 +155,11 @@ export const dashboardApi = {
 
 export const diagnosisApi = {
   report: () => api.get<DiagnosisResult>("/diagnosis/report").then((r) => r.data),
+};
+
+export const growthApi = {
+  allocationTargets: () =>
+    api.get<GrowthAllocationResponse>("/growth/allocation-targets").then((r) => r.data),
+  updateAllocationTargets: (data: GrowthAllocationRequest) =>
+    api.put<GrowthAllocationResponse>("/growth/allocation-targets", data).then((r) => r.data),
 };
