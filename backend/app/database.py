@@ -23,17 +23,20 @@ def _set_wal_mode(dbapi_conn, _):
 
 
 def migrate_fund_tags(engine):
-    """迁移基金标签字段到数据库"""
-    with engine.connect() as conn:
-        inspector = inspect(engine)
-        columns = [c['name'] for c in inspector.get_columns('funds')]
+    """贾维斯：迁移基金标签字段到数据库"""
+    try:
+        with engine.connect() as conn:
+            inspector = inspect(engine)
+            columns = [c['name'] for c in inspector.get_columns('funds')]
 
-        if 'index_type' not in columns:
-            conn.execute(text("ALTER TABLE funds ADD COLUMN index_type TEXT"))
-            conn.commit()
-        if 'region' not in columns:
-            conn.execute(text("ALTER TABLE funds ADD COLUMN region TEXT"))
-            conn.commit()
+            with conn.begin():
+                if 'index_type' not in columns:
+                    conn.execute(text("ALTER TABLE funds ADD COLUMN index_type TEXT"))
+                if 'region' not in columns:
+                    conn.execute(text("ALTER TABLE funds ADD COLUMN region TEXT"))
+    except Exception as e:
+        # 记录错误但不应让应用启动失败
+        print(f"数据库迁移警告: {e}")
 
 
 def create_db_and_tables():
