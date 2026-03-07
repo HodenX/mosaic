@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import { Pencil } from "lucide-react";
 import { portfolioApi, positionApi, dashboardApi } from "@/services/api";
 import SummaryCards from "@/components/SummaryCards";
 import AssetAllocationTarget from "@/components/AssetAllocationTarget";
 import TrendChart from "@/components/TrendChart";
 import CollapsibleAnalytics from "@/components/CollapsibleAnalytics";
+import GrowthAllocationDialog from "@/components/GrowthAllocationDialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { PortfolioSummary, PortfolioTrend, PositionStatus, StrategyResult, AllocationTarget } from "@/types";
 
@@ -14,6 +17,7 @@ export default function OverviewPage() {
   const [suggestion, setSuggestion] = useState<StrategyResult | null>(null);
   const [strategyTargets, setStrategyTargets] = useState<Record<string, { target: number; min: number; max: number }> | null>(null);
   const [growthBudget, setGrowthBudget] = useState<number | null>(null);
+  const [allocDialogOpen, setAllocDialogOpen] = useState(false);
 
   useEffect(() => {
     portfolioApi.summary().then(setSummary);
@@ -34,7 +38,11 @@ export default function OverviewPage() {
       dashboardApi.allocationTargets(),
     ]).then(([dash, alloc]: [{ total_assets: number }, AllocationTarget | null]) => {
       if (alloc && dash.total_assets > 0) {
-        setGrowthBudget(dash.total_assets * alloc.growth_target / 100);
+        // growth_target is percentage of remaining assets (total - liquid)
+        const remainingAssets = dash.total_assets - alloc.liquid_target;
+        if (remainingAssets > 0) {
+          setGrowthBudget(remainingAssets * alloc.growth_target / 100);
+        }
       }
     }).catch(() => {});
   }, []);
@@ -64,15 +72,29 @@ export default function OverviewPage() {
 
       {/* Asset allocation target gauges (only for asset_rebalance strategy) */}
       {position?.active_strategy === "asset_rebalance" && suggestion?.extra?.class_ratios != null && (
-        <AssetAllocationTarget
-          classValues={(suggestion.extra.class_values ?? {}) as Record<string, number>}
-          targets={strategyTargets ?? {
-            equity: { target: 70, min: 65, max: 75 },
-            bond: { target: 10, min: 8, max: 12 },
-            gold: { target: 20, min: 16, max: 24 },
-          }}
-          totalBudget={growthBudget ?? undefined}
-        />
+        <Card className="shadow-sm">
+          <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
+            <CardTitle className="text-sm">资产配置目标</CardTitle>
+            <button
+              onClick={() => setAllocDialogOpen(true)}
+              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+            >
+              <Pencil className="h-3 w-3" />
+              编辑
+            </button>
+          </CardHeader>
+          <CardContent>
+            <AssetAllocationTarget
+              classValues={(suggestion.extra.class_values ?? {}) as Record<string, number>}
+              targets={strategyTargets ?? {
+                equity: { target: 70, min: 65, max: 75 },
+                bond: { target: 10, min: 8, max: 12 },
+                gold: { target: 20, min: 16, max: 24 },
+              }}
+              totalBudget={growthBudget ?? undefined}
+            />
+          </CardContent>
+        </Card>
       )}
 
       {/* Row 2: Trend chart (full width) */}
@@ -80,6 +102,15 @@ export default function OverviewPage() {
 
       {/* Row 3: Collapsible analytics panel */}
       <CollapsibleAnalytics activeStrategy={position?.active_strategy ?? ""} />
+
+      {/* Growth allocation dialog */}
+      <GrowthAllocationDialog
+        open={allocDialogOpen}
+        onOpenChange={setAllocDialogOpen}
+        onUpdated={() => {
+          positionApi.suggestion().then(setSuggestion);
+        }}
+      />
     </div>
   );
 }
