@@ -71,6 +71,11 @@ export const fundsApi = {
     api.get<FundAllocation>(`/funds/${code}/allocation`).then((r) => r.data),
   topHoldings: (code: string) =>
     api.get<TopHolding[]>(`/funds/${code}/top-holdings`).then((r) => r.data),
+  updateTags: (fundCode: string, indexType: string | null, region: string | null) =>
+    api.put(`/funds/${fundCode}/tags`, {
+      index_type: indexType,
+      region: region,
+    }),
 };
 
 export const portfolioApi = {
