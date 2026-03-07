@@ -72,7 +72,7 @@ export const fundsApi = {
   topHoldings: (code: string) =>
     api.get<TopHolding[]>(`/funds/${code}/top-holdings`).then((r) => r.data),
   updateTags: (fundCode: string, indexType: string | null, region: string | null) =>
-    api.put<Fund>(`/funds/${fundCode}/tags`, {
+    api.put<FundInfo>(`/funds/${fundCode}/tags`, {
       index_type: indexType,
       region: region,
     }).then((r) => r.data),
