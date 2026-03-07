@@ -237,34 +237,45 @@ def get_family_asset_summary() -> str:
             f"| 综合收益 | {_fmt_money(total_return)} ({_fmt_pct(total_return_pct)}) |",
             "",
             "### 各桶明细\n",
-            "| 桶 | 金额/市值 | 目标占比 | 目标金额 | 实际占比 | 收益/盈亏 | 数量 |",
-            "|------|---------|---------|---------|---------|---------|------|",
+            "| 桶 | 金额/市值 | 目标金额 | 实际占比 | 收益/盈亏 | 数量 |",
+            "|------|---------|---------|---------|---------|------|",
         ]
 
-        def _bucket_row(name: str, amount: float, target_pct: float | None, detail: str, count: str) -> str:
+        def _bucket_row(name: str, amount: float, target_amt: float | None, detail: str, count: str) -> str:
             actual_pct = (amount / total_assets * 100) if total_assets > 0 else 0.0
-            target_amt = _fmt_money(total_assets * target_pct / 100) if target_pct is not None else "未设置"
-            target_str = f"{target_pct:.0f}%" if target_pct is not None else "未设置"
+            target_amt_str = _fmt_money(target_amt) if target_amt is not None else "未设置"
             return (
-                f"| {name} | {_fmt_money(amount)} | {target_str} | {target_amt} | "
+                f"| {name} | {_fmt_money(amount)} | {target_amt_str} | "
                 f"{actual_pct:.1f}% | {detail} | {count} |"
             )
 
+        # Compute target amounts based on new logic:
+        # - liquid_target: absolute value
+        # - stable_target: percentage of remaining assets (total - liquid)
+        # - growth_target: percentage of remaining assets (total - liquid)
+        liquid_target_amt = alloc_target.liquid_target if alloc_target else None
+        remaining_assets = total_assets - (liquid_target_amt or 0)
+        stable_target_amt = None
+        growth_target_amt = None
+        if alloc_target and remaining_assets > 0:
+            stable_target_amt = remaining_assets * alloc_target.stable_target / 100
+            growth_target_amt = remaining_assets * alloc_target.growth_target / 100
+
         lines.append(_bucket_row(
             "活钱", liquid_amount,
-            alloc_target.liquid_target if alloc_target else None,
+            liquid_target_amt,
             f"预估年收益 {_fmt_money(liquid_return)}",
             f"{len(liquid_assets)} 笔",
         ))
         lines.append(_bucket_row(
             "稳钱", stable_amount,
-            alloc_target.stable_target if alloc_target else None,
+            stable_target_amt,
             f"预估年收益 {_fmt_money(stable_return)}",
             f"{len(stable_assets)} 笔",
         ))
         lines.append(_bucket_row(
             "长钱", growth_value,
-            alloc_target.growth_target if alloc_target else None,
+            growth_target_amt,
             f"盈亏 {_fmt_money(growth_pnl)} ({_fmt_pct(growth_pnl_pct)})",
             f"{len(holdings)} 笔",
         ))

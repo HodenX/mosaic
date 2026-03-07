@@ -22,17 +22,56 @@ ASSET_CLASS_LABELS = {
     "gold": "黄金",
 }
 
+# 权益子项索引标签
+EQUITY_SUB_LABELS = {
+    "spx": "标普500",
+    "nasdaq": "纳斯达克",
+    "csi300": "沪深300",
+    "dividend": "中证红利",
+    "hkt": "恒生科技",
+}
+
 
 def classify_fund(fund_type: str, fund_name: str = "") -> str:
     """Classify a fund into equity/bond/gold based on its fund_type and fund_name."""
     ft = fund_type.lower()
+    fn = fund_name.lower()
     if "债" in ft:
         return "bond"
     if "黄金" in ft or "贵金属" in ft:
         return "gold"
-    if "黄金" in fund_name or "贵金属" in fund_name:
+    if "黄金" in fn or "贵金属" in fn:
         return "gold"
     return "equity"
+
+
+def classify_equity_sub(fund_type: str, fund_name: str) -> str:
+    """将权益基金分类到具体的指数/类别"""
+    ft = fund_type.lower()
+    fn = fund_name.lower()
+
+    # 标普500
+    if "标普500" in fn or "标普 500" in fn or "s&p" in fn:
+        return "spx"
+
+    # 纳斯达克
+    if "纳斯达克" in fn or "纳指" in fn or "nasdaq" in fn:
+        return "nasdaq"
+
+    # 沪深300 / 中证300
+    if "沪深300" in fn or "沪深 300" in fn or "中证300" in fn or "中证 300" in fn:
+        return "csi300"
+
+    # 中证红利
+    if "红利" in fn:
+        return "dividend"
+
+    # 恒生科技 / 港股科技
+    if "恒生科技" in fn or "恒科" in fn or "港股科技" in fn:
+        return "hkt"
+
+    # 默认归类到沪深300（A股/港股其他基金）
+    return "csi300"
 
 
 def _in_execution_window(today: datetime.date, window_days: int) -> bool:
@@ -110,12 +149,20 @@ class AssetRebalanceStrategy:
 
         # --- Classify holdings and compute per-class market value ---
         class_values: dict[str, float] = {"equity": 0.0, "bond": 0.0, "gold": 0.0}
+        # 权益子项市值
+        equity_sub_values: dict[str, float] = {"spx": 0.0, "nasdaq": 0.0, "csi300": 0.0, "dividend": 0.0, "hkt": 0.0}
+
         for h in context.holdings:
             fund = session.get(Fund, h["fund_code"])
             fund_type = fund.fund_type if fund else ""
             fund_name = fund.fund_name if fund else ""
             cls = classify_fund(fund_type, fund_name)
             class_values[cls] += h.get("market_value", 0.0)
+
+            # 如果是权益类，进一步分类到指数/子项
+            if cls == "equity":
+                sub = classify_equity_sub(fund_type, fund_name)
+                equity_sub_values[sub] += h.get("market_value", 0.0)
 
         total_value = sum(class_values.values())
 
@@ -149,6 +196,7 @@ class AssetRebalanceStrategy:
                     "gap": round(gap, 2),
                     "class_ratios": {k: round(v, 2) for k, v in class_ratios.items()},
                     "class_values": {k: round(v, 2) for k, v in class_values.items()},
+                    "equity_sub_values": {k: round(v, 2) for k, v in equity_sub_values.items()},
                 },
             )
 
@@ -181,6 +229,7 @@ class AssetRebalanceStrategy:
                     "in_window": False,
                     "class_ratios": {k: round(v, 2) for k, v in class_ratios.items()},
                     "class_values": {k: round(v, 2) for k, v in class_values.items()},
+                    "equity_sub_values": {k: round(v, 2) for k, v in equity_sub_values.items()},
                 },
             )
 
@@ -233,5 +282,6 @@ class AssetRebalanceStrategy:
                 "in_window": True,
                 "class_ratios": {k: round(v, 2) for k, v in class_ratios.items()},
                 "class_values": {k: round(v, 2) for k, v in class_values.items()},
+                "equity_sub_values": {k: round(v, 2) for k, v in equity_sub_values.items()},
             },
         )

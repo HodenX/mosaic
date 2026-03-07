@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#14b8a6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded square background with gradient -->
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+
+  <!-- Three converging petals forming a gem/pinwheel — represents "聚" -->
+  <!-- Top petal -->
+  <path d="M64 22 C48 42, 44 56, 64 64 C84 56, 80 42, 64 22Z" fill="#fff" opacity="0.95"/>
+  <!-- Bottom-left petal -->
+  <path d="M26 90 C38 68, 48 58, 64 64 C54 80, 40 92, 26 90Z" fill="#fff" opacity="0.7"/>
+  <!-- Bottom-right petal -->
+  <path d="M102 90 C90 68, 80 58, 64 64 C74 80, 88 92, 102 90Z" fill="#fff" opacity="0.7"/>
+
+  <!-- Center diamond accent — represents "宝" -->
+  <polygon points="64,48 74,64 64,78 54,64" fill="#5eead4" opacity="0.9"/>
+</svg>

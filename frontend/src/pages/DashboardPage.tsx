@@ -244,8 +244,8 @@ export default function DashboardPage() {
   const [barAnimated, setBarAnimated] = useState(false);
 
   // Dialog form state
-  const [draftLiquid, setDraftLiquid] = useState("20");
-  const [draftStable, setDraftStable] = useState("30");
+  const [draftLiquid, setDraftLiquid] = useState("10");
+  const [draftStable, setDraftStable] = useState("50");
   const [draftGrowth, setDraftGrowth] = useState("50");
   const [savingTargets, setSavingTargets] = useState(false);
 
@@ -257,7 +257,8 @@ export default function DashboardPage() {
       setTargets(t);
       setTargetsLoaded(true);
       if (t) {
-        setDraftLiquid(String(t.liquid_target));
+        // 活钱是绝对值（万元）
+        setDraftLiquid(String(t.liquid_target / 10000));
         setDraftStable(String(t.stable_target));
         setDraftGrowth(String(t.growth_target));
       }
@@ -293,10 +294,10 @@ export default function DashboardPage() {
   }, [summary, targetsLoaded, animRevision]);
 
   const handleSaveTargets = useCallback(async () => {
-    const l = parseFloat(draftLiquid) || 0;
+    const l = (parseFloat(draftLiquid) || 0) * 10000; // 转换为元
     const s = parseFloat(draftStable) || 0;
     const g = parseFloat(draftGrowth) || 0;
-    if (Math.round(l + s + g) !== 100) return;
+    if (Math.round(s + g) !== 100) return;
     setSavingTargets(true);
     try {
       const updated = await dashboardApi.updateAllocationTargets({
@@ -313,7 +314,6 @@ export default function DashboardPage() {
   }, [draftLiquid, draftStable, draftGrowth]);
 
   const draftTotal = Math.round(
-    (parseFloat(draftLiquid) || 0) +
     (parseFloat(draftStable) || 0) +
     (parseFloat(draftGrowth) || 0)
   );
@@ -535,7 +535,7 @@ export default function DashboardPage() {
               label={"活钱"}
               amount={summary.buckets.liquid.amount}
               totalAssets={summary.total_assets}
-              targetPct={targets?.liquid_target ?? null}
+              targetPct={targets && summary.total_assets > 0 ? (targets.liquid_target / summary.total_assets) * 100 : null}
               animated={barAnimated}
             />
             <WaterBucket
@@ -544,7 +544,9 @@ export default function DashboardPage() {
               label={"稳钱"}
               amount={summary.buckets.stable.amount}
               totalAssets={summary.total_assets}
-              targetPct={targets?.stable_target ?? null}
+              targetPct={targets && summary.total_assets > 0 && targets.liquid_target < summary.total_assets
+                ? targets.stable_target * (summary.total_assets - targets.liquid_target) / summary.total_assets
+                : null}
               animated={barAnimated}
             />
             <WaterBucket
@@ -553,7 +555,9 @@ export default function DashboardPage() {
               label={"长钱"}
               amount={summary.buckets.growth.total_amount}
               totalAssets={summary.total_assets}
-              targetPct={targets?.growth_target ?? null}
+              targetPct={targets && summary.total_assets > 0 && targets.liquid_target < summary.total_assets
+                ? targets.growth_target * (summary.total_assets - targets.liquid_target) / summary.total_assets
+                : null}
               animated={barAnimated}
             />
           </div>
@@ -562,26 +566,28 @@ export default function DashboardPage() {
 
       {/* Allocation Target Dialog */}
       <Dialog open={targetsDialogOpen} onOpenChange={setTargetsDialogOpen}>
-        <DialogContent className="sm:max-w-[320px]">
+        <DialogContent className="sm:max-w-[340px]">
           <DialogHeader>
-            <DialogTitle>{"设置目标配置"}</DialogTitle>
+            <DialogTitle>{"设置资产配置目标"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">{"活钱目标比例"}</Label>
+              <Label className="text-xs text-muted-foreground">{"活钱目标（绝对值，万元）"}</Label>
+              <p className="text-[10px] text-muted-foreground">{"建议：家庭月支出的 3-6 倍"}</p>
               <div className="flex items-center gap-2">
                 <Input
                   type="number"
                   min={0}
-                  max={100}
                   step={1}
                   value={draftLiquid}
                   onChange={(e) => setDraftLiquid(e.target.value)}
                   className="h-8 text-right tabular-nums font-serif"
                 />
-                <span className="text-sm text-muted-foreground shrink-0">%</span>
+                <span className="text-sm text-muted-foreground shrink-0">万元</span>
               </div>
             </div>
+            <div className="border-t border-muted my-3" />
+            <p className="text-xs text-muted-foreground text-center">{"剩余资产（总资产 - 活钱）分配比例："}</p>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">{"稳钱目标比例"}</Label>
               <div className="flex items-center gap-2">
@@ -613,7 +619,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className={`flex items-center justify-end gap-1 text-xs ${draftTotal === 100 ? "text-emerald-600" : "text-red-500"}`}>
-              <span>{"合计"}</span>
+              <span>{"稳钱 + 长钱"}</span>
               <span className="tabular-nums font-serif font-medium">{draftTotal}%</span>
               <span>{draftTotal === 100 ? "✓" : "（需等于 100%）"}</span>
             </div>

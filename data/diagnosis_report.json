@@ -1,0 +1,214 @@
+{
+  "report_date": "2026-02-22",
+  "family_asset_overview": {
+    "total_assets": 2420949.90,
+    "total_return": 59611.08,
+    "total_return_pct": 2.51,
+    "buckets": {
+      "liquid": {
+        "label": "活钱",
+        "amount": 1499879.49,
+        "pct_of_total": 61.9,
+        "annual_income_est": 1290.00,
+        "count": 4
+      },
+      "stable": {
+        "label": "稳钱",
+        "amount": 300000.00,
+        "pct_of_total": 12.4,
+        "annual_income_est": 8700.00,
+        "count": 3
+      },
+      "growth": {
+        "label": "长钱",
+        "market_value": 621070.41,
+        "cost": 571449.33,
+        "pnl": 49621.08,
+        "pnl_pct": 8.68,
+        "pct_of_total": 25.7,
+        "fund_count": 10,
+        "platform_count": 3
+      },
+      "insurance": {
+        "label": "保险",
+        "annual_premium": 10055.60,
+        "policy_count": 3,
+        "covered_members": 2
+      }
+    }
+  },
+  "market_snapshot": {
+    "sh_index": { "value": 4082.07, "change_pct": -1.26 },
+    "csi300": { "value": 4660.41, "change_pct": -1.25 },
+    "csi500": { "value": 8299.59, "change_pct": -1.47 },
+    "star50": { "value": 1470.33, "change_pct": -0.72 }
+  },
+  "holdings": [
+    { "code": "018738", "name": "博时标普500ETF联接E(人民币)", "platform": "博时 app", "market_value": 230956.53, "pnl": 16689.34, "pnl_pct": 7.79, "weight_pct": 37.2, "index_tracked": "S&P500" },
+    { "code": "000248", "name": "汇添富中证主要消费ETF联接A", "platform": "alipay", "market_value": 80156.40, "pnl": -7219.52, "pnl_pct": -8.26, "weight_pct": 12.9, "index_tracked": "中证主要消费" },
+    { "code": "110020", "name": "易方达沪深300ETF联接A", "platform": "alipay", "market_value": 62284.90, "pnl": 9894.61, "pnl_pct": 18.89, "weight_pct": 10.0, "index_tracked": "沪深300" },
+    { "code": "017403", "name": "广发养老2050五年持有混合发起式(FOF)Y", "platform": "招行 app", "market_value": 62292.03, "pnl": 14238.92, "pnl_pct": 29.63, "weight_pct": 10.0, "index_tracked": "养老FOF混合" },
+    { "code": "000043", "name": "嘉实美国成长股票人民币", "platform": "alipay", "market_value": 50063.91, "pnl": 3463.54, "pnl_pct": 7.43, "weight_pct": 8.1, "index_tracked": "美国成长股(主动)" },
+    { "code": "050025", "name": "博时标普500ETF联接A", "platform": "alipay", "market_value": 35443.46, "pnl": 3455.23, "pnl_pct": 10.80, "weight_pct": 5.7, "index_tracked": "S&P500" },
+    { "code": "016055", "name": "博时纳斯达克100ETF发起式联接(QDII)A人民币", "platform": "alipay", "market_value": 34613.21, "pnl": 3408.88, "pnl_pct": 10.92, "weight_pct": 5.6, "index_tracked": "纳斯达克100" },
+    { "code": "019172", "name": "摩根纳斯达克100指数(QDII)人民币A", "platform": "alipay", "market_value": 30617.97, "pnl": 2497.65, "pnl_pct": 8.88, "weight_pct": 4.9, "index_tracked": "纳斯达克100" },
+    { "code": "017641", "name": "摩根标普500指数(QDII)人民币A", "platform": "alipay", "market_value": 20437.68, "pnl": 1687.97, "pnl_pct": 9.00, "weight_pct": 3.3, "index_tracked": "S&P500" },
+    { "code": "007721", "name": "天弘标普500发起(QDII-FOF)A", "platform": "alipay", "market_value": 14204.33, "pnl": 1504.46, "pnl_pct": 11.85, "weight_pct": 2.3, "index_tracked": "S&P500" }
+  ],
+  "exposure_analysis": {
+    "by_index": [
+      { "index": "S&P500", "fund_count": 4, "combined_weight_pct": 48.5 },
+      { "index": "纳斯达克100", "fund_count": 2, "combined_weight_pct": 10.5 },
+      { "index": "美国成长股(主动)", "fund_count": 1, "combined_weight_pct": 8.1 },
+      { "index": "中证主要消费", "fund_count": 1, "combined_weight_pct": 12.9 },
+      { "index": "沪深300", "fund_count": 1, "combined_weight_pct": 10.0 },
+      { "index": "养老FOF混合", "fund_count": 1, "combined_weight_pct": 10.0 }
+    ],
+    "effective_exposures": 6,
+    "nominal_funds": 10,
+    "by_geography": [
+      { "region": "美国", "pct": 67.0 },
+      { "region": "中国", "pct": 33.0 }
+    ],
+    "by_asset_class": [
+      { "class": "权益(含其他)", "pct": 95.2 },
+      { "class": "现金", "pct": 6.4 },
+      { "class": "债券", "pct": 0.5 }
+    ],
+    "top3_sectors": [
+      { "sector": "信息技术", "pct": 24.7 },
+      { "sector": "食品饮料", "pct": 8.4 },
+      { "sector": "金融", "pct": 7.0 }
+    ],
+    "top3_sectors_total_pct": 40.1
+  },
+  "position_management": {
+    "budget": 1500000.00,
+    "current_value": 621070.41,
+    "position_pct": 41.4,
+    "target_range": { "min": 50, "max": 80 },
+    "status": "below_target",
+    "gap_to_min": 128929.59
+  },
+  "diagnosis": {
+    "scan1_mpt": {
+      "theory": "MPT — 分散化与相关性",
+      "findings": [
+        { "issue": "标普500重复持有4只基金", "severity": "high", "detail": "博时E 37.2% + 博时A 5.7% + 摩根 3.3% + 天弘 2.3% = 48.5%，追踪同一指数无分散价值" },
+        { "issue": "纳斯达克100重复持有2只", "severity": "medium", "detail": "博时 5.6% + 摩根 4.9% = 10.5%" },
+        { "issue": "美国单一市场占比67%", "severity": "high", "detail": "超过60%阈值，地域集中风险" },
+        { "issue": "债券占比仅0.5%", "severity": "high", "detail": "大类资产严重缺失，长钱桶几乎无固收" }
+      ]
+    },
+    "scan2_three_fund": {
+      "theory": "三基金组合 — 结构完整性",
+      "findings": [
+        { "issue": "债券腿缺失", "severity": "high", "detail": "债券占比0.5%，远低于5%最低线" },
+        { "issue": "国际vs本国比例偏高", "severity": "medium", "detail": "国际67% vs 本国33%，国际偏重" }
+      ]
+    },
+    "scan3_all_weather": {
+      "theory": "全天候 — 宏观环境覆盖",
+      "scenarios_covered": 1,
+      "scenarios_total": 4,
+      "findings": [
+        { "issue": "仅覆盖1/4宏观情景", "severity": "high", "detail": "仅覆盖增长+低通胀（股票），缺失其他三种情景的对冲资产" },
+        { "issue": "无国债/利率债", "severity": "high", "detail": "衰退+低通胀情景无保护" },
+        { "issue": "无黄金/商品类资产", "severity": "info", "detail": "高通胀情景无对冲" }
+      ]
+    },
+    "scan4_core_satellite": {
+      "theory": "核心-卫星 — 结构识别",
+      "core_pct": 79,
+      "satellite_pct": 21,
+      "findings": [
+        { "issue": "博时标普500E单只占比37.2%", "severity": "high", "detail": "远超25%单只上限" },
+        { "issue": "标普500类合计48.5%", "severity": "high", "detail": "单一指数集中度过高" }
+      ]
+    },
+    "scan5_lifecycle": {
+      "theory": "生命周期 — 年龄适配性",
+      "estimated_age_range": "30-40",
+      "basis": "持有广发养老2050基金",
+      "recommended_equity_pct": { "min": 55, "max": 70 },
+      "findings": [
+        { "issue": "权益仅占总资产25.7%", "severity": "high", "detail": "30-40岁建议55-70%，严重偏保守" },
+        { "issue": "活钱占总资产61.9%", "severity": "high", "detail": "远超10-15%参考区间，大量资金闲置被通胀侵蚀" }
+      ]
+    },
+    "supplementary": {
+      "bucket_allocation": {
+        "findings": [
+          { "issue": "活钱超配", "severity": "high", "detail": "实际61.9% vs 参考10-15%，超出约¥110-120万" },
+          { "issue": "稳钱略低", "severity": "medium", "detail": "实际12.4% vs 参考15-25%" },
+          { "issue": "长钱严重低配", "severity": "high", "detail": "实际25.7% vs 参考50-70%" }
+        ]
+      },
+      "insurance": {
+        "covered_members": ["刘凌峰", "刘兮玥"],
+        "findings": [
+          { "issue": "经济支柱缺意外险+定期寿险", "severity": "info", "detail": "已有重疾50万+医疗200万，但身故/伤残保障缺口" },
+          { "issue": "配偶（如有）保险空白", "severity": "info", "detail": "家庭保障不完整" },
+          { "issue": "少儿缺医疗/意外险", "severity": "info", "detail": "仅有重疾50万，日常就医保障空白" },
+          { "issue": "少儿重疾险3/25需续费", "severity": "info", "detail": "距今约1个月" }
+        ]
+      },
+      "platform_concentration": {
+        "top_platform": "alipay",
+        "top_platform_pct": 52.8,
+        "over_70_threshold": false
+      }
+    }
+  },
+  "issues_summary": [
+    { "id": 1, "issue": "活钱61.9%，¥150万闲置", "severity": "high", "source": "生命周期", "detail": "扣除公积金和备用金后仍有>¥100万近零收益" },
+    { "id": 2, "issue": "长钱仅25.7%，严重偏保守", "severity": "high", "source": "生命周期", "detail": "30-40岁建议55-70%" },
+    { "id": 3, "issue": "标普500买了4只（合计48.5%）", "severity": "high", "source": "MPT", "detail": "同指数重复=伪分散" },
+    { "id": 4, "issue": "债券0.5%，固收近乎为零", "severity": "high", "source": "三基金/全天候", "detail": "下跌无缓冲，衰退无保护" },
+    { "id": 5, "issue": "仅覆盖1/4宏观情景", "severity": "high", "source": "全天候", "detail": "纯权益，缺债券/商品/黄金" },
+    { "id": 6, "issue": "美国占长钱67%", "severity": "high", "source": "MPT", "detail": "超60%阈值" },
+    { "id": 7, "issue": "博时标普500E单只37.2%", "severity": "high", "source": "核心-卫星", "detail": "远超25%上限" },
+    { "id": 8, "issue": "纳指100重复2只", "severity": "medium", "source": "MPT", "detail": "同指数冗余" },
+    { "id": 9, "issue": "国际vs本国67:33偏高", "severity": "medium", "source": "三基金", "detail": "可适度再平衡" },
+    { "id": 10, "issue": "长钱仓位41.4%低于自设下限", "severity": "medium", "source": "仓位管理", "detail": "策略执行不一致" },
+    { "id": 11, "issue": "稳钱12.4%略低", "severity": "medium", "source": "桶间配比", "detail": "中期保值层偏薄" },
+    { "id": 12, "issue": "支柱缺意外险+定期寿险", "severity": "info", "source": "保险", "detail": "身故/伤残保障缺口" },
+    { "id": 13, "issue": "配偶（如有）保险空白", "severity": "info", "source": "保险", "detail": "家庭保障不完整" },
+    { "id": 14, "issue": "少儿缺医疗/意外险", "severity": "info", "source": "保险", "detail": "日常就医空白" },
+    { "id": 15, "issue": "无黄金/商品类资产", "severity": "info", "source": "全天候", "detail": "抗通胀资产为零" },
+    { "id": 16, "issue": "少儿重疾险3/25需续费", "severity": "info", "source": "保险", "detail": "距今约1个月" }
+  ],
+  "recommendations": [
+    {
+      "id": 1,
+      "title": "精简同指数重复基金",
+      "resolves_issues": [3, 7, 8],
+      "approach": "标普500的4只精简为1只（保留费率最低的），纳指100的2只精简为1只。释放管理精力，赎回资金用于补齐缺失品种。"
+    },
+    {
+      "id": 2,
+      "title": "分批将活钱转入长钱桶",
+      "resolves_issues": [1, 2, 10],
+      "approach": "活钱扣除公积金¥6.3万和6-12月备用金¥20-30万后，剩余¥100万+制定定期定额计划分批投入，目标将长钱从25.7%逐步提至50%以上。"
+    },
+    {
+      "id": 3,
+      "title": "补齐债券配置",
+      "resolves_issues": [4, 5, 9],
+      "approach": "新增债券类基金（方向如中短债指数、利率债指数），目标占长钱15-25%。降低波动、覆盖衰退情景、稀释美国集中度。"
+    },
+    {
+      "id": 4,
+      "title": "少量配置黄金",
+      "resolves_issues": [5, 15],
+      "approach": "配置5-10%黄金ETF联接，补齐全天候中高通胀情景的对冲。"
+    },
+    {
+      "id": 5,
+      "title": "补全家庭保险",
+      "resolves_issues": [12, 13, 14, 16],
+      "approach": "经济支柱补意外险+定期寿险（保额覆盖3-5年家庭支出）；少儿补百万医疗/意外险；配偶如有同步配齐；3月25日前完成少儿重疾险续费。"
+    }
+  ],
+  "disclaimer": "以上分析基于当前持仓数据和五大经典投资理论框架，所有建议仅供参考，不构成投资意见。"
+}

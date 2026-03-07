@@ -289,7 +289,11 @@ def take_snapshot(session: SessionDep):
 
 @router.get("/allocation-targets")
 def get_allocation_targets(session: SessionDep):
-    """Return user-configured bucket allocation targets (percentages)."""
+    """Return user-configured bucket allocation targets.
+    - liquid_target: absolute amount (in yuan)
+    - stable_target: percentage of remaining assets (total - liquid)
+    - growth_target: percentage of remaining assets (total - liquid)
+    """
     target = session.exec(select(AllocationTarget)).first()
     if not target:
         return None
@@ -305,7 +309,11 @@ def update_allocation_targets(
     data: AllocationTargetRequest,
     session: SessionDep,
 ):
-    """Upsert bucket allocation targets. Expects {liquid_target, stable_target, growth_target}."""
+    """Upsert bucket allocation targets.
+    - liquid_target: absolute amount (in yuan)
+    - stable_target: percentage of remaining assets (total - liquid)
+    - growth_target: percentage of remaining assets (total - liquid)
+    """
     liquid = data.liquid_target
     stable = data.stable_target
     growth = data.growth_target

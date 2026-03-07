@@ -23,6 +23,7 @@ interface Props {
   classValues: Record<string, number>;
   targets: Record<string, TargetConfig>;
   totalBudget?: number;
+  equitySubValues?: Record<string, number>;
   onUpdated?: () => void;
 }
 
@@ -70,7 +71,7 @@ const GRADIENTS = {
 
 const BAR_SCALE = 120;
 
-export default function AssetAllocationTarget({ classValues, targets, totalBudget, onUpdated }: Props) {
+export default function AssetAllocationTarget({ classValues, targets, totalBudget, equitySubValues: propEquitySubValues, onUpdated }: Props) {
   const [collapsed, setCollapsed] = useState(false);
   const [equityExpanded, setEquityExpanded] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -90,11 +91,9 @@ export default function AssetAllocationTarget({ classValues, targets, totalBudge
   const pendingTotal = referenceTotal - currentTotal;
 
   const equityValue = classValues["equity"] ?? 0;
-  const equitySubValues: Record<string, number> = {};
-  const equityTotalRatio = equitySub.reduce((s, i) => s + i.target_ratio, 0);
-  equitySub.forEach((item) => {
-    equitySubValues[item.code] = equityValue * (item.target_ratio / equityTotalRatio);
-  });
+  // 使用后端传入的真实市值，如果没有则按配置比例计算
+  const equitySubValues: Record<string, number> = propEquitySubValues || {};
+  const hasRealEquitySubValues = Object.keys(propEquitySubValues || {}).length > 0;
 
   const updateAssetClass = useCallback((code: string, field: "target_ratio" | "float_ratio", value: number) => {
     setAssetClass((prev) =>

@@ -77,6 +77,7 @@ export default function OverviewPage() {
             gold: { target: 20, min: 16, max: 24 },
           }}
           totalBudget={growthBudget ?? undefined}
+          equitySubValues={(suggestion.extra.equity_sub_values ?? {}) as Record<string, number>}
           onUpdated={() => {
             positionApi.suggestion().then(setSuggestion);
           }}
