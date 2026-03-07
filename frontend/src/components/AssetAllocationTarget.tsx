@@ -200,9 +200,16 @@ export default function AssetAllocationTarget({ classValues, targets, totalBudge
         <span className={`text-right text-sm font-semibold tabular-nums font-serif ${statusColor}`}>
           {ratio.toFixed(0)}%
         </span>
-        <div className={`relative ${barHeight} rounded-full bg-muted/50 overflow-hidden`}>
-          <div className={`absolute inset-y-0 left-0 rounded-full bg-gradient-to-r ${gradient} transition-all duration-500`} style={{ width: `${fillW}%` }} />
-          <div className="absolute inset-y-0 w-0.5 bg-white/80" style={{ left: `${targetX}%` }} />
+        <div className="flex flex-col justify-center">
+          <div className={`relative ${barHeight} rounded-full bg-muted/50 overflow-hidden`}>
+            <div className={`absolute inset-y-0 left-0 rounded-full bg-gradient-to-r ${gradient} transition-all duration-500`} style={{ width: `${fillW}%` }} />
+            <div className="absolute inset-y-0 w-0.5 bg-white/80" style={{ left: `${targetX}%` }} />
+          </div>
+          <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5 -mx-1 px-1">
+            <span>{Math.round(minThreshold)}%</span>
+            <span className="font-medium">{targetPercent}%</span>
+            <span>{Math.round(maxThreshold)}%</span>
+          </div>
         </div>
         <span className={`text-right text-xs tabular-nums ${gap > 0 ? "text-muted-foreground" : "text-emerald-600"}`}>
           {gap > 0 ? `-${(gap / 10000).toFixed(1)}万` : `+${(-gap / 10000).toFixed(1)}万`}
