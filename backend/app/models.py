@@ -10,6 +10,9 @@ class Fund(SQLModel, table=True):
     fund_name: str = ""
     fund_type: str = ""
     management_company: str = ""
+    # 新增标签字段
+    index_type: str | None = Field(default=None, description="指数类型标签: csi300|sp500|nasdaq100|csi500|hsi")
+    region: str | None = Field(default=None, description="地域标签: china|usa|hongkong|japan|europe|global")
     last_updated: datetime.datetime | None = None
 
 
