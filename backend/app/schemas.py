@@ -225,4 +225,4 @@ class FundDetailResponse(SQLModel):
     management_company: str = ""
     index_type: str | None = None
     region: str | None = None
-    last_updated: datetime.datetime | None = None
+    last_updated: datetime | None = None
