@@ -17,6 +17,7 @@ import AddHoldingDialog from "@/components/AddHoldingDialog";
 import UpdateSnapshotDialog from "@/components/UpdateSnapshotDialog";
 import ChangeLogDialog from "@/components/ChangeLogDialog";
 import { PlatformBadge } from "@/components/PlatformBadge";
+import { FundTagsBadges } from "@/components/FundTagsBadges";
 import { Skeleton } from "@/components/ui/skeleton";
 import { holdingsApi, fundsApi } from "@/services/api";
 import { useFundDetail } from "@/contexts/FundDetailContext";
@@ -98,6 +99,7 @@ export default function HoldingsPage() {
                 <TableHead className="whitespace-nowrap">基金名称</TableHead>
                 <TableHead className="whitespace-nowrap">基金代码</TableHead>
                 <TableHead className="whitespace-nowrap">平台</TableHead>
+                <TableHead className="whitespace-nowrap">标签</TableHead>
                 <TableHead className="text-right whitespace-nowrap">份额</TableHead>
                 <TableHead className="text-right whitespace-nowrap">最新净值</TableHead>
                 <TableHead className="text-right whitespace-nowrap">市值</TableHead>
@@ -120,6 +122,7 @@ export default function HoldingsPage() {
                   </TableCell>
                   <TableCell className="font-mono text-xs tabular-nums whitespace-nowrap">{h.fund_code}</TableCell>
                   <TableCell className="whitespace-nowrap"><PlatformBadge platform={h.platform} /></TableCell>
+                  <TableCell className="whitespace-nowrap"><FundTagsBadges indexType={h.index_type} region={h.region} /></TableCell>
                   <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">{h.shares.toFixed(2)}</TableCell>
                   <TableCell className="text-right font-serif tabular-nums whitespace-nowrap">
                     {refreshing.has(h.fund_code) && !h.latest_nav
@@ -187,7 +190,7 @@ export default function HoldingsPage() {
               ))}
               {holdings.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
                     暂无持仓，点击"添加持仓"开始
                   </TableCell>
                 </TableRow>

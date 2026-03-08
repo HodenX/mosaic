@@ -11,6 +11,8 @@ export interface Holding {
   market_value: number | null;
   pnl: number | null;
   pnl_percent: number | null;
+  index_type?: string | null;
+  region?: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -16,6 +16,8 @@ SessionDep = Annotated[Session, Depends(get_session)]
 def _enrich_holding(holding: Holding, session: Session) -> HoldingResponse:
     fund = session.get(Fund, holding.fund_code)
     fund_name = fund.fund_name if fund else ""
+    index_type = fund.index_type if fund else None
+    region = fund.region if fund else None
 
     nav_record = session.exec(
         select(FundNavHistory)
@@ -44,6 +46,8 @@ def _enrich_holding(holding: Holding, session: Session) -> HoldingResponse:
         market_value=market_value,
         pnl=pnl,
         pnl_percent=pnl_percent,
+        index_type=index_type,
+        region=region,
         created_at=holding.created_at,
         updated_at=holding.updated_at,
     )

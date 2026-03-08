@@ -32,6 +32,8 @@ class HoldingResponse(SQLModel):
     market_value: float | None
     pnl: float | None
     pnl_percent: float | None
+    index_type: str | None = None
+    region: str | None = None
     created_at: datetime
     updated_at: datetime
 
