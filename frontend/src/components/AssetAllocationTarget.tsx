@@ -41,6 +41,7 @@ const EQUITY_SUB_LABELS: Record<string, { label: string; group: string }> = {
   csi300: { label: "沪深300", group: "A股/港股" },
   dividend: { label: "中证红利", group: "A股/港股" },
   hkt: { label: "恒生科技", group: "A股/港股" },
+  other: { label: "其他", group: "A股/港股" },
 };
 
 const DEFAULT_ASSET_CLASS: GrowthAllocationItem[] = [
@@ -67,6 +68,7 @@ const GRADIENTS = {
   csi300: "from-red-400 via-rose-500 to-red-500",
   dividend: "from-orange-400 via-amber-500 to-orange-500",
   hkt: "from-teal-400 via-cyan-500 to-teal-500",
+  other: "from-gray-400 via-gray-500 to-gray-500",
 };
 
 const BAR_SCALE = 120;

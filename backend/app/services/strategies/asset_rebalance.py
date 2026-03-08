@@ -29,6 +29,7 @@ EQUITY_SUB_LABELS = {
     "csi300": "沪深300",
     "dividend": "中证红利",
     "hkt": "恒生科技",
+    "other": "其他",
 }
 
 
@@ -90,8 +91,8 @@ def classify_equity_sub(fund_type: str, fund_name: str, index_type: str | None =
     if "恒生科技" in fn or "恒科" in fn or "港股科技" in fn:
         return "hkt"
 
-    # 默认归类到沪深300（A股/港股其他基金）
-    return "csi300"
+    # 无法识别的归类到"其他"
+    return "other"
 
 
 def _in_execution_window(today: datetime.date, window_days: int) -> bool:
@@ -170,7 +171,7 @@ class AssetRebalanceStrategy:
         # --- Classify holdings and compute per-class market value ---
         class_values: dict[str, float] = {"equity": 0.0, "bond": 0.0, "gold": 0.0}
         # 权益子项市值
-        equity_sub_values: dict[str, float] = {"spx": 0.0, "nasdaq": 0.0, "csi300": 0.0, "dividend": 0.0, "hkt": 0.0}
+        equity_sub_values: dict[str, float] = {"spx": 0.0, "nasdaq": 0.0, "csi300": 0.0, "dividend": 0.0, "hkt": 0.0, "other": 0.0}
 
         for h in context.holdings:
             fund = session.get(Fund, h["fund_code"])
