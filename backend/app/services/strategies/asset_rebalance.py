@@ -45,11 +45,31 @@ def classify_fund(fund_type: str, fund_name: str = "") -> str:
     return "equity"
 
 
-def classify_equity_sub(fund_type: str, fund_name: str) -> str:
-    """将权益基金分类到具体的指数/类别"""
+def classify_equity_sub(fund_type: str, fund_name: str, index_type: str | None = None) -> str:
+    """将权益基金分类到具体的指数/类别，优先使用 index_type 标签"""
     ft = fund_type.lower()
     fn = fund_name.lower()
 
+    # 优先使用基金标签进行分类
+    if index_type:
+        it = index_type.lower()
+        # 标普500
+        if "sp500" in it or "标普500" in it:
+            return "spx"
+        # 纳斯达克
+        if "nasdaq" in it or "纳斯达克" in it:
+            return "nasdaq"
+        # 沪深300
+        if "csi300" in it or "沪深300" in it:
+            return "csi300"
+        # 中证红利
+        if "红利" in it:
+            return "dividend"
+        # 恒生科技
+        if "hsi" in it or "恒生" in it:
+            return "hkt"
+
+    # 如果没有标签或标签无法识别，使用基金名称/类型匹配
     # 标普500
     if "标普500" in fn or "标普 500" in fn or "s&p" in fn:
         return "spx"
@@ -156,12 +176,13 @@ class AssetRebalanceStrategy:
             fund = session.get(Fund, h["fund_code"])
             fund_type = fund.fund_type if fund else ""
             fund_name = fund.fund_name if fund else ""
+            index_type = fund.index_type if fund else None
             cls = classify_fund(fund_type, fund_name)
             class_values[cls] += h.get("market_value", 0.0)
 
             # 如果是权益类，进一步分类到指数/子项
             if cls == "equity":
-                sub = classify_equity_sub(fund_type, fund_name)
+                sub = classify_equity_sub(fund_type, fund_name, index_type)
                 equity_sub_values[sub] += h.get("market_value", 0.0)
 
         total_value = sum(class_values.values())
