@@ -6,11 +6,41 @@ interface FundTagsBadgesProps {
 }
 
 const INDEX_TYPE_LABELS: Record<string, string> = {
+  // 中国
   csi300: "沪深300",
+  csi500: "中证500",
+  csi1000: "中证1000",
+  创业板指: "创业板指",
+  科创50: "科创50",
+  上证50: "上证50",
+  中证800: "中证800",
+  中证全指: "中证全指",
+  // 美国
   sp500: "标普500",
   nasdaq100: "纳斯达克100",
-  csi500: "中证500",
+  nasdaqComposite: "纳斯达克综指",
+  russell2000: "罗素2000",
+  dowJones: "道琼斯",
+  // 香港
   hsi: "恒生指数",
+  恒生科技: "恒生科技",
+  国企指数: "国企指数",
+  红筹指数: "红筹指数",
+  // 全球
+  msciWorld: "MSCI全球",
+  msciEmerging: "MSCI新兴市场",
+  // 其他
+  日经225: "日经225",
+  欧洲50: "欧洲斯托克50",
+  德国DAX: "德国DAX",
+  法国CAC: "法国CAC40",
+  英国FTSE: "英国富时100",
+  黄金: "黄金",
+  原油: "原油",
+  商品: "商品",
+  债券: "债券",
+  REITs: "REITs",
+  其他: "其他",
 };
 
 const REGION_LABELS: Record<string, string> = {

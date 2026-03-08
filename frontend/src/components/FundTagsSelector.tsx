@@ -22,11 +22,41 @@ interface FundTagsSelectorProps {
 }
 
 const INDEX_TYPE_OPTIONS = [
+  // 中国
   { value: "csi300", label: "沪深300" },
+  { value: "csi500", label: "中证500" },
+  { value: "csi1000", label: "中证1000" },
+  { value: "创业板指", label: "创业板指" },
+  { value: "科创50", label: "科创50" },
+  { value: "上证50", label: "上证50" },
+  { value: "中证800", label: "中证800" },
+  { value: "中证全指", label: "中证全指" },
+  // 美国
   { value: "sp500", label: "标普500" },
   { value: "nasdaq100", label: "纳斯达克100" },
-  { value: "csi500", label: "中证500" },
+  { value: "nasdaqComposite", label: "纳斯达克综指" },
+  { value: "russell2000", label: "罗素2000" },
+  { value: "dowJones", label: "道琼斯" },
+  // 香港
   { value: "hsi", label: "恒生指数" },
+  { value: "恒生科技", label: "恒生科技" },
+  { value: "国企指数", label: "国企指数" },
+  { value: "红筹指数", label: "红筹指数" },
+  // 全球
+  { value: "msciWorld", label: "MSCI全球" },
+  { value: "msciEmerging", label: "MSCI新兴市场" },
+  // 其他
+  { value: "日经225", label: "日经225" },
+  { value: "欧洲50", label: "欧洲斯托克50" },
+  { value: "德国DAX", label: "德国DAX" },
+  { value: "法国CAC", label: "法国CAC40" },
+  { value: "英国FTSE", label: "英国富时100" },
+  { value: "黄金", label: "黄金" },
+  { value: "原油", label: "原油" },
+  { value: "商品", label: "商品" },
+  { value: "债券", label: "债券" },
+  { value: "REITs", label: "REITs" },
+  { value: "其他", label: "其他" },
 ] as const;
 
 const REGION_OPTIONS = [
