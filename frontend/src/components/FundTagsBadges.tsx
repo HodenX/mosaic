@@ -1,7 +1,5 @@
 // 贾维斯: 基金标签徽章组件
 
-import { Badge } from "@/components/ui/badge";
-
 interface FundTagsBadgesProps {
   indexType?: string | null;
   region?: string | null;
@@ -42,9 +40,16 @@ export function FundTagsBadges({ indexType, region }: FundTagsBadgesProps) {
   return (
     <div className="flex flex-wrap gap-1">
       {tags.map((tag) => (
-        <Badge key={tag.label} variant={tag.variant} className="text-xs px-1.5 py-0">
+        <span
+          key={tag.label}
+          className={`text-xs px-1.5 py-0 rounded ${
+            tag.variant === "default"
+              ? "bg-primary text-primary-foreground"
+              : "bg-secondary text-secondary-foreground"
+          }`}
+        >
           {tag.label}
-        </Badge>
+        </span>
       ))}
     </div>
   );
